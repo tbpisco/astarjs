@@ -7,14 +7,16 @@ export class AppController {
 
     private mapView = new MapView("#map");
 
-    private map = new Map([["e", 1 ,0, 0, 0, 0],
-                            [0, 1 ,0, 0, 0, 0],
-                            [0, 0 ,0, 0, 0, 0],
-                            [1, 1 ,1, 1, 0, 0],
-                            [0, 0 ,0, 0, 0, 0],
-                            [0, 0 ,1, 0, 0, 0],
-                            [0, 0 ,0, 1, 1, 0],
-                            [1, 0 ,0, 0, "s" ,0]]);
+    private map = new Map([[0, 1 ,0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                            [0, 1 ,0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                            [0, 0 ,0, "e", 0, 0, 0, 0, 0, 2, 0, 0, 0, 0],
+                            [1, 1 ,1, 1, 0, 0, 0, 0, 0, 2, 2, 0, 0, 0],
+                            [0, 0 ,0, 0, 0, 0, 0, 0, 0, 2, 2, 0, 0, 0],
+                            [0, 0 ,1, 0, 0, 0, 0, 0, 0, 2, 2, 0, 0, 0],
+                            [0, 0 ,0, 1, 1, 0, 0, 0, 0, 2, 2, 0, 0, 0],
+                            [1, 0 ,0, 0, 0, 0, 0, 0, 1, 2, 2, 0, 0, 0],
+                            [0, 0 ,0, 0, 2, 0, 0, 1, 1, 1, 1, 0, "s", 0],
+                            [0, 0 ,0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0]]);
 
     private closedList: Node[];
     private openList: Node[];
@@ -27,8 +29,10 @@ export class AppController {
         this.openList = [];
         this.firstElement = this.findStart(this.map);
         this.lastElement = this.findEnd(this.map);
-        this.findBestPath(this.firstElement, this.lastElement, this.map);
-        
+
+        this.mapView.createStage(this.map);
+
+        this.findBestPath(this.firstElement, this.lastElement, this.map);        
     }
 
     findBestPath(firstElement: Node, lastElement:Node, map: Map){
@@ -93,6 +97,8 @@ export class AppController {
     }
 
     showNodes(node:Node){
+
+        this.mapView.highlightRectangule(node.getRow(), node.getCol());
         console.log(node.getRow()  + " - " + node.getCol());
         if(node.getParent()){
             this.showNodes(node.getParent());
