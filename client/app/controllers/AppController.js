@@ -18,18 +18,21 @@ System.register(["../views/MapView", "../models/Map", "../models/Node"], functio
             AppController = class AppController {
                 constructor() {
                     this.mapView = new MapView_1.MapView("#map");
-                    this.map = new Map_1.Map([["e", 1, 0, 0, 0, 0],
-                        [0, 1, 0, 0, 0, 0],
-                        [0, 0, 0, 0, 0, 0],
-                        [1, 1, 1, 1, 0, 0],
-                        [0, 0, 0, 0, 0, 0],
-                        [0, 0, 1, 0, 0, 0],
-                        [0, 0, 0, 1, 1, 0],
-                        [1, 0, 0, 0, "s", 0]]);
+                    this.map = new Map_1.Map([[0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                        [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                        [0, 0, 0, "e", 0, 0, 0, 0, 0, 2, 0, 0, 0, 0],
+                        [1, 1, 1, 1, 0, 0, 0, 0, 0, 2, 2, 0, 0, 0],
+                        [0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 0, 0, 0],
+                        [0, 0, 1, 0, 0, 0, 0, 0, 0, 2, 2, 0, 0, 0],
+                        [0, 0, 0, 1, 1, 0, 0, 0, 0, 2, 2, 0, 0, 0],
+                        [1, 0, 0, 0, 0, 0, 0, 0, 1, 2, 2, 0, 0, 0],
+                        [0, 0, 0, 0, 2, 0, 0, 1, 1, 1, 1, 0, "s", 0],
+                        [0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0]]);
                     this.closedList = [];
                     this.openList = [];
                     this.firstElement = this.findStart(this.map);
                     this.lastElement = this.findEnd(this.map);
+                    this.mapView.createStage(this.map);
                     this.findBestPath(this.firstElement, this.lastElement, this.map);
                 }
                 findBestPath(firstElement, lastElement, map) {
@@ -83,6 +86,7 @@ System.register(["../views/MapView", "../models/Map", "../models/Node"], functio
                     return (element.getRow() == element0.getRow() && element.getCol() == element0.getCol());
                 }
                 showNodes(node) {
+                    this.mapView.highlightRectangule(node.getRow(), node.getCol());
                     console.log(node.getRow() + " - " + node.getCol());
                     if (node.getParent()) {
                         this.showNodes(node.getParent());
