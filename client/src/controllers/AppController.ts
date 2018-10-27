@@ -135,30 +135,31 @@ export class AppController {
         let validAdjacents = this.findAdjacents(map, node).filter(
             (elementAdjacent) => {
                 return closedList.some((element) => {
-                    return !(element.getRow() == elementAdjacent.getRow() && element.getCol() == elementAdjacent.getCol())
+                    return !(this.isObjectEqual(element, elementAdjacent))
                 })
             });
 
         let validAdjacentsOpenList = validAdjacents.filter(
             (elementAdjacent) => {
                 return openList.some((element) => {
-                    return (element.getRow() == elementAdjacent.getRow() && element.getCol() == elementAdjacent.getCol())
+                    return (this.isObjectEqual(element, elementAdjacent))
                 })
             });
 
         validAdjacentsOpenList.map((elementAdjacent) => {
-
-            let validElement = openList.filter((element) => (element.getRow() == elementAdjacent.getRow() && element.getCol() == elementAdjacent.getCol()))[0];
+            let validElement = openList.filter((element) => (this.isObjectEqual(element, elementAdjacent)))[0];
             if(validElement.getG() < (node.getG() + this.getValueMove(validElement, node))){
                 validElement.setG(this.getValueMove(validElement, node));
                 validElement.setParent(node);
             }
         });
 
+        openList.sort((a,b) => b.getValue() - a.getValue());
+
         let validAdjacentsNewOpenList = validAdjacents.filter(
             (elementAdjacent) => {
                 return !openList.some((element) => {
-                    return (element.getRow() == elementAdjacent.getRow() && element.getCol() == elementAdjacent.getCol())
+                    return (this.isObjectEqual(element, elementAdjacent))
                 })
             });
 
