@@ -18,15 +18,15 @@ System.register(["../views/MapView", "../models/Map", "../models/Node"], functio
             AppController = class AppController {
                 constructor() {
                     this.mapView = new MapView_1.MapView("#map");
-                    this.map = new Map_1.Map([[0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+                    this.map = new Map_1.Map([["e", 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                         [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                        [0, 0, 0, "e", 0, 0, 0, 0, 0, 2, 0, 0, 0, 0],
+                        [0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0],
                         [1, 1, 1, 1, 0, 0, 0, 0, 0, 2, 2, 0, 0, 0],
                         [0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 0, 0, 0],
                         [0, 0, 1, 0, 0, 0, 0, 0, 0, 2, 2, 0, 0, 0],
                         [0, 0, 0, 1, 1, 0, 0, 0, 0, 2, 2, 0, 0, 0],
                         [1, 0, 0, 0, 0, 0, 0, 0, 1, 2, 2, 0, 0, 0],
-                        [0, 0, 0, 0, 2, 0, 0, 1, 1, 1, 1, 0, "s", 0],
+                        [0, 0, "s", 0, 2, 0, 0, 1, 1, 1, 1, 0, 0, 0],
                         [0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0]]);
                     this.closedList = [];
                     this.openList = [];
@@ -121,7 +121,7 @@ System.register(["../views/MapView", "../models/Map", "../models/Node"], functio
                     });
                     validAdjacentsOpenList.map((elementAdjacent) => {
                         let validElement = openList.filter((element) => (this.isObjectEqual(element, elementAdjacent)))[0];
-                        if (validElement.getG() < (node.getG() + this.getValueMove(validElement, node))) {
+                        if ((node.getG() + this.getValueMove(validElement, node)) < validElement.getG()) {
                             validElement.setG(this.getValueMove(validElement, node));
                             validElement.setParent(node);
                         }
@@ -140,6 +140,8 @@ System.register(["../views/MapView", "../models/Map", "../models/Node"], functio
                         openList.push(element);
                     });
                     openList.sort((a, b) => b.getValue() - a.getValue());
+                    console.log("openList:");
+                    console.log(openList);
                     return openList;
                 }
             };

@@ -7,15 +7,15 @@ export class AppController {
 
     private mapView = new MapView("#map");
 
-    private map = new Map([[0, 1 ,0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    private map = new Map([["e", 1 ,0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                             [0, 1 ,0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                            [0, 0 ,0, "e", 0, 0, 0, 0, 0, 2, 0, 0, 0, 0],
+                            [0, 0 ,0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0],
                             [1, 1 ,1, 1, 0, 0, 0, 0, 0, 2, 2, 0, 0, 0],
                             [0, 0 ,0, 0, 0, 0, 0, 0, 0, 2, 2, 0, 0, 0],
                             [0, 0 ,1, 0, 0, 0, 0, 0, 0, 2, 2, 0, 0, 0],
                             [0, 0 ,0, 1, 1, 0, 0, 0, 0, 2, 2, 0, 0, 0],
                             [1, 0 ,0, 0, 0, 0, 0, 0, 1, 2, 2, 0, 0, 0],
-                            [0, 0 ,0, 0, 2, 0, 0, 1, 1, 1, 1, 0, "s", 0],
+                            [0, 0 ,"s", 0, 2, 0, 0, 1, 1, 1, 1, 0, 0, 0],
                             [0, 0 ,0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0]]);
 
     private closedList: Node[];
@@ -148,7 +148,7 @@ export class AppController {
 
         validAdjacentsOpenList.map((elementAdjacent) => {
             let validElement = openList.filter((element) => (this.isObjectEqual(element, elementAdjacent)))[0];
-            if(validElement.getG() < (node.getG() + this.getValueMove(validElement, node))){
+            if(( node.getG() + this.getValueMove(validElement, node)) < validElement.getG()){
                 validElement.setG(this.getValueMove(validElement, node));
                 validElement.setParent(node);
             }
@@ -174,6 +174,9 @@ export class AppController {
         });
         
         openList.sort((a,b) => b.getValue() - a.getValue());
+
+        console.log("openList:");
+        console.log(openList);
         
         return openList;  
       }
