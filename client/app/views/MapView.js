@@ -30,7 +30,7 @@ System.register(["pixi.js"], function (exports_1, context_1) {
                     app.stage.addChild(this.graphics);
                 }
                 highlightRectangule(row, col) {
-                    this.graphics.lineStyle(2, 0x00FF00, 1);
+                    this.graphics.lineStyle(4, 0x00FF00, 1);
                     this.graphics.fillAlpha = 0;
                     this.graphics.drawRect(col * this.size, row * this.size, this.size, this.size);
                     this.graphics.fillAlpha = 1;
