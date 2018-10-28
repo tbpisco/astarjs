@@ -31,7 +31,7 @@ export class MapView {
     }
 
     highlightRectangule(row: number, col: number){
-        this.graphics.lineStyle(2, 0x00FF00, 1);
+        this.graphics.lineStyle(4, 0x00FF00, 1);
         this.graphics.fillAlpha = 0;
         this.graphics.drawRect(col*this.size, row*this.size, this.size, this.size);
         this.graphics.fillAlpha = 1;
