@@ -6,8 +6,6 @@ import { Map } from '../models/Map';
 
 export class AppController {
 
-    private bestPath: PathFinding;
-
     private mapView: MapView = new MapView("#map");
 
     private map: Map;/*= new Map([["e", 1 ,0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
