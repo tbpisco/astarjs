@@ -22,10 +22,6 @@ export class PathFinding {
         var isFinished: boolean = false;
 
         closedList.push(firstElement);
-        openList = PathFinding.findValidAdjacents(map, closedList[closedList.length -1], closedList, openList, lastElement);
-        if(openList.length > 0)closedList.push(openList.pop() as Node);
-
-        isFinished = PathFinding.isObjectEqual(closedList[closedList.length-1],lastElement) || openList.length == 0;
 
         while(!isFinished){
             
@@ -82,9 +78,8 @@ export class PathFinding {
 
         let adjacents: Node[] = [];
 
-        let verify = [[-1,-1], [-1,0] , [-1, 1],
-                      [0,-1], [0,1],
-                      [1,-1], [1,0] , [1, 1]];
+        let verify = [[-1,-1], [-1,0] , [-1, 1], [0,-1], 
+                      [0,1], [1,-1], [1,0] , [1, 1]];
 
         let mapElements = map.get();
         

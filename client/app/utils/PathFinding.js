@@ -22,10 +22,6 @@ System.register(["../models/Node"], function (exports_1, context_1) {
                     var openList = [];
                     var isFinished = false;
                     closedList.push(firstElement);
-                    openList = PathFinding.findValidAdjacents(map, closedList[closedList.length - 1], closedList, openList, lastElement);
-                    if (openList.length > 0)
-                        closedList.push(openList.pop());
-                    isFinished = PathFinding.isObjectEqual(closedList[closedList.length - 1], lastElement) || openList.length == 0;
                     while (!isFinished) {
                         openList = PathFinding.findValidAdjacents(map, closedList[closedList.length - 1], closedList, openList, lastElement);
                         if (openList.length > 0)
@@ -72,9 +68,8 @@ System.register(["../models/Node"], function (exports_1, context_1) {
                 }
                 static findAdjacents(map, node) {
                     let adjacents = [];
-                    let verify = [[-1, -1], [-1, 0], [-1, 1],
-                        [0, -1], [0, 1],
-                        [1, -1], [1, 0], [1, 1]];
+                    let verify = [[-1, -1], [-1, 0], [-1, 1], [0, -1],
+                        [0, 1], [1, -1], [1, 0], [1, 1]];
                     let mapElements = map.get();
                     for (let v = 0; v < verify.length; v++) {
                         var x = node.getRow() + verify[v][0];
