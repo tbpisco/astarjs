@@ -6,7 +6,10 @@ import { Map } from '../models/Map';
 
 export class AppController {
 
-    private mapView: MapView = new MapView("#map");
+    private size:number = 40;
+    private mapView: MapView = new MapView(this.size);
+    private domElement : HTMLDivElement;
+    private app: PIXI.Application; 
 
     private map: Map;/*= new Map([["e", 1 ,0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
                             ["s", 0 ,0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -22,13 +25,20 @@ export class AppController {
     constructor(){
 
         this.map = this.createRandomMap();
-        this.mapView.createStage(this.map);
+        this.app = new PIXI.Application(this.size*this.map.getCol(), this.size*this.map.getRow(), { antialias: true });
+        
+        let domElement = document.body.querySelector("#map");
+        if(domElement)this.domElement = domElement as HTMLDivElement;
+        this.domElement.appendChild(this.app.view);
+
+        this.app.stage.addChild(this.mapView.createStage(this.map));
+
         let bestPath = PathFinding.find(this.map);
         if(bestPath)this.showResult(bestPath, this.showNodes);
 
     }
 
-    createRandomMap(): Map{
+    createRandomMap(): Map {
         let array: (string | number)[][] = [];
         for (let index = 0; index < 10; index++) {
             array.push(new Array(14+1).join("0").split("").map((element) => {
@@ -59,7 +69,6 @@ export class AppController {
         array[r0][c0] = "e";
 
         return new Map(array);
-        
     }
 
     showResult(node:Node, draw: Function){

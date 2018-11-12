@@ -1,14 +1,15 @@
-export class ButtonElement extends PIXI.Sprite {
+export class Tile extends PIXI.Sprite {
 
-    private size:number = 40;
+    private size:number;
     private col:number;
     private row:number;
     private element: number | string;
 
-    constructor(element: number | string, col: number, row :number){
+    constructor(element: number | string, col: number, row: number, size: number){
         super();
         this.col = col;
         this.row = row;
+        this.size = size;
         this.element = element;
         this.create(element, col, row);
     }

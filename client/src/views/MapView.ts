@@ -1,51 +1,46 @@
 import * as PIXI from 'pixi.js';
 import { Map } from '../models/Map';
-import { ButtonElement } from './ButtonElement';
+import { Tile } from './Tile';
 
 export class MapView {
  
-    private domElement : HTMLDivElement;
-    private size:number = 40;
-    private buttons: ButtonElement[] = [];
-    private app:PIXI.Application; 
+    private size:number;
+    private tiles: Tile[] = [];
+    private container: PIXI.Container = new PIXI.Container();
 
-    constructor(domElementID:string){
+    constructor(size: number){
 
-        let domElement = document.body.querySelector(domElementID);
-        if(domElement)this.domElement = domElement as HTMLDivElement;
+        this.size = size;
         
     }
 
-    createStage(map:Map){
-
-        var row = map.get().length;
-        var col = map.get()[0].length;
-        this.app = new PIXI.Application(this.size*col, this.size*row, { antialias: true });
-        this.domElement.appendChild(this.app.view);
+    createStage(map:Map): PIXI.Container {
 
         map.get().forEach((elementRow, indexRow) => {
             elementRow.forEach((elementCol, indexCol) => {
-                let button = new ButtonElement(elementCol, indexCol, indexRow);
-                this.buttons.push(button);
-                button.x = indexCol*this.size;
-                button.y =  indexRow*this.size;
-                this.app.stage.addChild(button);
+                let tile = new Tile(elementCol, indexCol, indexRow, this.size);
+                this.tiles.push(tile);
+                tile.x = indexCol*this.size;
+                tile.y =  indexRow*this.size;
+                this.container.addChild(tile);
             })
         })
+
+        return this.container;
     }
 
     highlightRectangule(row: number, col: number){
 
         let button;
 
-        for (let index = 0; index < this.buttons.length; index++) {
-            const element = this.buttons[index];
-            if(this.buttons[index].getRow() == row 
-                && this.buttons[index].getCol() == col){
-                    button = this.buttons[index];
+        for (let index = 0; index < this.tiles.length; index++) {
+            const element = this.tiles[index];
+            if(element.getRow() == row 
+                && element.getCol() == col){
+                    button = element;
                     button.highlight();
-                    this.app.stage.removeChild(button);
-                    this.app.stage.addChildAt(button, this.app.stage.children.length - 1);
+                    this.container.removeChild(button);
+                    this.container.addChildAt(button, this.container.children.length - 1);
                     break;
             }
         }

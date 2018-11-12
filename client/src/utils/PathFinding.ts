@@ -122,7 +122,7 @@ export class PathFinding {
             }
         });
 
-        openList.sort((a,b) => b.getValue() - a.getValue());
+        //openList.sort((a,b) => b.getValue() - a.getValue());
 
         let validAdjacentsNewOpenList = validAdjacents.filter(
             (elementAdjacent) => {

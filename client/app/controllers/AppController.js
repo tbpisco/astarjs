@@ -17,9 +17,15 @@ System.register(["../views/MapView", "../utils/PathFinding", "../models/Map"], f
         execute: function () {
             AppController = class AppController {
                 constructor() {
-                    this.mapView = new MapView_1.MapView("#map");
+                    this.size = 40;
+                    this.mapView = new MapView_1.MapView(this.size);
                     this.map = this.createRandomMap();
-                    this.mapView.createStage(this.map);
+                    this.app = new PIXI.Application(this.size * this.map.getCol(), this.size * this.map.getRow(), { antialias: true });
+                    let domElement = document.body.querySelector("#map");
+                    if (domElement)
+                        this.domElement = domElement;
+                    this.domElement.appendChild(this.app.view);
+                    this.app.stage.addChild(this.mapView.createStage(this.map));
                     let bestPath = PathFinding_1.PathFinding.find(this.map);
                     if (bestPath)
                         this.showResult(bestPath, this.showNodes);

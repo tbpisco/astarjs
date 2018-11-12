@@ -99,7 +99,6 @@ System.register(["../models/Node"], function (exports_1, context_1) {
                             validElement.setParent(node);
                         }
                     });
-                    openList.sort((a, b) => b.getValue() - a.getValue());
                     let validAdjacentsNewOpenList = validAdjacents.filter((elementAdjacent) => {
                         return !openList.some((element) => {
                             return (PathFinding.isObjectEqual(element, elementAdjacent));
