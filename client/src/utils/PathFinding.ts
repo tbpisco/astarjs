@@ -38,14 +38,14 @@ export class PathFinding {
     }
 
     static findEnd(map:Map): Node {
-        return PathFinding.findElement(map, "e");
+        return PathFinding.findElement(map, 4);
     }
 
     static findStart(map:Map): Node {
-        return PathFinding.findElement(map, "s");
+        return PathFinding.findElement(map, 3);
     }
 
-    static findElement(map:Map, value:string): Node {
+    static findElement(map:Map, value:number): Node {
 
         let el = new Node(0,0);
         map.get().forEach((element, indexRow) => {
@@ -89,7 +89,7 @@ export class PathFinding {
           var y = node.getCol() + verify[v][1];
 
           if(x > -1 && y > -1 && x < mapElements.length && y < mapElements[x].length 
-            && (mapElements[x][y] == 0 || mapElements[x][y] == "e" )){
+            && (mapElements[x][y] == 0 || mapElements[x][y] == 4 )){
                 adjacents.push(new Node(x, y));
           }
         }

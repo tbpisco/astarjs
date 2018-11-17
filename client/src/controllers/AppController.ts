@@ -2,73 +2,86 @@ import { MapView } from '../views/MapView';
 import { PathFinding } from '../utils/PathFinding';
 import { Node } from '../models/Node';
 import { Map } from '../models/Map';
-
+import { Title } from '../views/Title';
+import { Instructions } from '../views/Instructions';
+import { GameState } from '../states/GameState';
 
 export class AppController {
 
-    private size:number = 40;
-    private mapView: MapView = new MapView(this.size);
-    private domElement : HTMLDivElement;
-    private app: PIXI.Application; 
+    private size : number = 40;
+    private mapCol : number = 14;
+    private mapRow : number = 8;
+    private mapPaddingTopBottom : number = this.size * 5;
+    private mapPaddingLeftRight : number = this.size * 2;
 
-    private map: Map;/*= new Map([["e", 1 ,0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                            ["s", 0 ,0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                            [0, 0 ,0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0],
-                            [1, 1 ,1, 1, 0, 0, 0, 0, 0, 2, 2, 0, 0, 0],
-                            [0, 1 ,1, 1, 0, 0, 0, 0, 0, 2, 2, 0, 0, 0],
-                            [0, 1 ,1, 1, 0, 0, 0, 0, 0, 2, 2, 0, 0, 0],
-                            [0, 0 ,1, 1, 1, 0, 0, 0, 0, 2, 2, 0, 0, 0],
-                            [1, 0 ,1, 0, 0, 0, 0, 0, 1, 2, 2, 0, 0, 0],
-                            [0, 0 ,0 , 0, 2, 0, 0, 1, 1, 1, 1, 0, 0, 0],
-                            [0, 0 ,0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0]]);*/
+    private gameState : GameState;
+
+    private mapView : MapView = new MapView(this.size);
+    private resources : any;
+    private domElement : HTMLDivElement;
+    private app : PIXI.Application; 
+
+    private randomMode : boolean = false;
+
+    private map : Map;
 
     constructor(){
 
-        this.map = this.createRandomMap();
-        this.app = new PIXI.Application(this.size*this.map.getCol(), this.size*this.map.getRow(), { antialias: true });
-        
-        let domElement = document.body.querySelector("#map");
-        if(domElement)this.domElement = domElement as HTMLDivElement;
-        this.domElement.appendChild(this.app.view);
+        const loader = new PIXI.loaders.Loader();
+        loader.add("tile-set","../images/tile-set.png")
+              .load(this.setup.bind(this));
 
-        this.app.stage.addChild(this.mapView.createStage(this.map));
+       //let bestPath = PathFinding.find(this.map);
+       //if(bestPath)this.showResult(bestPath, this.showNodes);
 
-        let bestPath = PathFinding.find(this.map);
-        if(bestPath)this.showResult(bestPath, this.showNodes);
+       
 
     }
 
-    createRandomMap(): Map {
-        let array: (string | number)[][] = [];
-        for (let index = 0; index < 10; index++) {
-            array.push(new Array(14+1).join("0").split("").map((element) => {
-                let num = Math.floor(Math.random()*10);
-                if(num < 8){
-                    return 0;
-                } else if(num == 8){
-                    return 1;
-                } else {
-                    return 2;
-                }
-            }));
-        }
+    setup(loader: PIXI.loaders.Loader, res : any){
 
-        let r = Math.floor(Math.random()*10);
-        let c = Math.floor(Math.random()*14);
+        this.resources = res["tile-set"];
 
-        array[r][c] = "s";
+        let width = this.size*this.mapCol + this.mapPaddingLeftRight;
+        let height = this.size*this.mapRow + this.mapPaddingTopBottom;
 
-        let r0 = Math.floor(Math.random()*10);
-        let c0 = Math.floor(Math.random()*14);
+        this.init(width, height);
+        
+        this.gameState = new GameState();
 
-        while(r0 == r && c0 == c){
-            r0 = Math.floor(Math.random()*10);
-            c0 = Math.floor(Math.random()*14);
-            console.log("repetiu")
-        }
-        array[r0][c0] = "e";
+        this.setupView(width, height);
+    }
 
-        return new Map(array);
+    init(width : number, height : number){ 
+
+        this.app = new PIXI.Application(width, height, 
+                        { antialias: true , transparent: true});
+
+        let domElement = document.body.querySelector("#map");
+        if(domElement)this.domElement = domElement as HTMLDivElement;
+        this.domElement.appendChild(this.app.view);
+    }
+
+    setupView(width : number, height : number){
+
+        this.map = new Map(this.mapCol, this.mapRow, this.randomMode);
+        if(this.randomMode)this.mapView.disableTiles();
+
+        let mapViewContainer = this.mapView.createStage(this.map, this.resources);
+        mapViewContainer.x = this.mapPaddingLeftRight/2;
+        mapViewContainer.y = this.mapPaddingTopBottom/5 * 4;
+        this.app.stage.addChild(mapViewContainer);
+
+        let title = new Title("PathFinding", width);
+        title.x = (( width ) - title.width)/2;
+        title.y = 0;
+        this.app.stage.addChild(title);
+
+        let instructions = new Instructions(this.gameState.currentState.instructions, width - this.mapPaddingLeftRight);
+        instructions.x = this.mapPaddingLeftRight/2;
+        instructions.y = title.height;
+        this.app.stage.addChild(instructions);
+
     }
 
     showResult(node:Node, draw: Function){
