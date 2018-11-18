@@ -53,7 +53,7 @@ export class Tile extends PIXI.Sprite {
     }
 
     update(){
-        let background = [1, 2, 3, 4, 13];
+        let background = [1, 2, 3, 4, 13, 14, 15];
         if(background.indexOf(this.type) > -1)this.background.visible = true;
             else this.background.visible = false;
 
@@ -72,6 +72,14 @@ export class Tile extends PIXI.Sprite {
 
     getFrameByType(type: number) : PIXI.Rectangle {
         switch(type){
+            case 15:
+                /* mountain brown*/
+                return new Rectangle(6*16,28*16,16,16);
+            break;
+            case 14:
+                /* mountain */
+                return new Rectangle(6*16,3*16,16,16);
+            break;
             case 13:
                 /* select */
                 return new Rectangle(6*16,42*16,16,16);

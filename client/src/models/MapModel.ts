@@ -34,10 +34,14 @@ export class MapModel{
         let array: number[][] = [];
         for (let index = 0; index < row; index++) {
             array.push(new Array(col+1).join("0").split("").map((element) => {
-                let num = Math.floor(Math.random()*10);
-                if(num < 8){
+                let num = Math.floor(Math.random()*20);
+                if(num < 16){
                     return 0;
-                } else if(num == 8){
+                } else if(num == 17){
+                    return 15;
+                } else if(num == 18){
+                    return 14;
+                } else if(num == 19){
                     return 1;
                 } else {
                     return 2;

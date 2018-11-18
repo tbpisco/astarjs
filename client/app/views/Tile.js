@@ -37,7 +37,7 @@ System.register(["pixi.js"], function (exports_1, context_1) {
                     this.buttonMode = false;
                 }
                 update() {
-                    let background = [1, 2, 3, 4, 13];
+                    let background = [1, 2, 3, 4, 13, 14, 15];
                     if (background.indexOf(this.type) > -1)
                         this.background.visible = true;
                     else
@@ -52,6 +52,12 @@ System.register(["pixi.js"], function (exports_1, context_1) {
                 }
                 getFrameByType(type) {
                     switch (type) {
+                        case 15:
+                            return new pixi_js_1.Rectangle(6 * 16, 28 * 16, 16, 16);
+                            break;
+                        case 14:
+                            return new pixi_js_1.Rectangle(6 * 16, 3 * 16, 16, 16);
+                            break;
                         case 13:
                             return new pixi_js_1.Rectangle(6 * 16, 42 * 16, 16, 16);
                             break;
