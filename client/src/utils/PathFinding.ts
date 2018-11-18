@@ -1,4 +1,4 @@
-import { Map } from "../models/Map";
+import { MapModel } from "../models/MapModel";
 import { Node } from "../models/Node";
 
 export class PathFinding {
@@ -7,7 +7,7 @@ export class PathFinding {
         
     }
 
-    static find(map: Map): Node | null{
+    static find(map: MapModel): Node | null{
 
         let firstElement = PathFinding.findStart(map);
         let lastElement = PathFinding.findEnd(map);
@@ -15,7 +15,7 @@ export class PathFinding {
 
     }
 
-    static findBestPath(firstElement: Node, lastElement:Node, map: Map): Node | null{
+    static findBestPath(firstElement: Node, lastElement:Node, map: MapModel): Node | null{
 
         var closedList: Node[] = [];
         var openList: Node[]= [];
@@ -37,15 +37,15 @@ export class PathFinding {
         }
     }
 
-    static findEnd(map:Map): Node {
+    static findEnd(map:MapModel): Node {
         return PathFinding.findElement(map, 4);
     }
 
-    static findStart(map:Map): Node {
+    static findStart(map:MapModel): Node {
         return PathFinding.findElement(map, 3);
     }
 
-    static findElement(map:Map, value:number): Node {
+    static findElement(map:MapModel, value:number): Node {
 
         let el = new Node(0,0);
         map.get().forEach((element, indexRow) => {
@@ -74,7 +74,7 @@ export class PathFinding {
         return (element.getRow() == element0.getRow() && element.getCol() == element0.getCol());
     }
 
-    static findAdjacents(map:Map, node:Node) : Node[] {
+    static findAdjacents(map:MapModel, node:Node) : Node[] {
 
         let adjacents: Node[] = [];
 
@@ -98,7 +98,7 @@ export class PathFinding {
     }
 
 
-    static findValidAdjacents(map:Map, node:Node, closedList:Node[], openList: Node[], lastElement:Node){
+    static findValidAdjacents(map:MapModel, node:Node, closedList:Node[], openList: Node[], lastElement:Node){
         
         let validAdjacents = PathFinding.findAdjacents(map, node).filter(
             (elementAdjacent) => {

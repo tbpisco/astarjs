@@ -14,35 +14,72 @@ System.register(["pixi.js", "./Tile"], function (exports_1, context_1) {
         execute: function () {
             MapView = class MapView {
                 constructor(size) {
-                    this.tiles = [];
+                    this.tiles = new Map();
                     this.container = new PIXI.Container();
                     this.size = size;
                 }
-                createStage(map) {
-                    map.get().forEach((elementRow, indexRow) => {
+                createStage(map, resources) {
+                    this.map = map;
+                    this.map.get().forEach((elementRow, indexRow) => {
                         elementRow.forEach((elementCol, indexCol) => {
-                            let tile = new Tile_1.Tile(elementCol, indexCol, indexRow, this.size);
-                            this.tiles.push(tile);
+                            let button = new Tile_1.Tile(elementCol, indexCol, indexRow, this.size, resources);
+                            button.interactive = true;
+                            button.buttonMode = true;
+                            button.on("mousedown", this.onClick.bind(this, button), this);
+                            let trapFunction = this.update.bind(this);
+                            let tile = new Proxy(button, {
+                                set(target, key, value) {
+                                    if (key === "_textureID") {
+                                        trapFunction(target);
+                                    }
+                                    return Reflect.set(target, key, value);
+                                }
+                            });
+                            this.tiles.set(`${indexCol}-${indexRow}`, button);
                             tile.x = indexCol * this.size;
                             tile.y = indexRow * this.size;
                             this.container.addChild(tile);
                         });
                     });
+                    this.createBorder(resources, this.map.getCol(), this.map.getRow());
                     return this.container;
                 }
-                highlightRectangule(row, col) {
-                    let button;
-                    for (let index = 0; index < this.tiles.length; index++) {
-                        const element = this.tiles[index];
-                        if (element.getRow() == row
-                            && element.getCol() == col) {
-                            button = element;
-                            button.highlight();
-                            this.container.removeChild(button);
-                            this.container.addChildAt(button, this.container.children.length - 1);
-                            break;
-                        }
+                createBorder(resources, col, row) {
+                    this.createElementBorder(5, -1, -1, resources);
+                    for (let index = 0; index < row; index++) {
+                        this.createElementBorder(6, -1, index, resources);
                     }
+                    this.createElementBorder(7, -1, row, resources);
+                    for (let index = 0; index < row; index++) {
+                        this.createElementBorder(11, col, index, resources);
+                    }
+                    this.createElementBorder(10, col, -1, resources);
+                    for (let index = 0; index < col; index++) {
+                        this.createElementBorder(8, index, -1, resources);
+                    }
+                    this.createElementBorder(12, col, row, resources);
+                    for (let index = 0; index < col; index++) {
+                        this.createElementBorder(9, index, row, resources);
+                    }
+                }
+                createElementBorder(type, x, y, resources) {
+                    let border = new Tile_1.Tile(type, 0, 0, this.size, resources);
+                    border.x = x * this.size;
+                    border.y = y * this.size;
+                    this.container.addChild(border);
+                }
+                update(tile) {
+                    this.map.get()[tile.getRow()][tile.getCol()] = tile.type;
+                }
+                onClick(button) {
+                    button.type = (button.type + 1) % 3;
+                    button.update();
+                }
+                disableTiles() {
+                }
+                highlightRectangule(row, col) {
+                    let tile = this.tiles.get(`${col}-${row}`);
+                    tile.highlight();
                 }
             };
             exports_1("MapView", MapView);

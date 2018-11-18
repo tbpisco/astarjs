@@ -1,18 +1,30 @@
-System.register([], function (exports_1, context_1) {
+System.register(["pixi.js"], function (exports_1, context_1) {
     "use strict";
-    var Tile;
+    var pixi_js_1, Tile;
     var __moduleName = context_1 && context_1.id;
     return {
-        setters: [],
+        setters: [
+            function (pixi_js_1_1) {
+                pixi_js_1 = pixi_js_1_1;
+            }
+        ],
         execute: function () {
             Tile = class Tile extends PIXI.Sprite {
-                constructor(element, col, row, size) {
+                constructor(type, col, row, size, resources) {
                     super();
+                    this.tex = resources.texture;
                     this.col = col;
                     this.row = row;
                     this.size = size;
-                    this.element = element;
-                    this.create(element, col, row);
+                    this.type = type;
+                    this.background = new PIXI.Sprite();
+                    this.background.texture = new PIXI.Texture(this.tex, this.getFrameByType(0), new pixi_js_1.Rectangle(0, 0, this.size, this.size), new pixi_js_1.Rectangle(0, 0, this.size, this.size));
+                    this.addChild(this.background);
+                    this.element = new PIXI.Sprite();
+                    this.element.texture = new PIXI.Texture(this.tex, this.getFrameByType(0), new pixi_js_1.Rectangle(0, 0, this.size, this.size), new pixi_js_1.Rectangle(0, 0, this.size, this.size));
+                    this.addChild(this.element);
+                    this.tex.baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST;
+                    this.update();
                 }
                 getCol() {
                     return this.col;
@@ -20,52 +32,72 @@ System.register([], function (exports_1, context_1) {
                 getRow() {
                     return this.row;
                 }
-                create(element, col, row) {
-                    this.texture = this.drawRectangle(element, col, row);
-                    this.on("mousedown", () => {
-                        this.onClick();
-                    }, this);
-                    this.interactive = true;
-                    this.buttonMode = true;
+                disable() {
+                    this.interactive = false;
+                    this.buttonMode = false;
                 }
-                drawRectangle(element, col, row) {
-                    let graphics = new PIXI.Graphics();
-                    graphics.lineStyle(2, 0x333333, 1, 0);
-                    graphics.beginFill(this.getColourByType(element), 1);
-                    graphics.drawRect(0, 0, this.size - 2, this.size - 2);
-                    return graphics.generateCanvasTexture();
+                update() {
+                    let background = [1, 2, 3, 4, 13];
+                    if (background.indexOf(this.type) > -1)
+                        this.background.visible = true;
+                    else
+                        this.background.visible = false;
+                    this.element.texture = new PIXI.Texture(this.tex, this.getFrameByType(this.type), new pixi_js_1.Rectangle(0, 0, this.size, this.size), new pixi_js_1.Rectangle(0, 0, this.size, this.size));
                 }
                 highlight() {
-                    let graphics = new PIXI.Graphics();
-                    graphics.lineStyle(4, 0x00FF00, 1, 0);
-                    graphics.beginFill(this.getColourByType(this.element), 1);
-                    graphics.drawRect(0, 0, this.size - 4, this.size - 4);
-                    this.texture = graphics.generateCanvasTexture();
+                    if (this.type == 3 || this.type == 4)
+                        return;
+                    this.type = 13;
+                    this.update();
                 }
-                getColourByType(type) {
+                getFrameByType(type) {
                     switch (type) {
-                        case "e":
-                            return 0xFF0000;
+                        case 13:
+                            return new pixi_js_1.Rectangle(6 * 16, 42 * 16, 16, 16);
                             break;
-                        case "s":
-                            return 0x00FF00;
+                        case 12:
+                            return new pixi_js_1.Rectangle(2 * 16, 30 * 16, 16, 16);
+                            break;
+                        case 11:
+                            return new pixi_js_1.Rectangle(2 * 16, 29 * 16, 16, 16);
+                            break;
+                        case 10:
+                            return new pixi_js_1.Rectangle(2 * 16, 28 * 16, 16, 16);
+                            break;
+                        case 9:
+                            return new pixi_js_1.Rectangle(1 * 16, 30 * 16, 16, 16);
+                            break;
+                        case 8:
+                            return new pixi_js_1.Rectangle(1 * 16, 28 * 16, 16, 16);
+                            break;
+                        case 7:
+                            return new pixi_js_1.Rectangle(0 * 16, 30 * 16, 16, 16);
+                            break;
+                        case 6:
+                            return new pixi_js_1.Rectangle(0 * 16, 29 * 16, 16, 16);
+                            break;
+                        case 5:
+                            return new pixi_js_1.Rectangle(0 * 16, 28 * 16, 16, 16);
+                            break;
+                        case 4:
+                            return new pixi_js_1.Rectangle(2 * 16, 6 * 16, 16, 16);
+                            break;
+                        case 3:
+                            return new pixi_js_1.Rectangle(3 * 16, 6 * 16, 16, 16);
                             break;
                         case 0:
-                            return 0xFFFFFF;
+                            return new pixi_js_1.Rectangle(16, 0, 16, 16);
                             break;
                         case 1:
-                            return 0x0000FF;
+                            return new pixi_js_1.Rectangle(2 * 16, 1 * 16, 16, 16);
                             break;
                         case 2:
-                            return 0xa52a2a;
+                            return new pixi_js_1.Rectangle(5 * 16, 0, 16, 16);
                             break;
                         default:
-                            return 0x000000;
+                            return new pixi_js_1.Rectangle(0, 0, 16, 16);
                             break;
                     }
-                }
-                onClick() {
-                    alert(`col:${this.col}- row:${this.row}`);
                 }
             };
             exports_1("Tile", Tile);

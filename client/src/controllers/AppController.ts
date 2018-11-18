@@ -1,10 +1,11 @@
 import { MapView } from '../views/MapView';
 import { PathFinding } from '../utils/PathFinding';
 import { Node } from '../models/Node';
-import { Map } from '../models/Map';
-import { Title } from '../views/Title';
-import { Instructions } from '../views/Instructions';
+import { MapModel } from '../models/MapModel';
+import { Title } from '../components/Title';
+import { Instructions } from '../components/Instructions';
 import { GameState } from '../states/GameState';
+import Button from '../components/Button';
 
 export class AppController {
 
@@ -23,18 +24,13 @@ export class AppController {
 
     private randomMode : boolean = false;
 
-    private map : Map;
+    private map : MapModel;
 
     constructor(){
 
         const loader = new PIXI.loaders.Loader();
         loader.add("tile-set","../images/tile-set.png")
               .load(this.setup.bind(this));
-
-       //let bestPath = PathFinding.find(this.map);
-       //if(bestPath)this.showResult(bestPath, this.showNodes);
-
-       
 
     }
 
@@ -64,7 +60,7 @@ export class AppController {
 
     setupView(width : number, height : number){
 
-        this.map = new Map(this.mapCol, this.mapRow, this.randomMode);
+        this.map = new MapModel(this.mapCol, this.mapRow, this.randomMode);
         if(this.randomMode)this.mapView.disableTiles();
 
         let mapViewContainer = this.mapView.createStage(this.map, this.resources);
@@ -82,6 +78,40 @@ export class AppController {
         instructions.y = title.height;
         this.app.stage.addChild(instructions);
 
+        let buttonDone = new Button(380, instructions.y + instructions.height + 15 , 100, 20);
+        buttonDone.setText("DONE");
+        buttonDone.clicked = this.onDoneClicked.bind(this);
+        this.app.stage.addChild(buttonDone);
+
+        let buttonRandom = new Button(250, instructions.y + instructions.height + 15 , 100, 20);
+        buttonRandom.setText("RANDOM");
+        buttonRandom.clicked = this.onRandomClicked.bind(this);
+        this.app.stage.addChild(buttonRandom);
+
+    }
+
+    onDoneClicked(){
+        alert("done!")
+    }
+
+    onRandomClicked(){
+        
+        this.randomMode = true;
+        this.map = new MapModel(this.mapCol, this.mapRow, this.randomMode);
+        this.map.get().forEach((elementRow, indexRow) => {
+            elementRow.forEach((elementCol, indexCol) => {
+                let tile = this.mapView.tiles.get(`${indexCol}-${indexRow}`);
+                tile.type = elementCol;
+                tile.update();
+                tile.disable();
+            })
+        })
+        this.findPath();
+    }
+
+    findPath(){
+       let bestPath = PathFinding.find(this.map);
+       if(bestPath)this.showResult(bestPath, this.showNodes);
     }
 
     showResult(node:Node, draw: Function){

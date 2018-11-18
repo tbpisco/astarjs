@@ -1,11 +1,11 @@
 System.register([], function (exports_1, context_1) {
     "use strict";
-    var Map;
+    var MapModel;
     var __moduleName = context_1 && context_1.id;
     return {
         setters: [],
         execute: function () {
-            Map = class Map {
+            MapModel = class MapModel {
                 constructor(col, row, isRandom) {
                     this.map = (isRandom) ? this.createRandomMap(col, row) : this.createEmptyMap(col, row);
                     this.row = row;
@@ -56,7 +56,7 @@ System.register([], function (exports_1, context_1) {
                     return array;
                 }
             };
-            exports_1("Map", Map);
+            exports_1("MapModel", MapModel);
         }
     };
 });

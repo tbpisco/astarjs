@@ -36,10 +36,10 @@ System.register(["../models/Node"], function (exports_1, context_1) {
                     }
                 }
                 static findEnd(map) {
-                    return PathFinding.findElement(map, "e");
+                    return PathFinding.findElement(map, 4);
                 }
                 static findStart(map) {
-                    return PathFinding.findElement(map, "s");
+                    return PathFinding.findElement(map, 3);
                 }
                 static findElement(map, value) {
                     let el = new Node_1.Node(0, 0);
@@ -75,7 +75,7 @@ System.register(["../models/Node"], function (exports_1, context_1) {
                         var x = node.getRow() + verify[v][0];
                         var y = node.getCol() + verify[v][1];
                         if (x > -1 && y > -1 && x < mapElements.length && y < mapElements[x].length
-                            && (mapElements[x][y] == 0 || mapElements[x][y] == "e")) {
+                            && (mapElements[x][y] == 0 || mapElements[x][y] == 4)) {
                             adjacents.push(new Node_1.Node(x, y));
                         }
                     }

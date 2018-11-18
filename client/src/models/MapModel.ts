@@ -1,4 +1,4 @@
-export class Map{
+export class MapModel{
 
     private map: number[][];
     private row: number;

@@ -2,11 +2,13 @@ import { Rectangle, Texture } from "pixi.js";
 
 export class Tile extends PIXI.Sprite {
 
-    private size:number;
-    private col:number;
-    private row:number;
-    private _type: number;
-    private tex: any;
+    private size : number;
+    private col : number;
+    private row : number;
+    public type : number;
+    public background : PIXI.Sprite; 
+    public element : PIXI.Sprite;
+    private tex : any;
 
     constructor(type: number, col: number, row: number, size: number, resources: PIXI.loaders.Resource){
         super();
@@ -16,6 +18,22 @@ export class Tile extends PIXI.Sprite {
         this.size = size;
         this.type = type;
 
+        this.background = new PIXI.Sprite();
+        this.background.texture = new PIXI.Texture(this.tex, 
+            this.getFrameByType(0), 
+            new Rectangle(0, 0, this.size, this.size), 
+            new Rectangle(0, 0, this.size, this.size));
+
+        this.addChild(this.background);
+
+        this.element = new PIXI.Sprite();
+        this.element.texture = new PIXI.Texture(this.tex, 
+            this.getFrameByType(0), 
+            new Rectangle(0, 0, this.size, this.size), 
+            new Rectangle(0, 0, this.size, this.size));
+
+        this.addChild(this.element);
+            
         this.tex.baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST;
 
         this.update();
@@ -30,42 +48,34 @@ export class Tile extends PIXI.Sprite {
     }
 
     disable(){
-        //this.off("mousedown", this.onClick, this);
-       // this.interactive = false;
-       // this.buttonMode = false;
-    }
-
-    drawRectangle( type: number, col: number, row: number){
-        let graphics = new PIXI.Graphics();
-        graphics.lineStyle(2, 0x333333, 1, 0);
-        graphics.beginFill(this.getColourByType(type), 1);
-        graphics.drawRect(0, 0, this.size-2, this.size-2);
-        return graphics.generateCanvasTexture();
+       this.interactive = false;
+       this.buttonMode = false;
     }
 
     update(){
-       /* let graphics = new PIXI.Graphics();
-        graphics.lineStyle(2, 0x333333, 1, 0);
-        graphics.beginFill(this.getColourByType(this.type), 1);
-        graphics.drawRect(0, 0, this.size-2, this.size-2);
-        this.texture = graphics.generateCanvasTexture();*/
+        let background = [1, 2, 3, 4, 13];
+        if(background.indexOf(this.type) > -1)this.background.visible = true;
+            else this.background.visible = false;
 
-        this.texture = new PIXI.Texture(this.tex, 
+        this.element.texture = new PIXI.Texture(this.tex, 
             this.getFrameByType(this.type), 
             new Rectangle(0, 0, this.size, this.size), 
             new Rectangle(0, 0, this.size, this.size));
+
     }
 
     highlight(){
-        let graphics = new PIXI.Graphics();
-        graphics.lineStyle(4, 0x00FF00, 1, 0);
-        graphics.beginFill(this.getColourByType(this.type), 1);
-        graphics.drawRect(0, 0, this.size-4, this.size-4);
-        this.texture = graphics.generateCanvasTexture();
+        if(this.type == 3 || this.type == 4)return;
+        this.type = 13;
+        this.update();
     }
 
     getFrameByType(type: number) : PIXI.Rectangle {
         switch(type){
+            case 13:
+                /* select */
+                return new Rectangle(6*16,42*16,16,16);
+            break;
             case 12:
                 /* bottom right */
                 return new Rectangle(2*16,30*16,16,16);
@@ -108,52 +118,22 @@ export class Tile extends PIXI.Sprite {
             break;
             case 0:
                 /* green */
-                return new Rectangle(0,0,16,16);
+                return new Rectangle(16,0,16,16);
             break;
             case 1:
                 /* water */
-                return new Rectangle(16,24*16,16,16);
+                return new Rectangle(2*16,1*16,16,16);
+                //return new Rectangle(16,24*16,16,16);
             break;
             case 2:
                 /* trees */
-                return new Rectangle(6*16,0,16,16);
+                return new Rectangle(5*16,0,16,16);
             break;
             default:
                 /* green */
                 return new Rectangle(0,0,16,16);
             break;
         }
-    }
-
-    getColourByType(type: number) : number{
-        switch(type){
-            case 4:
-                return 0xFF0000;
-            break;
-            case 3:
-                return 0x00FF00;
-            break;
-            case 0:
-                return 0xFFFFFF;
-            break;
-            case 1:
-                return 0x0000FF;
-            break;
-            case 2:
-                return 0xa52a2a;
-            break;
-            default:
-                return 0x000000;
-            break;
-        }
-    }
-
-    set type(type:number){
-        this._type = type;
-    }
-
-    get type():number{
-        return this._type;
     }
 
 }
