@@ -1,69 +1,101 @@
 import * as PIXI from 'pixi.js';
-import { Map } from '../models/Map';
+import { MapModel } from '../models/MapModel';
+import { Tile } from './Tile';
 
 export class MapView {
+ 
+    private size:number;
+    public tiles = new Map();
+    private map: MapModel;
+    private container: PIXI.Container = new PIXI.Container();
 
-    private domElement : HTMLDivElement;
-    private size:number = 40;
-    private graphics = new PIXI.Graphics();
-
-    constructor(domElementID:string){
-
-        let domElement = document.body.querySelector(domElementID);
-        if(domElement)this.domElement = domElement as HTMLDivElement;
-
+    constructor(size: number){
+        this.size = size;
     }
 
-    createStage(map:Map){
+    createStage(map:MapModel, resources: PIXI.loaders.Resource): PIXI.Container {
 
-        var row = map.get().length;
-        var col = map.get()[0].length;
-        var app = new PIXI.Application(this.size*col, this.size*row, { antialias: true });
-        this.domElement.appendChild(app.view);
-
-        map.get().forEach((elementRow, indexRow) => {
+        this.map = map;
+        this.map.get().forEach((elementRow, indexRow) => {
             elementRow.forEach((elementCol, indexCol) => {
-               this.drawRectangle(this.graphics, elementCol, indexCol, indexRow);
+                let button = new Tile(elementCol, indexCol, indexRow, this.size, resources);
+                button.interactive = true;
+                button.buttonMode = true;
+                button.on("mousedown", this.onClick.bind(this, button), this);
+                let trapFunction = this.update.bind(this);
+                let tile = new Proxy(button , {
+                    set (target, key, value) {
+                        if(key === "_textureID"){
+                            trapFunction(target);
+                        }
+                        return Reflect.set(target, key, value);
+                    }
+                });
+                
+                this.tiles.set(`${indexCol}-${indexRow}`, button );
+                tile.x = indexCol*this.size;
+                tile.y =  indexRow*this.size;
+                this.container.addChild(tile);
             })
         })
 
-        app.stage.addChild(this.graphics);
+        this.createBorder(resources, this.map.getCol(), this.map.getRow());
+
+        return this.container;
+    }
+
+    createBorder(resources:any, col:number, row:number){
+
+        this.createElementBorder(5, -1, -1, resources);
+
+        for (let index = 0; index < row; index++) {
+            this.createElementBorder(6, -1, index, resources);
+        }
+
+        this.createElementBorder(7, -1, row, resources);
+
+        for (let index = 0; index < row; index++) {
+            this.createElementBorder(11, col, index, resources);
+        }
+
+        this.createElementBorder(10, col, -1, resources);
+        
+        for (let index = 0; index < col; index++) {
+            this.createElementBorder(8, index, -1, resources);
+        }
+
+        this.createElementBorder(12, col, row, resources);
+
+        for (let index = 0; index < col; index++) {
+            this.createElementBorder(9, index, row, resources);
+        }
+    }
+
+    createElementBorder(type : number, x : number, y : number, resources:any){
+        let border = new Tile(type, 0, 0, this.size, resources);
+        border.x = x*this.size;
+        border.y = y*this.size;
+        this.container.addChild(border);
+    }
+
+    update(tile:Tile){
+        this.map.get()[tile.getRow()][tile.getCol()] = tile.type;
+    }
+
+    onClick(button:Tile){
+        button.changeTileType();
+        button.update();
+    }
+
+    disableTiles(){
+       // this.tiles.forEach((element) => element.disable());
     }
 
     highlightRectangule(row: number, col: number){
-        this.graphics.lineStyle(4, 0x00FF00, 1);
-        this.graphics.fillAlpha = 0;
-        this.graphics.drawRect(col*this.size, row*this.size, this.size, this.size);
-        this.graphics.fillAlpha = 1;
+        let tile = this.tiles.get(`${col}-${row}`);
+        tile.highlight();        
     }
 
-    drawRectangle(graphics: PIXI.Graphics, element: number | string, col: number, row: number){
-        graphics.lineStyle(2, 0x333333, 1);
-        graphics.beginFill(this.getColourByType(element), 1);
-        graphics.drawRect(col*this.size, row*this.size, this.size, this.size);
-    }
-
-    getColourByType(type: number | string) : number{
-        switch(type){
-            case "e":
-                return 0xFF0000;
-            break;
-            case "s":
-                return 0x00FF00;
-            break;
-            case 0:
-                return 0xFFFFFF;
-            break;
-            case 1:
-                return 0x0000FF;
-            break;
-            case 2:
-                return 0xa52a2a;
-            break;
-            default:
-                return 0x000000;
-            break;
-        }
-    }
+    
     
 }

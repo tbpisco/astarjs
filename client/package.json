@@ -1,5 +1,5 @@
 {
-  "name": "alurabank",
+  "name": "PathFinding",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -7,8 +7,9 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "compile": "tsc",
     "watch": "tsc -w",
-    "server": "lite-server --baseDir=app",
-    "start": "concurrently \"npm run watch\" \"npm run server\""
+    "server": "lite-server --baseDir=client",
+    "start": "concurrently \"npm run watch\" \"npm run server\"",
+    "build": "tsc --out --module=system src/**/*.ts"
   },
   "author": "",
   "license": "ISC",

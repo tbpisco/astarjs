@@ -3,10 +3,29 @@
         <title>A*</title>
         <meta charset="utf-8">
         <style>
+
+            @font-face {
+                font-family: 'FuturaHandwritten';
+                src: url('FuturaHandwritten.eot');
+                src: url('FuturaHandwritten.woff2') format('woff2'),
+                    url('FuturaHandwritten.woff') format('woff'),
+                    url('FuturaHandwritten.ttf') format('truetype'),
+                    url('FuturaHandwritten.svg#FuturaHandwritten') format('svg'),
+                    url('FuturaHandwritten.eot?#iefix') format('embedded-opentype');
+                font-weight: normal;
+                font-style: normal;
+            }
+            
             body,html{
                 margin:0;
                 padding: 0;
+                background: #5a98de;
+                background-image: url(images/tile.jpg);
+                background-position-x: 0;
+                background-position-y: 0;
+                background-size: 30px 30px;
             }
+
             .container{
                 position: absolute;
                 width: 100%;
@@ -16,51 +35,13 @@
                 overflow: hidden;
                 text-align: center;
             }
-
-            .legend{
-                padding: 2%;
-            }
-
-            .rectangle > span:first-child{
-                width: 40px;
-                height: 40px;
-                border: 2px solid #333;
-            }
-
-            .rectangle--color-green > span:first-child{
-                background-color: #00FF00;
-            }
-
-            .rectangle--color-red > span:first-child{
-                background-color: red;
-            }
-
-            .rectangle--color-blue > span:first-child{
-                background-color: blue;
-            }
-
-            .rectangle--color-brown > span:first-child{
-                background-color: brown;
-            }
-
-            .rectangle > span{
-                display: inline-block;
-                vertical-align: middle;
-                padding: 1%;
-                box-sizing: border-box;
-            }
+          
         </style>
     </head>
     <body>
         <div class="container">
             <div id="map">
            
-            </div>
-            <div class="legend">
-                <span class="rectangle rectangle--color-green"><span></span><span>Start</span></span>
-                <span class="rectangle rectangle--color-red"><span></span><span>End</span></span>
-                <span class="rectangle rectangle--color-blue"><span></span><span>Water</span></span>
-                <span class="rectangle rectangle--color-brown"><span></span><span>Mountain</span></span>
             </div>
         </div>
     <script src="app/lib/system.js"></script>

@@ -1,183 +1,130 @@
 import { MapView } from '../views/MapView';
-import { Map } from '../models/Map';
+import { PathFinding } from '../utils/PathFinding';
 import { Node } from '../models/Node';
+import { MapModel } from '../models/MapModel';
+import { Title } from '../components/Title';
+import { Instructions } from '../components/Instructions';
+import { GameState } from '../states/GameState';
+import Button from '../components/Button';
 
 export class AppController {
 
+    private size : number = 40;
+    private mapCol : number = 14;
+    private mapRow : number = 8;
+    private mapPaddingTopBottom : number = this.size * 5;
+    private mapPaddingLeftRight : number = this.size * 2;
 
-    private mapView = new MapView("#map");
+    private gameState : GameState;
 
-    private map = new Map([["e", 1 ,0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                            [0, 1 ,0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                            [0, 0 ,0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0],
-                            [1, 1 ,1, 1, 0, 0, 0, 0, 0, 2, 2, 0, 0, 0],
-                            [0, 0 ,0, 0, 0, 0, 0, 0, 0, 2, 2, 0, 0, 0],
-                            [0, 0 ,1, 0, 0, 0, 0, 0, 0, 2, 2, 0, 0, 0],
-                            [0, 0 ,0, 1, 1, 0, 0, 0, 0, 2, 2, 0, 0, 0],
-                            [1, 0 ,0, 0, 0, 0, 0, 0, 1, 2, 2, 0, 0, 0],
-                            [0, 0 ,"s", 0, 2, 0, 0, 1, 1, 1, 1, 0, 0, 0],
-                            [0, 0 ,0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0]]);
+    private mapView : MapView = new MapView(this.size);
+    private resources : any;
+    private domElement : HTMLDivElement;
+    private app : PIXI.Application; 
 
-    private closedList: Node[];
-    private openList: Node[];
-    private firstElement: Node;
-    private lastElement: Node;
+    private randomMode : boolean = false;
+
+    private map : MapModel;
 
     constructor(){
 
-        this.closedList = [];
-        this.openList = [];
-        this.firstElement = this.findStart(this.map);
-        this.lastElement = this.findEnd(this.map);
+        const loader = new PIXI.loaders.Loader();
+        loader.add("tile-set","../images/tile-set.png")
+              .load(this.setup.bind(this));
 
-        this.mapView.createStage(this.map);
-
-        this.findBestPath(this.firstElement, this.lastElement, this.map);        
     }
 
-    findBestPath(firstElement: Node, lastElement:Node, map: Map){
+    setup(loader: PIXI.loaders.Loader, res : any){
 
-        this.closedList.push(firstElement);
+        this.resources = res["tile-set"];
 
-        this.openList = this.findValidAdjacents(map, this.closedList[this.closedList.length -1], this.closedList, this.openList);
-        if(this.openList.length > 0)this.closedList.push(this.openList.pop() as Node);
+        let width = this.size*this.mapCol + this.mapPaddingLeftRight;
+        let height = this.size*this.mapRow + this.mapPaddingTopBottom;
 
-        var isFinished: boolean = false;
-
-        while(!isFinished){
-            
-            this.openList = this.findValidAdjacents(map, this.closedList[this.closedList.length -1], this.closedList, this.openList);
+        this.init(width, height);
         
-            if(this.openList.length > 0)this.closedList.push(this.openList.pop() as Node);
+        this.gameState = new GameState();
 
-            isFinished = this.isObjectEqual(this.closedList[this.closedList.length-1],lastElement) || this.openList.length == 0;
+        this.setupView(width, height);
+    }
+
+    init(width : number, height : number){ 
+
+        this.app = new PIXI.Application(width, height, 
+                        { antialias: true , transparent: true});
+
+        let domElement = document.body.querySelector("#map");
+        if(domElement)this.domElement = domElement as HTMLDivElement;
+        this.domElement.appendChild(this.app.view);
+    }
+
+    setupView(width : number, height : number){
+
+        this.map = new MapModel(this.mapCol, this.mapRow, this.randomMode);
+        if(this.randomMode)this.mapView.disableTiles();
+
+        let mapViewContainer = this.mapView.createStage(this.map, this.resources);
+        mapViewContainer.x = this.mapPaddingLeftRight/2;
+        mapViewContainer.y = this.mapPaddingTopBottom/5 * 4;
+        this.app.stage.addChild(mapViewContainer);
+
+        let title = new Title("Path Finding", width);
+        title.x = (( width ) - title.width)/2;
+        title.y = 0;
+        this.app.stage.addChild(title);
+
+        let instructions = new Instructions(this.gameState.currentState.instructions, width - this.mapPaddingLeftRight);
+        instructions.x = this.mapPaddingLeftRight/2;
+        instructions.y = title.height;
+        this.app.stage.addChild(instructions);
+
+        let buttonDone = new Button(380, instructions.y + instructions.height + 15 , 100, 20);
+        buttonDone.setText("DONE");
+        buttonDone.clicked = this.onDoneClicked.bind(this);
+        this.app.stage.addChild(buttonDone);
+
+        let buttonRandom = new Button(250, instructions.y + instructions.height + 15 , 100, 20);
+        buttonRandom.setText("RANDOM");
+        buttonRandom.clicked = this.onRandomClicked.bind(this);
+        this.app.stage.addChild(buttonRandom);
+        
+    }
+
+    onDoneClicked(){
+        alert("done!")
+    }
+
+    onRandomClicked(){
+        this.randomMode = true;
+        this.map = new MapModel(this.mapCol, this.mapRow, this.randomMode);
+        this.map.get().forEach((elementRow, indexRow) => {
+            elementRow.forEach((elementCol, indexCol) => {
+                let tile = this.mapView.tiles.get(`${indexCol}-${indexRow}`);
+                tile.type = elementCol;
+                tile.update();
+                tile.disable();
+            })
+        })
+        this.findPath();
+    }
+
+    findPath(){
+       let bestPath = PathFinding.find(this.map);
+       if(bestPath)this.showResult(bestPath, this.showNodes);
+    }
+
+    showResult(node:Node, draw: Function){
+
+        let currentNode = node;
+        while(currentNode){
+            draw.apply(this, [currentNode]);
+            currentNode = currentNode.getParent();
         }
 
-        if(this.openList.length > 0){
-            this.showNodes(this.closedList[this.closedList.length-1])
-        } else {
-            console.log("There is no solution.");
-        }
-    }
-
-    findEnd(map:Map): Node {
-        return this.findElement(map, "e");
-    }
-
-    findStart(map:Map): Node {
-        return this.findElement(map, "s");
-    }
-
-    findElement(map:Map, value:string): Node {
-
-        let el = new Node(0,0);
-        map.get().forEach((element, indexRow) => {
-            element.forEach((element, indexCol) => {
-                if(element == value){
-                    el = new Node(indexRow, indexCol);
-                }
-            });
-        });
-        return el;
-    }
-
-    getValueMove(node:Node, nodeNew:Node){
-        if(node.getRow() != nodeNew.getRow() && node.getCol() != nodeNew.getCol()) return 14;
-            else return 10;
-    }
-
-    distanceBetweenNodes(nodeInitial:Node, nodeFinal:Node, val:number){
-        let col = Math.abs(nodeFinal.getCol() - nodeInitial.getCol());
-        let row = Math.abs(nodeFinal.getRow() - nodeInitial.getRow());
-        return col*val + row*val;
-    }
-
-    isObjectEqual(element:Node, element0:Node):boolean{
-        return (element.getRow() == element0.getRow() && element.getCol() == element0.getCol());
     }
 
     showNodes(node:Node){
-
         this.mapView.highlightRectangule(node.getRow(), node.getCol());
-        console.log(node.getRow()  + " - " + node.getCol());
-        if(node.getParent()){
-            this.showNodes(node.getParent());
-        }
     }
 
-    findAdjacents(map:Map, node:Node) : Node[] {
-
-        let adjacents: Node[] = [];
-
-        let verify = [[-1,-1], [-1,0] , [-1, 1],
-                      [0,-1], [0,1],
-                      [1,-1], [1,0] , [1, 1]];
-
-        let mapElements = map.get();
-        
-        for(let v = 0; v < verify.length; v++){
-
-          var x = node.getRow() + verify[v][0];
-          var y = node.getCol() + verify[v][1];
-
-          if(x > -1 && y > -1 && x < mapElements.length && y < mapElements[x].length 
-            && (mapElements[x][y] == 0 || mapElements[x][y] == "e" )){
-                adjacents.push(new Node(x, y));
-          }
-        }
-
-        return adjacents;
-    }
-
-
-    findValidAdjacents(map:Map, node:Node, closedList:Node[], openList: Node[]){
-        
-        let validAdjacents = this.findAdjacents(map, node).filter(
-            (elementAdjacent) => {
-                return closedList.some((element) => {
-                    return !(this.isObjectEqual(element, elementAdjacent))
-                })
-            });
-
-        let validAdjacentsOpenList = validAdjacents.filter(
-            (elementAdjacent) => {
-                return openList.some((element) => {
-                    return (this.isObjectEqual(element, elementAdjacent))
-                })
-            });
-
-        validAdjacentsOpenList.map((elementAdjacent) => {
-            let validElement = openList.filter((element) => (this.isObjectEqual(element, elementAdjacent)))[0];
-            if(( node.getG() + this.getValueMove(validElement, node)) < validElement.getG()){
-                validElement.setG(this.getValueMove(validElement, node));
-                validElement.setParent(node);
-            }
-        });
-
-        openList.sort((a,b) => b.getValue() - a.getValue());
-
-        let validAdjacentsNewOpenList = validAdjacents.filter(
-            (elementAdjacent) => {
-                return !openList.some((element) => {
-                    return (this.isObjectEqual(element, elementAdjacent))
-                })
-            });
-
-
-        validAdjacentsNewOpenList.forEach((element) => {
-            element.setParent(node);
-            element.setH(this.distanceBetweenNodes(element, this.lastElement, 10));
-            element.setG(this.getValueMove(node, element));
-            element.setValue(element.getG() + element.getH());
-            openList.push(element);
-            
-        });
-        
-        openList.sort((a,b) => b.getValue() - a.getValue());
-
-        console.log("openList:");
-        console.log(openList);
-        
-        return openList;  
-      }
 }

@@ -1,148 +1,115 @@
-System.register(["../views/MapView", "../models/Map", "../models/Node"], function (exports_1, context_1) {
+System.register(["../views/MapView", "../utils/PathFinding", "../models/MapModel", "../components/Title", "../components/Instructions", "../states/GameState", "../components/Button"], function (exports_1, context_1) {
     "use strict";
-    var MapView_1, Map_1, Node_1, AppController;
+    var MapView_1, PathFinding_1, MapModel_1, Title_1, Instructions_1, GameState_1, Button_1, AppController;
     var __moduleName = context_1 && context_1.id;
     return {
         setters: [
             function (MapView_1_1) {
                 MapView_1 = MapView_1_1;
             },
-            function (Map_1_1) {
-                Map_1 = Map_1_1;
+            function (PathFinding_1_1) {
+                PathFinding_1 = PathFinding_1_1;
             },
-            function (Node_1_1) {
-                Node_1 = Node_1_1;
+            function (MapModel_1_1) {
+                MapModel_1 = MapModel_1_1;
+            },
+            function (Title_1_1) {
+                Title_1 = Title_1_1;
+            },
+            function (Instructions_1_1) {
+                Instructions_1 = Instructions_1_1;
+            },
+            function (GameState_1_1) {
+                GameState_1 = GameState_1_1;
+            },
+            function (Button_1_1) {
+                Button_1 = Button_1_1;
             }
         ],
         execute: function () {
             AppController = class AppController {
                 constructor() {
-                    this.mapView = new MapView_1.MapView("#map");
-                    this.map = new Map_1.Map([["e", 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                        [0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
-                        [0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0],
-                        [1, 1, 1, 1, 0, 0, 0, 0, 0, 2, 2, 0, 0, 0],
-                        [0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 0, 0, 0],
-                        [0, 0, 1, 0, 0, 0, 0, 0, 0, 2, 2, 0, 0, 0],
-                        [0, 0, 0, 1, 1, 0, 0, 0, 0, 2, 2, 0, 0, 0],
-                        [1, 0, 0, 0, 0, 0, 0, 0, 1, 2, 2, 0, 0, 0],
-                        [0, 0, "s", 0, 2, 0, 0, 1, 1, 1, 1, 0, 0, 0],
-                        [0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 0, 0, 0]]);
-                    this.closedList = [];
-                    this.openList = [];
-                    this.firstElement = this.findStart(this.map);
-                    this.lastElement = this.findEnd(this.map);
-                    this.mapView.createStage(this.map);
-                    this.findBestPath(this.firstElement, this.lastElement, this.map);
+                    this.size = 40;
+                    this.mapCol = 14;
+                    this.mapRow = 8;
+                    this.mapPaddingTopBottom = this.size * 5;
+                    this.mapPaddingLeftRight = this.size * 2;
+                    this.mapView = new MapView_1.MapView(this.size);
+                    this.randomMode = false;
+                    const loader = new PIXI.loaders.Loader();
+                    loader.add("tile-set", "../images/tile-set.png")
+                        .load(this.setup.bind(this));
                 }
-                findBestPath(firstElement, lastElement, map) {
-                    this.closedList.push(firstElement);
-                    this.openList = this.findValidAdjacents(map, this.closedList[this.closedList.length - 1], this.closedList, this.openList);
-                    if (this.openList.length > 0)
-                        this.closedList.push(this.openList.pop());
-                    var isFinished = false;
-                    while (!isFinished) {
-                        this.openList = this.findValidAdjacents(map, this.closedList[this.closedList.length - 1], this.closedList, this.openList);
-                        if (this.openList.length > 0)
-                            this.closedList.push(this.openList.pop());
-                        isFinished = this.isObjectEqual(this.closedList[this.closedList.length - 1], lastElement) || this.openList.length == 0;
-                    }
-                    if (this.openList.length > 0) {
-                        this.showNodes(this.closedList[this.closedList.length - 1]);
-                    }
-                    else {
-                        console.log("There is no solution.");
-                    }
+                setup(loader, res) {
+                    this.resources = res["tile-set"];
+                    let width = this.size * this.mapCol + this.mapPaddingLeftRight;
+                    let height = this.size * this.mapRow + this.mapPaddingTopBottom;
+                    this.init(width, height);
+                    this.gameState = new GameState_1.GameState();
+                    this.setupView(width, height);
                 }
-                findEnd(map) {
-                    return this.findElement(map, "e");
+                init(width, height) {
+                    this.app = new PIXI.Application(width, height, { antialias: true, transparent: true });
+                    let domElement = document.body.querySelector("#map");
+                    if (domElement)
+                        this.domElement = domElement;
+                    this.domElement.appendChild(this.app.view);
                 }
-                findStart(map) {
-                    return this.findElement(map, "s");
+                setupView(width, height) {
+                    this.map = new MapModel_1.MapModel(this.mapCol, this.mapRow, this.randomMode);
+                    if (this.randomMode)
+                        this.mapView.disableTiles();
+                    let mapViewContainer = this.mapView.createStage(this.map, this.resources);
+                    mapViewContainer.x = this.mapPaddingLeftRight / 2;
+                    mapViewContainer.y = this.mapPaddingTopBottom / 5 * 4;
+                    this.app.stage.addChild(mapViewContainer);
+                    let title = new Title_1.Title("Path Finding", width);
+                    title.x = ((width) - title.width) / 2;
+                    title.y = 0;
+                    this.app.stage.addChild(title);
+                    let instructions = new Instructions_1.Instructions(this.gameState.currentState.instructions, width - this.mapPaddingLeftRight);
+                    instructions.x = this.mapPaddingLeftRight / 2;
+                    instructions.y = title.height;
+                    this.app.stage.addChild(instructions);
+                    let buttonDone = new Button_1.default(380, instructions.y + instructions.height + 15, 100, 20);
+                    buttonDone.setText("DONE");
+                    buttonDone.clicked = this.onDoneClicked.bind(this);
+                    this.app.stage.addChild(buttonDone);
+                    let buttonRandom = new Button_1.default(250, instructions.y + instructions.height + 15, 100, 20);
+                    buttonRandom.setText("RANDOM");
+                    buttonRandom.clicked = this.onRandomClicked.bind(this);
+                    this.app.stage.addChild(buttonRandom);
                 }
-                findElement(map, value) {
-                    let el = new Node_1.Node(0, 0);
-                    map.get().forEach((element, indexRow) => {
-                        element.forEach((element, indexCol) => {
-                            if (element == value) {
-                                el = new Node_1.Node(indexRow, indexCol);
-                            }
+                onDoneClicked() {
+                    alert("done!");
+                }
+                onRandomClicked() {
+                    this.randomMode = true;
+                    this.map = new MapModel_1.MapModel(this.mapCol, this.mapRow, this.randomMode);
+                    this.map.get().forEach((elementRow, indexRow) => {
+                        elementRow.forEach((elementCol, indexCol) => {
+                            let tile = this.mapView.tiles.get(`${indexCol}-${indexRow}`);
+                            tile.type = elementCol;
+                            tile.update();
+                            tile.disable();
                         });
                     });
-                    return el;
+                    this.findPath();
                 }
-                getValueMove(node, nodeNew) {
-                    if (node.getRow() != nodeNew.getRow() && node.getCol() != nodeNew.getCol())
-                        return 14;
-                    else
-                        return 10;
+                findPath() {
+                    let bestPath = PathFinding_1.PathFinding.find(this.map);
+                    if (bestPath)
+                        this.showResult(bestPath, this.showNodes);
                 }
-                distanceBetweenNodes(nodeInitial, nodeFinal, val) {
-                    let col = Math.abs(nodeFinal.getCol() - nodeInitial.getCol());
-                    let row = Math.abs(nodeFinal.getRow() - nodeInitial.getRow());
-                    return col * val + row * val;
-                }
-                isObjectEqual(element, element0) {
-                    return (element.getRow() == element0.getRow() && element.getCol() == element0.getCol());
+                showResult(node, draw) {
+                    let currentNode = node;
+                    while (currentNode) {
+                        draw.apply(this, [currentNode]);
+                        currentNode = currentNode.getParent();
+                    }
                 }
                 showNodes(node) {
                     this.mapView.highlightRectangule(node.getRow(), node.getCol());
-                    console.log(node.getRow() + " - " + node.getCol());
-                    if (node.getParent()) {
-                        this.showNodes(node.getParent());
-                    }
-                }
-                findAdjacents(map, node) {
-                    let adjacents = [];
-                    let verify = [[-1, -1], [-1, 0], [-1, 1],
-                        [0, -1], [0, 1],
-                        [1, -1], [1, 0], [1, 1]];
-                    let mapElements = map.get();
-                    for (let v = 0; v < verify.length; v++) {
-                        var x = node.getRow() + verify[v][0];
-                        var y = node.getCol() + verify[v][1];
-                        if (x > -1 && y > -1 && x < mapElements.length && y < mapElements[x].length
-                            && (mapElements[x][y] == 0 || mapElements[x][y] == "e")) {
-                            adjacents.push(new Node_1.Node(x, y));
-                        }
-                    }
-                    return adjacents;
-                }
-                findValidAdjacents(map, node, closedList, openList) {
-                    let validAdjacents = this.findAdjacents(map, node).filter((elementAdjacent) => {
-                        return closedList.some((element) => {
-                            return !(this.isObjectEqual(element, elementAdjacent));
-                        });
-                    });
-                    let validAdjacentsOpenList = validAdjacents.filter((elementAdjacent) => {
-                        return openList.some((element) => {
-                            return (this.isObjectEqual(element, elementAdjacent));
-                        });
-                    });
-                    validAdjacentsOpenList.map((elementAdjacent) => {
-                        let validElement = openList.filter((element) => (this.isObjectEqual(element, elementAdjacent)))[0];
-                        if ((node.getG() + this.getValueMove(validElement, node)) < validElement.getG()) {
-                            validElement.setG(this.getValueMove(validElement, node));
-                            validElement.setParent(node);
-                        }
-                    });
-                    openList.sort((a, b) => b.getValue() - a.getValue());
-                    let validAdjacentsNewOpenList = validAdjacents.filter((elementAdjacent) => {
-                        return !openList.some((element) => {
-                            return (this.isObjectEqual(element, elementAdjacent));
-                        });
-                    });
-                    validAdjacentsNewOpenList.forEach((element) => {
-                        element.setParent(node);
-                        element.setH(this.distanceBetweenNodes(element, this.lastElement, 10));
-                        element.setG(this.getValueMove(node, element));
-                        element.setValue(element.getG() + element.getH());
-                        openList.push(element);
-                    });
-                    openList.sort((a, b) => b.getValue() - a.getValue());
-                    console.log("openList:");
-                    console.log(openList);
-                    return openList;
                 }
             };
             exports_1("AppController", AppController);
