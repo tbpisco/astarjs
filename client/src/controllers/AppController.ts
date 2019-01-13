@@ -87,7 +87,6 @@ export class AppController {
         buttonRandom.setText("RANDOM");
         buttonRandom.clicked = this.onRandomClicked.bind(this);
         this.app.stage.addChild(buttonRandom);
-        
     }
 
     onDoneClicked(){
