@@ -75,7 +75,7 @@ export class Tile extends PIXI.Sprite {
             this.getFrameByType(this.type), 
             new Rectangle(0, 0, this.texSize, this.texSize), 
             new Rectangle(0, 0, this.size, this.size));
-    }
+}
 
     highlight(){
         if(this.type == 3 || this.type == 4)return;
