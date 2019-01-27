@@ -26,6 +26,8 @@ export class AppController {
 
     private map : MapModel;
 
+    private listPath: Node[];
+
     constructor(){
 
         const loader = new PIXI.loaders.Loader();
@@ -109,21 +111,30 @@ export class AppController {
 
     findPath(){
        let bestPath = PathFinding.find(this.map);
-       if(bestPath)this.showResult(bestPath, this.showNodes);
+       if(bestPath)this.showResult(bestPath, this.createPath);
     }
 
-    showResult(node:Node, draw: Function){
+    showResult(node:Node, func: Function){
         let currentNode = node;
+        this.listPath = [];
         while(currentNode){
-            draw.apply(this, [currentNode]);
+            func.apply(this, [currentNode]);
             currentNode = currentNode.getParent();
+            if(!currentNode)this.showNodes(this.listPath);
         }
     }
 
-    showNodes(node:Node){
-        let nodeParent = node.getParent();
-        this.mapView.highlightRectangule(node.getRow(), node.getCol(),
-                                         nodeParent.getRow(), nodeParent.getCol());
+    createPath(node:Node){
+        this.listPath.push(node);
+    }
+
+    showNodes(listPath:Node[]){
+      //listPath = listPath.reverse();
+        listPath.map((node, index) => {
+            let nodeParent = node.getParent();
+            this.mapView.highlightRectangule(listPath.length, index, node.getRow(), node.getCol(),
+                                             nodeParent.getRow(), nodeParent.getCol());
+        })
     }
 
 }

@@ -8,6 +8,7 @@ export class MapView {
     public tiles = new Map();
     private map: MapModel;
     private container: PIXI.Container = new PIXI.Container();
+    private saveTimeout: number[] = [];
 
     constructor(size: number){
         this.size = size;
@@ -91,7 +92,12 @@ export class MapView {
        // this.tiles.forEach((element) => element.disable());
     }
 
-    highlightRectangule(row: number, col: number, parentRow: number, parentCol: number){
+    clearTimeoutList(){
+        this.saveTimeout.map((t)=> {clearTimeout(t)});
+        this.saveTimeout = [];
+    }
+
+    highlightRectangule(total:number, index:number, row: number, col: number, parentRow: number, parentCol: number){
         let tile = this.tiles.get(`${col}-${row}`);
         let direction = TILE.RIGHT;
         if(col > parentCol && row === parentRow){
@@ -111,7 +117,9 @@ export class MapView {
         } else if(col > parentCol && row > parentRow){
             direction = TILE.BOTTOM_RIGHT;
         }
-        tile.highlight(direction);        
+
+        if(index === 0)this.clearTimeoutList();
+        this.saveTimeout.push(setTimeout(() => {tile.highlight(direction);}, 200*(total-index)));
     }
 
     

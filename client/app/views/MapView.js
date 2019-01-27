@@ -16,6 +16,7 @@ System.register(["pixi.js", "./Tile"], function (exports_1, context_1) {
                 constructor(size) {
                     this.tiles = new Map();
                     this.container = new PIXI.Container();
+                    this.saveTimeout = [];
                     this.size = size;
                 }
                 createStage(map, resources) {
@@ -77,7 +78,11 @@ System.register(["pixi.js", "./Tile"], function (exports_1, context_1) {
                 }
                 disableTiles() {
                 }
-                highlightRectangule(row, col, parentRow, parentCol) {
+                clearTimeoutList() {
+                    this.saveTimeout.map((t) => { clearTimeout(t); });
+                    this.saveTimeout = [];
+                }
+                highlightRectangule(total, index, row, col, parentRow, parentCol) {
                     let tile = this.tiles.get(`${col}-${row}`);
                     let direction = Tile_1.TILE.RIGHT;
                     if (col > parentCol && row === parentRow) {
@@ -104,7 +109,9 @@ System.register(["pixi.js", "./Tile"], function (exports_1, context_1) {
                     else if (col > parentCol && row > parentRow) {
                         direction = Tile_1.TILE.BOTTOM_RIGHT;
                     }
-                    tile.highlight(direction);
+                    if (index === 0)
+                        this.clearTimeoutList();
+                    this.saveTimeout.push(setTimeout(() => { tile.highlight(direction); }, 200 * (total - index)));
                 }
             };
             exports_1("MapView", MapView);
