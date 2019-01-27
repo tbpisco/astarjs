@@ -29,7 +29,7 @@ export class AppController {
     constructor(){
 
         const loader = new PIXI.loaders.Loader();
-        loader.add("tile-set","../images/tile-set.png")
+        loader.add("tile-set","../images/tile-set_01.png")
               .load(this.setup.bind(this));
 
     }
@@ -113,17 +113,17 @@ export class AppController {
     }
 
     showResult(node:Node, draw: Function){
-
         let currentNode = node;
         while(currentNode){
             draw.apply(this, [currentNode]);
             currentNode = currentNode.getParent();
         }
-
     }
 
     showNodes(node:Node){
-        this.mapView.highlightRectangule(node.getRow(), node.getCol());
+        let nodeParent = node.getParent();
+        this.mapView.highlightRectangule(node.getRow(), node.getCol(),
+                                         nodeParent.getRow(), nodeParent.getCol());
     }
 
 }

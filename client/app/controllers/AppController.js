@@ -109,7 +109,8 @@ System.register(["../views/MapView", "../utils/PathFinding", "../models/MapModel
                     }
                 }
                 showNodes(node) {
-                    this.mapView.highlightRectangule(node.getRow(), node.getCol());
+                    let nodeParent = node.getParent();
+                    this.mapView.highlightRectangule(node.getRow(), node.getCol(), nodeParent.getRow(), nodeParent.getCol());
                 }
             };
             exports_1("AppController", AppController);

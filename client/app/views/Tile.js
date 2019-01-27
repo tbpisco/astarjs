@@ -86,10 +86,10 @@ System.register(["pixi.js"], function (exports_1, context_1) {
                         this.background.visible = false;
                     this.element.texture = new PIXI.Texture(this.tex, this.getFrameByType(this.type), new pixi_js_1.Rectangle(0, 0, this.texSize, this.texSize), new pixi_js_1.Rectangle(0, 0, this.size, this.size));
                 }
-                highlight() {
+                highlight(direction) {
                     if (this.type == TILE.START || this.type == TILE.END)
                         return;
-                    this.type = TILE.RIGHT;
+                    this.type = direction;
                     this.update();
                 }
                 getFrameByType(type) {

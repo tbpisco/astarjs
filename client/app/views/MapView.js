@@ -77,9 +77,34 @@ System.register(["pixi.js", "./Tile"], function (exports_1, context_1) {
                 }
                 disableTiles() {
                 }
-                highlightRectangule(row, col) {
+                highlightRectangule(row, col, parentRow, parentCol) {
                     let tile = this.tiles.get(`${col}-${row}`);
-                    tile.highlight();
+                    let direction = Tile_1.TILE.RIGHT;
+                    if (col > parentCol && row === parentRow) {
+                        direction = Tile_1.TILE.RIGHT;
+                    }
+                    else if (col < parentCol && row === parentRow) {
+                        direction = Tile_1.TILE.LEFT;
+                    }
+                    else if (col == parentCol && row < parentRow) {
+                        direction = Tile_1.TILE.TOP;
+                    }
+                    else if (col == parentCol && row > parentRow) {
+                        direction = Tile_1.TILE.BOTTOM;
+                    }
+                    else if (col < parentCol && row > parentRow) {
+                        direction = Tile_1.TILE.BOTTOM_LEFT;
+                    }
+                    else if (col < parentCol && row < parentRow) {
+                        direction = Tile_1.TILE.TOP_LEFT;
+                    }
+                    else if (col > parentCol && row < parentRow) {
+                        direction = Tile_1.TILE.TOP_RIGHT;
+                    }
+                    else if (col > parentCol && row > parentRow) {
+                        direction = Tile_1.TILE.BOTTOM_RIGHT;
+                    }
+                    tile.highlight(direction);
                 }
             };
             exports_1("MapView", MapView);

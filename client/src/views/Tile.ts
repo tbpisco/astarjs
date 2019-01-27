@@ -103,11 +103,11 @@ export class Tile extends PIXI.Sprite {
             this.getFrameByType(this.type), 
             new Rectangle(0, 0, this.texSize, this.texSize), 
             new Rectangle(0, 0, this.size, this.size));
-}
+    }
 
-    highlight(){
+    highlight(direction:number){
         if(this.type == TILE.START || this.type == TILE.END)return;
-        this.type = TILE.RIGHT;
+        this.type = direction;
         this.update();
     }
 
