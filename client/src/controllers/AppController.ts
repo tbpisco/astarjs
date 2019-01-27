@@ -129,7 +129,6 @@ export class AppController {
     }
 
     showNodes(listPath:Node[]){
-      //listPath = listPath.reverse();
         listPath.map((node, index) => {
             let nodeParent = node.getParent();
             this.mapView.highlightRectangule(listPath.length, index, node.getRow(), node.getCol(),

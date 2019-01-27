@@ -177,7 +177,6 @@ export class Tile extends PIXI.Sprite {
                 return new Rectangle(16,0,this.texSize,this.texSize);
             break;
             case TILE.WATER:
-
                 return new Rectangle(2*16,1*16,this.texSize,this.texSize);
             break;
             case TILE.TREES:
