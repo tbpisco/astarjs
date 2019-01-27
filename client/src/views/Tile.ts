@@ -1,5 +1,31 @@
 import { Rectangle, Texture } from "pixi.js";
 
+export enum TILE {
+    GREEN,
+    WATER,
+    TREES,
+    START,
+    END,
+    BORDER_TOP_LEFT,
+    BORDER_MIDDLE_LEFT,
+    BORDER_BOTTOM_LEFT,
+    BORDER_TOP_MIDDLE,
+    BORDER_BOTTOM_MIDDLE,
+    BORDER_TOP_RIGHT,
+    BORDER_MIDDLE_RIGHT,
+    BORDER_BOTTOM_RIGHT,
+    MOUNTAIN,
+    MOUNTAIN_BROWN,
+    TOP_RIGHT,
+    TOP_LEFT,
+    TOP,
+    BOTTOM,
+    RIGHT,
+    LEFT,
+    BOTTOM_LEFT,
+    BOTTOM_RIGHT
+}
+
 export class Tile extends PIXI.Sprite {
 
     private size : number;
@@ -7,7 +33,7 @@ export class Tile extends PIXI.Sprite {
     private row : number;
     public type : number;
     public typePos : number = 0;
-    public availableTypes : number[] = [0, 1, 2, 14, 15]; 
+    public availableTypes : number[] = [TILE.GREEN, TILE.WATER, TILE.TREES, TILE.MOUNTAIN, TILE.MOUNTAIN_BROWN]; 
     public background : PIXI.Sprite; 
     public element : PIXI.Sprite;
     private tex : any;
@@ -67,7 +93,9 @@ export class Tile extends PIXI.Sprite {
     }
 
     update(){
-        let background = [1, 2, 3, 4, 13, 14, 15];
+        let background = [TILE.WATER, TILE.TREES, TILE.START, TILE.END, 
+            TILE.MOUNTAIN, TILE.MOUNTAIN_BROWN, TILE.TOP_RIGHT, TILE.TOP_LEFT, TILE.TOP,
+            TILE.BOTTOM, TILE.RIGHT, TILE.LEFT, TILE.BOTTOM_LEFT, TILE.BOTTOM_RIGHT];
         if(background.indexOf(this.type) > -1)this.background.visible = true;
             else this.background.visible = false;
 
@@ -78,79 +106,84 @@ export class Tile extends PIXI.Sprite {
 }
 
     highlight(){
-        if(this.type == 3 || this.type == 4)return;
-        this.type = 13;
+        if(this.type == TILE.START || this.type == TILE.END)return;
+        this.type = TILE.RIGHT;
         this.update();
     }
 
     getFrameByType(type: number) : PIXI.Rectangle {
         switch(type){
-            case 15:
-                /* mountain brown*/
+            case TILE.BOTTOM_LEFT:
+                return new Rectangle(0*16,41*16,this.texSize,this.texSize);
+            break;
+            case TILE.BOTTOM_RIGHT:
+                return new Rectangle(1*16,41*16,this.texSize,this.texSize);
+            break;
+            case TILE.LEFT:
+                return new Rectangle(1*16,40*16,this.texSize,this.texSize);
+            break;
+            case TILE.RIGHT:
+                return new Rectangle(2*16,40*16,this.texSize,this.texSize);
+            break;
+            case TILE.BOTTOM:
+                return new Rectangle(3*16,40*16,this.texSize,this.texSize);
+            break;
+            case TILE.TOP:
+                return new Rectangle(4*16,40*16,this.texSize,this.texSize);
+            break;
+            case TILE.TOP_LEFT:
+                return new Rectangle(5*16,40*16,this.texSize,this.texSize);
+            break;
+            case TILE.TOP_RIGHT:
+                return new Rectangle(6*16,40*16,this.texSize,this.texSize);
+            break;
+            case TILE.MOUNTAIN_BROWN:
                 return new Rectangle(6*16,28*16,this.texSize,this.texSize);
             break;
-            case 14:
-                /* mountain */
+            case TILE.MOUNTAIN:
                 return new Rectangle(6*16,3*16,this.texSize,this.texSize);
             break;
-            case 13:
-                /* select */
-                return new Rectangle(6*16,42*16,this.texSize,this.texSize);
-            break;
-            case 12:
-                /* bottom right */
+            case TILE.BORDER_BOTTOM_RIGHT:
                 return new Rectangle(2*16,30*16,this.texSize,this.texSize);
             break;
-            case 11:
-                /* middle right */
+            case TILE.BORDER_MIDDLE_RIGHT:
                 return new Rectangle(2*16,29*16,this.texSize,this.texSize);
             break;
-            case 10:
-                /* top right */
+            case TILE.BORDER_TOP_RIGHT:
                 return new Rectangle(2*16,28*16,this.texSize,this.texSize);
             break;
-            case 9:
-                /* bottom middle */
+            case TILE.BORDER_BOTTOM_MIDDLE:
                 return new Rectangle(1*16,30*16,this.texSize,this.texSize);
             break;
-            case 8:
-                /* top middle */
+            case TILE.BORDER_TOP_MIDDLE:
                 return new Rectangle(1*16,28*16,this.texSize,this.texSize);
             break;
-            case 7:
-                /* bottom left */
+            case TILE.BORDER_BOTTOM_LEFT:
                 return new Rectangle(0*16,30*16,this.texSize,this.texSize);
             break;
-            case 6:
-                /* middle left */
+            case TILE.BORDER_MIDDLE_LEFT:
                 return new Rectangle(0*16,29*16,this.texSize,this.texSize);
             break;
-            case 5:
-                /* top left */
+            case TILE.BORDER_TOP_LEFT:
                 return new Rectangle(0*16,28*16,this.texSize,this.texSize);
             break;
-            case 4:
-                /* start */
+            case TILE.END:
                 return new Rectangle(2*16,6*16,this.texSize,this.texSize);
             break;
-            case 3:
-                /* start */
+            case TILE.START:
                 return new Rectangle(3*16,6*16,this.texSize,this.texSize);
             break;
-            case 0:
-                /* green */
+            case TILE.GREEN:
                 return new Rectangle(16,0,this.texSize,this.texSize);
             break;
-            case 1:
-                /* water */
+            case TILE.WATER:
+
                 return new Rectangle(2*16,1*16,this.texSize,this.texSize);
             break;
-            case 2:
-                /* trees */
+            case TILE.TREES:
                 return new Rectangle(5*16,0,this.texSize,this.texSize);
             break;
             default:
-                /* green */
                 return new Rectangle(0,0,this.texSize,this.texSize);
             break;
         }

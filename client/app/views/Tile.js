@@ -1,6 +1,6 @@
 System.register(["pixi.js"], function (exports_1, context_1) {
     "use strict";
-    var pixi_js_1, Tile;
+    var pixi_js_1, TILE, Tile;
     var __moduleName = context_1 && context_1.id;
     return {
         setters: [
@@ -9,11 +9,37 @@ System.register(["pixi.js"], function (exports_1, context_1) {
             }
         ],
         execute: function () {
+            (function (TILE) {
+                TILE[TILE["GREEN"] = 0] = "GREEN";
+                TILE[TILE["WATER"] = 1] = "WATER";
+                TILE[TILE["TREES"] = 2] = "TREES";
+                TILE[TILE["START"] = 3] = "START";
+                TILE[TILE["END"] = 4] = "END";
+                TILE[TILE["BORDER_TOP_LEFT"] = 5] = "BORDER_TOP_LEFT";
+                TILE[TILE["BORDER_MIDDLE_LEFT"] = 6] = "BORDER_MIDDLE_LEFT";
+                TILE[TILE["BORDER_BOTTOM_LEFT"] = 7] = "BORDER_BOTTOM_LEFT";
+                TILE[TILE["BORDER_TOP_MIDDLE"] = 8] = "BORDER_TOP_MIDDLE";
+                TILE[TILE["BORDER_BOTTOM_MIDDLE"] = 9] = "BORDER_BOTTOM_MIDDLE";
+                TILE[TILE["BORDER_TOP_RIGHT"] = 10] = "BORDER_TOP_RIGHT";
+                TILE[TILE["BORDER_MIDDLE_RIGHT"] = 11] = "BORDER_MIDDLE_RIGHT";
+                TILE[TILE["BORDER_BOTTOM_RIGHT"] = 12] = "BORDER_BOTTOM_RIGHT";
+                TILE[TILE["MOUNTAIN"] = 13] = "MOUNTAIN";
+                TILE[TILE["MOUNTAIN_BROWN"] = 14] = "MOUNTAIN_BROWN";
+                TILE[TILE["TOP_RIGHT"] = 15] = "TOP_RIGHT";
+                TILE[TILE["TOP_LEFT"] = 16] = "TOP_LEFT";
+                TILE[TILE["TOP"] = 17] = "TOP";
+                TILE[TILE["BOTTOM"] = 18] = "BOTTOM";
+                TILE[TILE["RIGHT"] = 19] = "RIGHT";
+                TILE[TILE["LEFT"] = 20] = "LEFT";
+                TILE[TILE["BOTTOM_LEFT"] = 21] = "BOTTOM_LEFT";
+                TILE[TILE["BOTTOM_RIGHT"] = 22] = "BOTTOM_RIGHT";
+            })(TILE || (TILE = {}));
+            exports_1("TILE", TILE);
             Tile = class Tile extends PIXI.Sprite {
                 constructor(type, col, row, size, resources) {
                     super();
                     this.typePos = 0;
-                    this.availableTypes = [0, 1, 2, 14, 15];
+                    this.availableTypes = [TILE.GREEN, TILE.WATER, TILE.TREES, TILE.MOUNTAIN, TILE.MOUNTAIN_BROWN];
                     this.texSize = 16;
                     this.tex = resources.texture;
                     this.col = col;
@@ -51,7 +77,9 @@ System.register(["pixi.js"], function (exports_1, context_1) {
                     this.type = this.availableTypes[this.typePos];
                 }
                 update() {
-                    let background = [1, 2, 3, 4, 13, 14, 15];
+                    let background = [TILE.WATER, TILE.TREES, TILE.START, TILE.END,
+                        TILE.MOUNTAIN, TILE.MOUNTAIN_BROWN, TILE.TOP_RIGHT, TILE.TOP_LEFT, TILE.TOP,
+                        TILE.BOTTOM, TILE.RIGHT, TILE.LEFT, TILE.BOTTOM_LEFT, TILE.BOTTOM_RIGHT];
                     if (background.indexOf(this.type) > -1)
                         this.background.visible = true;
                     else
@@ -59,59 +87,80 @@ System.register(["pixi.js"], function (exports_1, context_1) {
                     this.element.texture = new PIXI.Texture(this.tex, this.getFrameByType(this.type), new pixi_js_1.Rectangle(0, 0, this.texSize, this.texSize), new pixi_js_1.Rectangle(0, 0, this.size, this.size));
                 }
                 highlight() {
-                    if (this.type == 3 || this.type == 4)
+                    if (this.type == TILE.START || this.type == TILE.END)
                         return;
-                    this.type = 13;
+                    this.type = TILE.RIGHT;
                     this.update();
                 }
                 getFrameByType(type) {
                     switch (type) {
-                        case 15:
+                        case TILE.BOTTOM_LEFT:
+                            return new pixi_js_1.Rectangle(0 * 16, 41 * 16, this.texSize, this.texSize);
+                            break;
+                        case TILE.BOTTOM_RIGHT:
+                            return new pixi_js_1.Rectangle(1 * 16, 41 * 16, this.texSize, this.texSize);
+                            break;
+                        case TILE.LEFT:
+                            return new pixi_js_1.Rectangle(1 * 16, 40 * 16, this.texSize, this.texSize);
+                            break;
+                        case TILE.RIGHT:
+                            return new pixi_js_1.Rectangle(2 * 16, 40 * 16, this.texSize, this.texSize);
+                            break;
+                        case TILE.BOTTOM:
+                            return new pixi_js_1.Rectangle(3 * 16, 40 * 16, this.texSize, this.texSize);
+                            break;
+                        case TILE.TOP:
+                            return new pixi_js_1.Rectangle(4 * 16, 40 * 16, this.texSize, this.texSize);
+                            break;
+                        case TILE.TOP_LEFT:
+                            return new pixi_js_1.Rectangle(5 * 16, 40 * 16, this.texSize, this.texSize);
+                            break;
+                        case TILE.TOP_RIGHT:
+                            return new pixi_js_1.Rectangle(6 * 16, 40 * 16, this.texSize, this.texSize);
+                            break;
+                        case TILE.MOUNTAIN_BROWN:
                             return new pixi_js_1.Rectangle(6 * 16, 28 * 16, this.texSize, this.texSize);
                             break;
-                        case 14:
+                        case TILE.MOUNTAIN:
                             return new pixi_js_1.Rectangle(6 * 16, 3 * 16, this.texSize, this.texSize);
                             break;
-                        case 13:
-                            return new pixi_js_1.Rectangle(6 * 16, 42 * 16, this.texSize, this.texSize);
-                            break;
-                        case 12:
+                        case TILE.BORDER_BOTTOM_RIGHT:
                             return new pixi_js_1.Rectangle(2 * 16, 30 * 16, this.texSize, this.texSize);
                             break;
-                        case 11:
+                        case TILE.BORDER_MIDDLE_RIGHT:
                             return new pixi_js_1.Rectangle(2 * 16, 29 * 16, this.texSize, this.texSize);
                             break;
-                        case 10:
+                        case TILE.BORDER_TOP_RIGHT:
                             return new pixi_js_1.Rectangle(2 * 16, 28 * 16, this.texSize, this.texSize);
                             break;
-                        case 9:
+                        case TILE.BORDER_BOTTOM_MIDDLE:
                             return new pixi_js_1.Rectangle(1 * 16, 30 * 16, this.texSize, this.texSize);
                             break;
-                        case 8:
+                        case TILE.BORDER_TOP_MIDDLE:
                             return new pixi_js_1.Rectangle(1 * 16, 28 * 16, this.texSize, this.texSize);
                             break;
-                        case 7:
+                        case TILE.BORDER_BOTTOM_LEFT:
                             return new pixi_js_1.Rectangle(0 * 16, 30 * 16, this.texSize, this.texSize);
                             break;
-                        case 6:
+                        case TILE.BORDER_MIDDLE_LEFT:
                             return new pixi_js_1.Rectangle(0 * 16, 29 * 16, this.texSize, this.texSize);
                             break;
-                        case 5:
+                        case TILE.BORDER_TOP_LEFT:
                             return new pixi_js_1.Rectangle(0 * 16, 28 * 16, this.texSize, this.texSize);
                             break;
-                        case 4:
+                        case TILE.END:
                             return new pixi_js_1.Rectangle(2 * 16, 6 * 16, this.texSize, this.texSize);
                             break;
-                        case 3:
+                        case TILE.START:
                             return new pixi_js_1.Rectangle(3 * 16, 6 * 16, this.texSize, this.texSize);
                             break;
-                        case 0:
+                        case TILE.GREEN:
                             return new pixi_js_1.Rectangle(16, 0, this.texSize, this.texSize);
                             break;
-                        case 1:
+                        case TILE.WATER:
                             return new pixi_js_1.Rectangle(2 * 16, 1 * 16, this.texSize, this.texSize);
                             break;
-                        case 2:
+                        case TILE.TREES:
                             return new pixi_js_1.Rectangle(5 * 16, 0, this.texSize, this.texSize);
                             break;
                         default:

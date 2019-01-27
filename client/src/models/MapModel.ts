@@ -1,3 +1,5 @@
+import { TILE } from '../views/Tile';
+
 export class MapModel{
 
     private map: number[][];
@@ -36,15 +38,15 @@ export class MapModel{
             array.push(new Array(col+1).join("0").split("").map((element) => {
                 let num = Math.floor(Math.random()*20);
                 if(num < 16){
-                    return 0;
+                    return TILE.GREEN;
                 } else if(num == 17){
-                    return 15;
+                    return TILE.MOUNTAIN_BROWN;
                 } else if(num == 18){
-                    return 14;
+                    return TILE.MOUNTAIN;
                 } else if(num == 19){
-                    return 1;
+                    return TILE.WATER;
                 } else {
-                    return 2;
+                    return TILE.TREES;
                 }
             }));
         }
@@ -52,7 +54,7 @@ export class MapModel{
         let r = Math.floor(Math.random()*row);
         let c = Math.floor(Math.random()*col);
 
-        array[r][c] = 3;
+        array[r][c] = TILE.START;
 
         let r0 = Math.floor(Math.random()*row);
         let c0 = Math.floor(Math.random()*col);
@@ -61,7 +63,7 @@ export class MapModel{
             r0 = Math.floor(Math.random()*row);
             c0 = Math.floor(Math.random()*col);
         }
-        array[r0][c0] = 4;
+        array[r0][c0] = TILE.END;
 
         return array;
     }

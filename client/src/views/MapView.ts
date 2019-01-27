@@ -1,6 +1,6 @@
 import * as PIXI from 'pixi.js';
 import { MapModel } from '../models/MapModel';
-import { Tile } from './Tile';
+import { TILE, Tile } from './Tile';
 
 export class MapView {
  
@@ -46,28 +46,28 @@ export class MapView {
 
     createBorder(resources:any, col:number, row:number){
 
-        this.createElementBorder(5, -1, -1, resources);
+        this.createElementBorder(TILE.BORDER_TOP_LEFT, -1, -1, resources);
 
         for (let index = 0; index < row; index++) {
-            this.createElementBorder(6, -1, index, resources);
+            this.createElementBorder(TILE.BORDER_MIDDLE_LEFT, -1, index, resources);
         }
 
-        this.createElementBorder(7, -1, row, resources);
+        this.createElementBorder(TILE.BORDER_BOTTOM_LEFT, -1, row, resources);
 
         for (let index = 0; index < row; index++) {
-            this.createElementBorder(11, col, index, resources);
+            this.createElementBorder(TILE.BORDER_MIDDLE_RIGHT, col, index, resources);
         }
 
-        this.createElementBorder(10, col, -1, resources);
+        this.createElementBorder(TILE.BORDER_TOP_RIGHT, col, -1, resources);
         
         for (let index = 0; index < col; index++) {
-            this.createElementBorder(8, index, -1, resources);
+            this.createElementBorder(TILE.BORDER_TOP_MIDDLE, index, -1, resources);
         }
 
-        this.createElementBorder(12, col, row, resources);
+        this.createElementBorder(TILE.BORDER_BOTTOM_RIGHT, col, row, resources);
 
         for (let index = 0; index < col; index++) {
-            this.createElementBorder(9, index, row, resources);
+            this.createElementBorder(TILE.BORDER_BOTTOM_MIDDLE, index, row, resources);
         }
     }
 

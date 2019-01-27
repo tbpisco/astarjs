@@ -37,7 +37,7 @@ System.register(["../views/MapView", "../utils/PathFinding", "../models/MapModel
                     this.mapView = new MapView_1.MapView(this.size);
                     this.randomMode = false;
                     const loader = new PIXI.loaders.Loader();
-                    loader.add("tile-set", "../images/tile-set.png")
+                    loader.add("tile-set", "../images/tile-set_01.png")
                         .load(this.setup.bind(this));
                 }
                 setup(loader, res) {

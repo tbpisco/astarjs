@@ -1,9 +1,13 @@
-System.register([], function (exports_1, context_1) {
+System.register(["../views/Tile"], function (exports_1, context_1) {
     "use strict";
-    var MapModel;
+    var Tile_1, MapModel;
     var __moduleName = context_1 && context_1.id;
     return {
-        setters: [],
+        setters: [
+            function (Tile_1_1) {
+                Tile_1 = Tile_1_1;
+            }
+        ],
         execute: function () {
             MapModel = class MapModel {
                 constructor(col, row, isRandom) {
@@ -33,32 +37,32 @@ System.register([], function (exports_1, context_1) {
                         array.push(new Array(col + 1).join("0").split("").map((element) => {
                             let num = Math.floor(Math.random() * 20);
                             if (num < 16) {
-                                return 0;
+                                return Tile_1.TILE.GREEN;
                             }
                             else if (num == 17) {
-                                return 15;
+                                return Tile_1.TILE.MOUNTAIN_BROWN;
                             }
                             else if (num == 18) {
-                                return 14;
+                                return Tile_1.TILE.MOUNTAIN;
                             }
                             else if (num == 19) {
-                                return 1;
+                                return Tile_1.TILE.WATER;
                             }
                             else {
-                                return 2;
+                                return Tile_1.TILE.TREES;
                             }
                         }));
                     }
                     let r = Math.floor(Math.random() * row);
                     let c = Math.floor(Math.random() * col);
-                    array[r][c] = 3;
+                    array[r][c] = Tile_1.TILE.START;
                     let r0 = Math.floor(Math.random() * row);
                     let c0 = Math.floor(Math.random() * col);
                     while (r0 == r && c0 == c) {
                         r0 = Math.floor(Math.random() * row);
                         c0 = Math.floor(Math.random() * col);
                     }
-                    array[r0][c0] = 4;
+                    array[r0][c0] = Tile_1.TILE.END;
                     return array;
                 }
             };
