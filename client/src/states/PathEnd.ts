@@ -1,4 +1,5 @@
 import { GameState } from "./GameState";
+import { Build } from "./Build";
 
 export class PathEnd implements State {
 
@@ -11,5 +12,6 @@ export class PathEnd implements State {
     }
 
     update(){
+        this.gameState.change(new Build(this.gameState));
     }
 }

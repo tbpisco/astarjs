@@ -24,6 +24,7 @@ System.register(["./Build", "./PathEnd"], function (exports_1, context_1) {
                     this.controller.updateInstructions(this.currentState.instructions);
                     if (this.currentState instanceof PathEnd_1.PathEnd) {
                         this.controller.findPath();
+                        this.controller.resetView();
                     }
                 }
                 start() {

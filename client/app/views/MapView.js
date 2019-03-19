@@ -81,6 +81,9 @@ System.register(["pixi.js", "./Tile", "../states/Start", "../states/End", "../st
                     border.y = y * this.size;
                     this.container.addChild(border);
                 }
+                setMap(map) {
+                    this.map = map;
+                }
                 update(tile) {
                     this.map.get()[tile.getRow()][tile.getCol()] = tile.type;
                 }

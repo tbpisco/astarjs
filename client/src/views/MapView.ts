@@ -89,6 +89,10 @@ export class MapView {
         this.container.addChild(border);
     }
 
+    setMap(map:MapModel){
+        this.map = map;
+    }
+
     update(tile:Tile){
         this.map.get()[tile.getRow()][tile.getCol()] = tile.type;
     }

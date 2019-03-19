@@ -19,8 +19,8 @@ export class GameState {
         this.controller.updateInstructions(this.currentState.instructions);
         if(this.currentState instanceof PathEnd){
              this.controller.findPath();
+             this.controller.resetView();
         }
-        
     }
 
     start(){

@@ -31,6 +31,7 @@ export class AppController {
     public instructions:Instructions;
     public buttonDone:Button;
     public buttonRandom:Button;
+    public buttonReset:Button;
 
     constructor(){
 
@@ -93,6 +94,37 @@ export class AppController {
         this.buttonRandom.setText("RANDOM");
         this.buttonRandom.clicked = this.onRandomClicked.bind(this);
         this.app.stage.addChild(this.buttonRandom);
+
+        this.buttonReset = new Button(300, this.instructions.y + this.instructions.height + 15 , 100, 20);
+        this.buttonReset.setText("RESET");
+        this.buttonReset.clicked = this.onResetClicked.bind(this);
+    }
+
+    resetView(){
+        this.app.stage.addChild(this.buttonReset);
+    }
+
+    onResetClicked(){
+        this.gameState.update();
+        this.app.stage.removeChild(this.buttonReset);
+        this.app.stage.addChild(this.buttonRandom);
+        this.app.stage.addChild(this.buttonDone);
+
+        this.randomMode = false;
+        this.generateMap();
+    }
+
+    generateMap(){
+        this.map = new MapModel(this.mapCol, this.mapRow, this.randomMode);
+        this.mapView.setMap(this.map);
+        this.map.get().forEach((elementRow, indexRow) => {
+            elementRow.forEach((elementCol, indexCol) => {
+                let tile = this.mapView.tiles.get(`${indexCol}-${indexRow}`);
+                tile.type = elementCol;
+                tile.update();
+                if(this.randomMode)tile.disable();
+            })
+        })
     }
 
     onDoneClicked(){
@@ -108,15 +140,7 @@ export class AppController {
 
     onRandomClicked(){
         this.randomMode = true;
-        this.map = new MapModel(this.mapCol, this.mapRow, this.randomMode);
-        this.map.get().forEach((elementRow, indexRow) => {
-            elementRow.forEach((elementCol, indexCol) => {
-                let tile = this.mapView.tiles.get(`${indexCol}-${indexRow}`);
-                tile.type = elementCol;
-                tile.update();
-                tile.disable();
-            })
-        })
+        this.generateMap();
         this.findPath();
     }
 
@@ -142,6 +166,7 @@ export class AppController {
     showNodes(listPath:Node[]){
         listPath.map((node, index) => {
             let nodeParent = node.getParent();
+            if(!nodeParent)return;
             this.mapView.highlightRectangule(listPath.length, index, node.getRow(), node.getCol(),
                                              nodeParent.getRow(), nodeParent.getCol());
         })

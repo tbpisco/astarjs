@@ -1,9 +1,13 @@
-System.register([], function (exports_1, context_1) {
+System.register(["./Build"], function (exports_1, context_1) {
     "use strict";
-    var PathEnd;
+    var Build_1, PathEnd;
     var __moduleName = context_1 && context_1.id;
     return {
-        setters: [],
+        setters: [
+            function (Build_1_1) {
+                Build_1 = Build_1_1;
+            }
+        ],
         execute: function () {
             PathEnd = class PathEnd {
                 constructor(state) {
@@ -12,6 +16,7 @@ System.register([], function (exports_1, context_1) {
                     this.gameState = state;
                 }
                 update() {
+                    this.gameState.change(new Build_1.Build(this.gameState));
                 }
             };
             exports_1("PathEnd", PathEnd);
