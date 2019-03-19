@@ -23,7 +23,8 @@ export enum TILE {
     RIGHT,
     LEFT,
     BOTTOM_LEFT,
-    BOTTOM_RIGHT
+    BOTTOM_RIGHT,
+    HOUSE
 }
 
 export class Tile extends PIXI.Sprite {
@@ -33,7 +34,7 @@ export class Tile extends PIXI.Sprite {
     private row : number;
     public type : number;
     public typePos : number = 0;
-    public availableTypes : number[] = [TILE.GREEN, TILE.WATER, TILE.TREES, TILE.MOUNTAIN, TILE.MOUNTAIN_BROWN]; 
+    public availableTypes : number[] = [TILE.GREEN, TILE.HOUSE, TILE.WATER, TILE.TREES, TILE.MOUNTAIN, TILE.MOUNTAIN_BROWN]; 
     public background : PIXI.Sprite; 
     public element : PIXI.Sprite;
     private tex : any;
@@ -87,13 +88,18 @@ export class Tile extends PIXI.Sprite {
        this.buttonMode = false;
     }
 
-    changeTileType(){
-        this.typePos = (this.typePos + 1 ) % 5;
-        this.type = this.availableTypes[this.typePos];
+    changeTileType(type?:number){
+        if(type){
+            this.type = type;
+        } else {
+            this.typePos = (this.typePos + 1 ) % 6;
+            this.type = this.availableTypes[this.typePos];
+        }
+        this.update();
     }
 
     update(){
-        let background = [TILE.WATER, TILE.TREES, TILE.START, TILE.END, 
+        let background = [TILE.WATER, TILE.HOUSE, TILE.TREES, TILE.START, TILE.END, 
             TILE.MOUNTAIN, TILE.MOUNTAIN_BROWN, TILE.TOP_RIGHT, TILE.TOP_LEFT, TILE.TOP,
             TILE.BOTTOM, TILE.RIGHT, TILE.LEFT, TILE.BOTTOM_LEFT, TILE.BOTTOM_RIGHT];
         if(background.indexOf(this.type) > -1)this.background.visible = true;
@@ -177,6 +183,9 @@ export class Tile extends PIXI.Sprite {
                 return new Rectangle(16,0,this.texSize,this.texSize);
             break;
             case TILE.WATER:
+                return new Rectangle(4*16,2*16,this.texSize,this.texSize);
+            break;
+            case TILE.HOUSE:
                 return new Rectangle(2*16,1*16,this.texSize,this.texSize);
             break;
             case TILE.TREES:

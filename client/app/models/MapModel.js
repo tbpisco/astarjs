@@ -36,8 +36,11 @@ System.register(["../views/Tile"], function (exports_1, context_1) {
                     for (let index = 0; index < row; index++) {
                         array.push(new Array(col + 1).join("0").split("").map((element) => {
                             let num = Math.floor(Math.random() * 20);
-                            if (num < 16) {
+                            if (num < 15) {
                                 return Tile_1.TILE.GREEN;
+                            }
+                            else if (num == 16) {
+                                return Tile_1.TILE.HOUSE;
                             }
                             else if (num == 17) {
                                 return Tile_1.TILE.MOUNTAIN_BROWN;

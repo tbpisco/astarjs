@@ -1,9 +1,13 @@
-System.register([], function (exports_1, context_1) {
+System.register(["./Start"], function (exports_1, context_1) {
     "use strict";
-    var Build;
+    var Start_1, Build;
     var __moduleName = context_1 && context_1.id;
     return {
-        setters: [],
+        setters: [
+            function (Start_1_1) {
+                Start_1 = Start_1_1;
+            }
+        ],
         execute: function () {
             Build = class Build {
                 constructor(state) {
@@ -12,6 +16,7 @@ System.register([], function (exports_1, context_1) {
                     this.gameState = state;
                 }
                 update() {
+                    this.gameState.change(new Start_1.Start(this.gameState));
                 }
             };
             exports_1("Build", Build);

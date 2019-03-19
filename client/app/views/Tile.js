@@ -33,13 +33,14 @@ System.register(["pixi.js"], function (exports_1, context_1) {
                 TILE[TILE["LEFT"] = 20] = "LEFT";
                 TILE[TILE["BOTTOM_LEFT"] = 21] = "BOTTOM_LEFT";
                 TILE[TILE["BOTTOM_RIGHT"] = 22] = "BOTTOM_RIGHT";
+                TILE[TILE["HOUSE"] = 23] = "HOUSE";
             })(TILE || (TILE = {}));
             exports_1("TILE", TILE);
             Tile = class Tile extends PIXI.Sprite {
                 constructor(type, col, row, size, resources) {
                     super();
                     this.typePos = 0;
-                    this.availableTypes = [TILE.GREEN, TILE.WATER, TILE.TREES, TILE.MOUNTAIN, TILE.MOUNTAIN_BROWN];
+                    this.availableTypes = [TILE.GREEN, TILE.HOUSE, TILE.WATER, TILE.TREES, TILE.MOUNTAIN, TILE.MOUNTAIN_BROWN];
                     this.texSize = 16;
                     this.tex = resources.texture;
                     this.col = col;
@@ -72,12 +73,18 @@ System.register(["pixi.js"], function (exports_1, context_1) {
                     this.interactive = false;
                     this.buttonMode = false;
                 }
-                changeTileType() {
-                    this.typePos = (this.typePos + 1) % 5;
-                    this.type = this.availableTypes[this.typePos];
+                changeTileType(type) {
+                    if (type) {
+                        this.type = type;
+                    }
+                    else {
+                        this.typePos = (this.typePos + 1) % 6;
+                        this.type = this.availableTypes[this.typePos];
+                    }
+                    this.update();
                 }
                 update() {
-                    let background = [TILE.WATER, TILE.TREES, TILE.START, TILE.END,
+                    let background = [TILE.WATER, TILE.HOUSE, TILE.TREES, TILE.START, TILE.END,
                         TILE.MOUNTAIN, TILE.MOUNTAIN_BROWN, TILE.TOP_RIGHT, TILE.TOP_LEFT, TILE.TOP,
                         TILE.BOTTOM, TILE.RIGHT, TILE.LEFT, TILE.BOTTOM_LEFT, TILE.BOTTOM_RIGHT];
                     if (background.indexOf(this.type) > -1)
@@ -158,6 +165,9 @@ System.register(["pixi.js"], function (exports_1, context_1) {
                             return new pixi_js_1.Rectangle(16, 0, this.texSize, this.texSize);
                             break;
                         case TILE.WATER:
+                            return new pixi_js_1.Rectangle(4 * 16, 2 * 16, this.texSize, this.texSize);
+                            break;
+                        case TILE.HOUSE:
                             return new pixi_js_1.Rectangle(2 * 16, 1 * 16, this.texSize, this.texSize);
                             break;
                         case TILE.TREES:

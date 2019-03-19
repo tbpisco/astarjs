@@ -1,6 +1,6 @@
-System.register(["pixi.js", "./Tile"], function (exports_1, context_1) {
+System.register(["pixi.js", "./Tile", "../states/Start", "../states/End", "../states/Build"], function (exports_1, context_1) {
     "use strict";
-    var PIXI, Tile_1, MapView;
+    var PIXI, Tile_1, Start_1, End_1, Build_1, MapView;
     var __moduleName = context_1 && context_1.id;
     return {
         setters: [
@@ -9,6 +9,15 @@ System.register(["pixi.js", "./Tile"], function (exports_1, context_1) {
             },
             function (Tile_1_1) {
                 Tile_1 = Tile_1_1;
+            },
+            function (Start_1_1) {
+                Start_1 = Start_1_1;
+            },
+            function (End_1_1) {
+                End_1 = End_1_1;
+            },
+            function (Build_1_1) {
+                Build_1 = Build_1_1;
             }
         ],
         execute: function () {
@@ -18,6 +27,9 @@ System.register(["pixi.js", "./Tile"], function (exports_1, context_1) {
                     this.container = new PIXI.Container();
                     this.saveTimeout = [];
                     this.size = size;
+                }
+                setState(gameState) {
+                    this.gameState = gameState;
                 }
                 createStage(map, resources) {
                     this.map = map;
@@ -73,8 +85,20 @@ System.register(["pixi.js", "./Tile"], function (exports_1, context_1) {
                     this.map.get()[tile.getRow()][tile.getCol()] = tile.type;
                 }
                 onClick(button) {
-                    button.changeTileType();
-                    button.update();
+                    if (this.gameState.currentState instanceof Build_1.Build) {
+                        button.changeTileType();
+                        this.update(button);
+                    }
+                    else if (this.gameState.currentState instanceof Start_1.Start) {
+                        button.changeTileType(Tile_1.TILE.START);
+                        this.update(button);
+                        this.gameState.update();
+                    }
+                    else if (this.gameState.currentState instanceof End_1.End) {
+                        button.changeTileType(Tile_1.TILE.END);
+                        this.update(button);
+                        this.gameState.update();
+                    }
                 }
                 disableTiles() {
                 }

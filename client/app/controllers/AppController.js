@@ -45,7 +45,8 @@ System.register(["../views/MapView", "../utils/PathFinding", "../models/MapModel
                     let width = this.size * this.mapCol + this.mapPaddingLeftRight;
                     let height = this.size * this.mapRow + this.mapPaddingTopBottom;
                     this.init(width, height);
-                    this.gameState = new GameState_1.GameState();
+                    this.gameState = new GameState_1.GameState(this);
+                    this.mapView.setState(this.gameState);
                     this.setupView(width, height);
                 }
                 init(width, height) {
@@ -67,21 +68,27 @@ System.register(["../views/MapView", "../utils/PathFinding", "../models/MapModel
                     title.x = ((width) - title.width) / 2;
                     title.y = 0;
                     this.app.stage.addChild(title);
-                    let instructions = new Instructions_1.Instructions(this.gameState.currentState.instructions, width - this.mapPaddingLeftRight);
-                    instructions.x = this.mapPaddingLeftRight / 2;
-                    instructions.y = title.height;
-                    this.app.stage.addChild(instructions);
-                    let buttonDone = new Button_1.default(380, instructions.y + instructions.height + 15, 100, 20);
-                    buttonDone.setText("DONE");
-                    buttonDone.clicked = this.onDoneClicked.bind(this);
-                    this.app.stage.addChild(buttonDone);
-                    let buttonRandom = new Button_1.default(250, instructions.y + instructions.height + 15, 100, 20);
-                    buttonRandom.setText("RANDOM");
-                    buttonRandom.clicked = this.onRandomClicked.bind(this);
-                    this.app.stage.addChild(buttonRandom);
+                    this.instructions = new Instructions_1.Instructions(this.gameState.currentState.instructions, width - this.mapPaddingLeftRight);
+                    this.instructions.x = this.mapPaddingLeftRight / 2;
+                    this.instructions.y = title.height;
+                    this.app.stage.addChild(this.instructions);
+                    this.buttonDone = new Button_1.default(380, this.instructions.y + this.instructions.height + 15, 100, 20);
+                    this.buttonDone.setText("DONE");
+                    this.buttonDone.clicked = this.onDoneClicked.bind(this);
+                    this.app.stage.addChild(this.buttonDone);
+                    this.buttonRandom = new Button_1.default(250, this.instructions.y + this.instructions.height + 15, 100, 20);
+                    this.buttonRandom.setText("RANDOM");
+                    this.buttonRandom.clicked = this.onRandomClicked.bind(this);
+                    this.app.stage.addChild(this.buttonRandom);
                 }
                 onDoneClicked() {
-                    alert("done!");
+                    this.gameState.update();
+                    this.app.stage.removeChild(this.buttonRandom);
+                    this.app.stage.removeChild(this.buttonDone);
+                    this.mapView.setState(this.gameState);
+                }
+                updateInstructions(value) {
+                    this.instructions.text = value;
                 }
                 onRandomClicked() {
                     this.randomMode = true;

@@ -28,6 +28,10 @@ export class AppController {
 
     private listPath: Node[];
 
+    public instructions:Instructions;
+    public buttonDone:Button;
+    public buttonRandom:Button;
+
     constructor(){
 
         const loader = new PIXI.loaders.Loader();
@@ -45,8 +49,8 @@ export class AppController {
 
         this.init(width, height);
         
-        this.gameState = new GameState();
-
+        this.gameState = new GameState(this);
+        this.mapView.setState(this.gameState);
         this.setupView(width, height);
     }
 
@@ -75,24 +79,31 @@ export class AppController {
         title.y = 0;
         this.app.stage.addChild(title);
 
-        let instructions = new Instructions(this.gameState.currentState.instructions, width - this.mapPaddingLeftRight);
-        instructions.x = this.mapPaddingLeftRight/2;
-        instructions.y = title.height;
-        this.app.stage.addChild(instructions);
+        this.instructions = new Instructions(this.gameState.currentState.instructions, width - this.mapPaddingLeftRight);
+        this.instructions.x = this.mapPaddingLeftRight/2;
+        this.instructions.y = title.height;
+        this.app.stage.addChild(this.instructions);
 
-        let buttonDone = new Button(380, instructions.y + instructions.height + 15 , 100, 20);
-        buttonDone.setText("DONE");
-        buttonDone.clicked = this.onDoneClicked.bind(this);
-        this.app.stage.addChild(buttonDone);
+        this.buttonDone = new Button(380, this.instructions.y + this.instructions.height + 15 , 100, 20);
+        this.buttonDone.setText("DONE");
+        this.buttonDone.clicked = this.onDoneClicked.bind(this);
+        this.app.stage.addChild(this.buttonDone);
 
-        let buttonRandom = new Button(250, instructions.y + instructions.height + 15 , 100, 20);
-        buttonRandom.setText("RANDOM");
-        buttonRandom.clicked = this.onRandomClicked.bind(this);
-        this.app.stage.addChild(buttonRandom);
+        this.buttonRandom = new Button(250, this.instructions.y + this.instructions.height + 15 , 100, 20);
+        this.buttonRandom.setText("RANDOM");
+        this.buttonRandom.clicked = this.onRandomClicked.bind(this);
+        this.app.stage.addChild(this.buttonRandom);
     }
 
     onDoneClicked(){
-        alert("done!")
+        this.gameState.update();
+        this.app.stage.removeChild(this.buttonRandom);
+        this.app.stage.removeChild(this.buttonDone);
+        this.mapView.setState(this.gameState);
+    }
+
+    updateInstructions(value:string){
+        this.instructions.text = value;
     }
 
     onRandomClicked(){

@@ -1,4 +1,5 @@
 import { GameState } from "./GameState";
+import { Start } from "./Start";
 
 export class Build implements State {
 
@@ -11,6 +12,6 @@ export class Build implements State {
     }
 
     update(){
-
+        this.gameState.change(new Start(this.gameState));
     }
 }

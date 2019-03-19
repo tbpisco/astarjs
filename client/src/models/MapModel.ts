@@ -37,8 +37,10 @@ export class MapModel{
         for (let index = 0; index < row; index++) {
             array.push(new Array(col+1).join("0").split("").map((element) => {
                 let num = Math.floor(Math.random()*20);
-                if(num < 16){
+                if(num < 15){
                     return TILE.GREEN;
+                } else if(num == 16){
+                    return TILE.HOUSE;
                 } else if(num == 17){
                     return TILE.MOUNTAIN_BROWN;
                 } else if(num == 18){

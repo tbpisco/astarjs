@@ -1,6 +1,10 @@
 import * as PIXI from 'pixi.js';
 import { MapModel } from '../models/MapModel';
 import { TILE, Tile } from './Tile';
+import { GameState } from '../states/GameState';
+import { Start } from '../states/Start';
+import { End } from '../states/End';
+import { Build } from '../states/Build';
 
 export class MapView {
  
@@ -10,8 +14,14 @@ export class MapView {
     private container: PIXI.Container = new PIXI.Container();
     private saveTimeout: number[] = [];
 
+    private gameState:GameState;
+
     constructor(size: number){
         this.size = size;
+    }
+
+    setState(gameState: GameState){
+        this.gameState = gameState;
     }
 
     createStage(map:MapModel, resources: PIXI.loaders.Resource): PIXI.Container {
@@ -84,8 +94,19 @@ export class MapView {
     }
 
     onClick(button:Tile){
-        button.changeTileType();
-        button.update();
+        if(this.gameState.currentState instanceof Build){
+            button.changeTileType();
+            this.update(button);
+        } else if(this.gameState.currentState instanceof Start){
+            button.changeTileType(TILE.START);
+            this.update(button);
+            this.gameState.update();
+        } else if(this.gameState.currentState instanceof End){
+            button.changeTileType(TILE.END);
+            this.update(button);
+            this.gameState.update();
+        } 
+        
     }
 
     disableTiles(){
