@@ -1,10 +1,11 @@
 import * as PIXI from 'pixi.js';
 import { MapModel } from '../models/MapModel';
 import { TILE, Tile } from './Tile';
-import { GameState } from '../states/GameState';
+import { GameStateManager } from '../states/GameStateManager';
 import { Start } from '../states/Start';
 import { End } from '../states/End';
 import { Build } from '../states/Build';
+import { Initial } from '../states/Initial';
 
 export class MapView {
  
@@ -14,14 +15,14 @@ export class MapView {
     private container: PIXI.Container = new PIXI.Container();
     private saveTimeout: number[] = [];
 
-    private gameState:GameState;
+    private gameStateManager:GameStateManager;
 
     constructor(size: number){
         this.size = size;
     }
 
-    setState(gameState: GameState){
-        this.gameState = gameState;
+    setState(gameStateManager: GameStateManager){
+        this.gameStateManager = gameStateManager;
     }
 
     createStage(map:MapModel, resources: PIXI.loaders.Resource): PIXI.Container {
@@ -98,17 +99,21 @@ export class MapView {
     }
 
     onClick(button:Tile){
-        if(this.gameState.currentState instanceof Build){
+        if(this.gameStateManager.currentState instanceof Initial){
+            this.gameStateManager.update();
             button.changeTileType();
             this.update(button);
-        } else if(this.gameState.currentState instanceof Start){
+        } else if(this.gameStateManager.currentState instanceof Build){
+            button.changeTileType();
+            this.update(button);
+        } else if(this.gameStateManager.currentState instanceof Start){
             button.changeTileType(TILE.START);
             this.update(button);
-            this.gameState.update();
-        } else if(this.gameState.currentState instanceof End){
+            this.gameStateManager.update();
+        } else if(this.gameStateManager.currentState instanceof End){
             button.changeTileType(TILE.END);
             this.update(button);
-            this.gameState.update();
+            this.gameStateManager.update();
         } 
         
     }

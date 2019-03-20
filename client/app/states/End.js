@@ -13,10 +13,11 @@ System.register(["./PathEnd"], function (exports_1, context_1) {
                 constructor(state) {
                     this.instructions = "Select end position";
                     this.stateType = "GameState.END";
-                    this.gameState = state;
+                    this.gameStateManager = state;
+                    this.gameStateManager.controller.removeButtonView();
                 }
                 update() {
-                    this.gameState.change(new PathEnd_1.PathEnd(this.gameState));
+                    this.gameStateManager.change(new PathEnd_1.PathEnd(this.gameStateManager));
                 }
             };
             exports_1("End", End);

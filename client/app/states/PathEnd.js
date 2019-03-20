@@ -1,11 +1,11 @@
-System.register(["./Build"], function (exports_1, context_1) {
+System.register(["./Initial"], function (exports_1, context_1) {
     "use strict";
-    var Build_1, PathEnd;
+    var Initial_1, PathEnd;
     var __moduleName = context_1 && context_1.id;
     return {
         setters: [
-            function (Build_1_1) {
-                Build_1 = Build_1_1;
+            function (Initial_1_1) {
+                Initial_1 = Initial_1_1;
             }
         ],
         execute: function () {
@@ -13,10 +13,13 @@ System.register(["./Build"], function (exports_1, context_1) {
                 constructor(state) {
                     this.instructions = "done!";
                     this.stateType = "GameState.PATHEND";
-                    this.gameState = state;
+                    this.gameStateManager = state;
+                    this.gameStateManager.controller.findPath();
+                    this.gameStateManager.controller.resetView();
+                    this.gameStateManager.controller.removeButtonView();
                 }
                 update() {
-                    this.gameState.change(new Build_1.Build(this.gameState));
+                    this.gameStateManager.change(new Initial_1.Initial(this.gameStateManager));
                 }
             };
             exports_1("PathEnd", PathEnd);

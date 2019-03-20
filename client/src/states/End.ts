@@ -1,17 +1,18 @@
-import { GameState } from "./GameState";
+import { GameStateManager } from "./GameStateManager";
 import { PathEnd } from "./PathEnd";
 
 export class End implements State {
 
     public instructions : string = "Select end position";
     public stateType : string = "GameState.END";
-    public gameState : GameState;
+    public gameStateManager : GameStateManager;
 
-    constructor(state : GameState){
-        this.gameState = state;
+    constructor(state : GameStateManager){
+        this.gameStateManager = state;
+        this.gameStateManager.controller.removeButtonView();
     }
 
     update(){
-        this.gameState.change(new PathEnd(this.gameState));
+        this.gameStateManager.change(new PathEnd(this.gameStateManager));
     }
 }

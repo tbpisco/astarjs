@@ -4,7 +4,7 @@ import { Node } from '../models/Node';
 import { MapModel } from '../models/MapModel';
 import { Title } from '../components/Title';
 import { Instructions } from '../components/Instructions';
-import { GameState } from '../states/GameState';
+import { GameStateManager } from '../states/GameStateManager';
 import Button from '../components/Button';
 
 export class AppController {
@@ -15,7 +15,7 @@ export class AppController {
     private mapPaddingTopBottom : number = this.size * 5;
     private mapPaddingLeftRight : number = this.size * 2;
 
-    private gameState : GameState;
+    private gameStateManager : GameStateManager;
 
     private mapView : MapView = new MapView(this.size);
     private resources : any;
@@ -50,8 +50,8 @@ export class AppController {
 
         this.init(width, height);
         
-        this.gameState = new GameState(this);
-        this.mapView.setState(this.gameState);
+        this.gameStateManager = new GameStateManager(this);
+        this.mapView.setState(this.gameStateManager);
         this.setupView(width, height);
     }
 
@@ -80,7 +80,7 @@ export class AppController {
         title.y = 0;
         this.app.stage.addChild(title);
 
-        this.instructions = new Instructions(this.gameState.currentState.instructions, width - this.mapPaddingLeftRight);
+        this.instructions = new Instructions(this.gameStateManager.currentState.instructions, width - this.mapPaddingLeftRight);
         this.instructions.x = this.mapPaddingLeftRight/2;
         this.instructions.y = title.height;
         this.app.stage.addChild(this.instructions);
@@ -88,16 +88,26 @@ export class AppController {
         this.buttonDone = new Button(380, this.instructions.y + this.instructions.height + 15 , 100, 20);
         this.buttonDone.setText("DONE");
         this.buttonDone.clicked = this.onDoneClicked.bind(this);
-        this.app.stage.addChild(this.buttonDone);
-
-        this.buttonRandom = new Button(250, this.instructions.y + this.instructions.height + 15 , 100, 20);
+        
+        this.buttonRandom = new Button(310, this.instructions.y + this.instructions.height + 15 , 100, 20);
         this.buttonRandom.setText("RANDOM");
         this.buttonRandom.clicked = this.onRandomClicked.bind(this);
         this.app.stage.addChild(this.buttonRandom);
 
-        this.buttonReset = new Button(300, this.instructions.y + this.instructions.height + 15 , 100, 20);
+        this.buttonReset = new Button(310, this.instructions.y + this.instructions.height + 15 , 100, 20);
         this.buttonReset.setText("RESET");
         this.buttonReset.clicked = this.onResetClicked.bind(this);
+    }
+
+    buildView(){
+        this.buttonDone.x = 310;
+        this.app.stage.addChild(this.buttonDone);
+        this.app.stage.removeChild(this.buttonRandom);
+    }
+
+    removeButtonView(){
+        this.app.stage.removeChild(this.buttonDone);
+        this.app.stage.removeChild(this.buttonRandom);
     }
 
     resetView(){
@@ -105,10 +115,10 @@ export class AppController {
     }
 
     onResetClicked(){
-        this.gameState.update();
+        this.gameStateManager.update();
+        this.app.stage.removeChild(this.buttonDone);
         this.app.stage.removeChild(this.buttonReset);
         this.app.stage.addChild(this.buttonRandom);
-        this.app.stage.addChild(this.buttonDone);
 
         this.randomMode = false;
         this.generateMap();
@@ -128,10 +138,10 @@ export class AppController {
     }
 
     onDoneClicked(){
-        this.gameState.update();
-        this.app.stage.removeChild(this.buttonRandom);
-        this.app.stage.removeChild(this.buttonDone);
-        this.mapView.setState(this.gameState);
+        this.gameStateManager.update();
+       // this.app.stage.removeChild(this.buttonRandom);
+        //this.app.stage.removeChild(this.buttonDone);
+        this.mapView.setState(this.gameStateManager);
     }
 
     updateInstructions(value:string){
@@ -141,7 +151,8 @@ export class AppController {
     onRandomClicked(){
         this.randomMode = true;
         this.generateMap();
-        this.findPath();
+        this.gameStateManager.update("random");
+        //this.findPath();
     }
 
     findPath(){

@@ -3,5 +3,5 @@ interface State {
     readonly instructions: string;
     readonly stateType: string;
 
-    update(): void;
+    update(type?:string): void;
 }

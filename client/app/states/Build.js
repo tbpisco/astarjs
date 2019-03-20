@@ -11,12 +11,13 @@ System.register(["./Start"], function (exports_1, context_1) {
         execute: function () {
             Build = class Build {
                 constructor(state) {
-                    this.instructions = "To create your own map CLICK on the SQUARES or switch to RANDOM mode.";
+                    this.instructions = "Click DONE once you have finished adding elements to your map.";
                     this.stateType = "GameState.BUILD";
-                    this.gameState = state;
+                    this.gameStateManager = state;
+                    this.gameStateManager.controller.buildView();
                 }
                 update() {
-                    this.gameState.change(new Start_1.Start(this.gameState));
+                    this.gameStateManager.change(new Start_1.Start(this.gameStateManager));
                 }
             };
             exports_1("Build", Build);

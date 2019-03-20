@@ -1,17 +1,20 @@
-import { GameState } from "./GameState";
-import { Build } from "./Build";
+import { GameStateManager } from "./GameStateManager";
+import { Initial } from "./Initial";
 
 export class PathEnd implements State {
 
     public instructions : string = "done!";
     public stateType : string = "GameState.PATHEND";
-    public gameState : GameState;
+    public gameStateManager : GameStateManager;
 
-    constructor(state : GameState){
-        this.gameState = state;
+    constructor(state : GameStateManager){
+        this.gameStateManager = state;
+        this.gameStateManager.controller.findPath();
+        this.gameStateManager.controller.resetView();
+        this.gameStateManager.controller.removeButtonView();
     }
 
     update(){
-        this.gameState.change(new Build(this.gameState));
+        this.gameStateManager.change(new Initial(this.gameStateManager));
     }
 }

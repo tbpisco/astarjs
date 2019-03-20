@@ -1,17 +1,18 @@
-import { GameState } from "./GameState";
+import { GameStateManager } from "./GameStateManager";
 import { End } from "./End";
 
 export class Start implements State {
 
     public instructions : string = "Select start position";
     public stateType : string = "GameState.START";
-    public gameState : GameState;
+    public gameStateManager : GameStateManager;
 
-    constructor(state : GameState){
-        this.gameState = state;
+    constructor(state : GameStateManager){
+        this.gameStateManager = state;
+        this.gameStateManager.controller.removeButtonView();
     }
 
     update(){
-        this.gameState.change(new End(this.gameState));
+        this.gameStateManager.change(new End(this.gameStateManager));
     }
 }

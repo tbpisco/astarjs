@@ -1,17 +1,18 @@
-import { GameState } from "./GameState";
+import { GameStateManager } from "./GameStateManager";
 import { Start } from "./Start";
 
 export class Build implements State {
 
-    public instructions : string = "To create your own map CLICK on the SQUARES or switch to RANDOM mode.";
+    public instructions : string = "Click DONE once you have finished adding elements to your map.";
     public stateType : string = "GameState.BUILD";
-    public gameState : GameState;
+    public gameStateManager : GameStateManager;
 
-    constructor(state : GameState){
-        this.gameState = state;
+    constructor(state : GameStateManager){
+        this.gameStateManager = state;
+        this.gameStateManager.controller.buildView();
     }
 
     update(){
-        this.gameState.change(new Start(this.gameState));
+        this.gameStateManager.change(new Start(this.gameStateManager));
     }
 }

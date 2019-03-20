@@ -1,12 +1,11 @@
-import { Build } from "./Build";
 import { AppController } from "../controllers/AppController";
-import { PathEnd } from "./PathEnd";
+import { Initial } from "./Initial";
 
-export class GameState {
+export class GameStateManager {
 
-    public currentState : State = new Build(this);
+    public currentState : State = new Initial(this);
     private previousState : State[] = [];
-    private controller:AppController;
+    public controller:AppController;
 
     constructor(controller:AppController){
         this.controller = controller;
@@ -17,10 +16,6 @@ export class GameState {
         this.previousState.push(this.currentState);
         this.currentState = state;
         this.controller.updateInstructions(this.currentState.instructions);
-        if(this.currentState instanceof PathEnd){
-             this.controller.findPath();
-             this.controller.resetView();
-        }
     }
 
     start(){
@@ -29,9 +24,9 @@ export class GameState {
 
     }
 
-    update(){
+    update(type?:string){
 
-        this.currentState.update();
+        this.currentState.update(type);
 
     }
 }

@@ -1,6 +1,6 @@
-System.register(["../views/MapView", "../utils/PathFinding", "../models/MapModel", "../components/Title", "../components/Instructions", "../states/GameState", "../components/Button"], function (exports_1, context_1) {
+System.register(["../views/MapView", "../utils/PathFinding", "../models/MapModel", "../components/Title", "../components/Instructions", "../states/GameStateManager", "../components/Button"], function (exports_1, context_1) {
     "use strict";
-    var MapView_1, PathFinding_1, MapModel_1, Title_1, Instructions_1, GameState_1, Button_1, AppController;
+    var MapView_1, PathFinding_1, MapModel_1, Title_1, Instructions_1, GameStateManager_1, Button_1, AppController;
     var __moduleName = context_1 && context_1.id;
     return {
         setters: [
@@ -19,8 +19,8 @@ System.register(["../views/MapView", "../utils/PathFinding", "../models/MapModel
             function (Instructions_1_1) {
                 Instructions_1 = Instructions_1_1;
             },
-            function (GameState_1_1) {
-                GameState_1 = GameState_1_1;
+            function (GameStateManager_1_1) {
+                GameStateManager_1 = GameStateManager_1_1;
             },
             function (Button_1_1) {
                 Button_1 = Button_1_1;
@@ -45,8 +45,8 @@ System.register(["../views/MapView", "../utils/PathFinding", "../models/MapModel
                     let width = this.size * this.mapCol + this.mapPaddingLeftRight;
                     let height = this.size * this.mapRow + this.mapPaddingTopBottom;
                     this.init(width, height);
-                    this.gameState = new GameState_1.GameState(this);
-                    this.mapView.setState(this.gameState);
+                    this.gameStateManager = new GameStateManager_1.GameStateManager(this);
+                    this.mapView.setState(this.gameStateManager);
                     this.setupView(width, height);
                 }
                 init(width, height) {
@@ -68,30 +68,38 @@ System.register(["../views/MapView", "../utils/PathFinding", "../models/MapModel
                     title.x = ((width) - title.width) / 2;
                     title.y = 0;
                     this.app.stage.addChild(title);
-                    this.instructions = new Instructions_1.Instructions(this.gameState.currentState.instructions, width - this.mapPaddingLeftRight);
+                    this.instructions = new Instructions_1.Instructions(this.gameStateManager.currentState.instructions, width - this.mapPaddingLeftRight);
                     this.instructions.x = this.mapPaddingLeftRight / 2;
                     this.instructions.y = title.height;
                     this.app.stage.addChild(this.instructions);
                     this.buttonDone = new Button_1.default(380, this.instructions.y + this.instructions.height + 15, 100, 20);
                     this.buttonDone.setText("DONE");
                     this.buttonDone.clicked = this.onDoneClicked.bind(this);
-                    this.app.stage.addChild(this.buttonDone);
-                    this.buttonRandom = new Button_1.default(250, this.instructions.y + this.instructions.height + 15, 100, 20);
+                    this.buttonRandom = new Button_1.default(310, this.instructions.y + this.instructions.height + 15, 100, 20);
                     this.buttonRandom.setText("RANDOM");
                     this.buttonRandom.clicked = this.onRandomClicked.bind(this);
                     this.app.stage.addChild(this.buttonRandom);
-                    this.buttonReset = new Button_1.default(300, this.instructions.y + this.instructions.height + 15, 100, 20);
+                    this.buttonReset = new Button_1.default(310, this.instructions.y + this.instructions.height + 15, 100, 20);
                     this.buttonReset.setText("RESET");
                     this.buttonReset.clicked = this.onResetClicked.bind(this);
+                }
+                buildView() {
+                    this.buttonDone.x = 310;
+                    this.app.stage.addChild(this.buttonDone);
+                    this.app.stage.removeChild(this.buttonRandom);
+                }
+                removeButtonView() {
+                    this.app.stage.removeChild(this.buttonDone);
+                    this.app.stage.removeChild(this.buttonRandom);
                 }
                 resetView() {
                     this.app.stage.addChild(this.buttonReset);
                 }
                 onResetClicked() {
-                    this.gameState.update();
+                    this.gameStateManager.update();
+                    this.app.stage.removeChild(this.buttonDone);
                     this.app.stage.removeChild(this.buttonReset);
                     this.app.stage.addChild(this.buttonRandom);
-                    this.app.stage.addChild(this.buttonDone);
                     this.randomMode = false;
                     this.generateMap();
                 }
@@ -109,10 +117,8 @@ System.register(["../views/MapView", "../utils/PathFinding", "../models/MapModel
                     });
                 }
                 onDoneClicked() {
-                    this.gameState.update();
-                    this.app.stage.removeChild(this.buttonRandom);
-                    this.app.stage.removeChild(this.buttonDone);
-                    this.mapView.setState(this.gameState);
+                    this.gameStateManager.update();
+                    this.mapView.setState(this.gameStateManager);
                 }
                 updateInstructions(value) {
                     this.instructions.text = value;
@@ -120,7 +126,7 @@ System.register(["../views/MapView", "../utils/PathFinding", "../models/MapModel
                 onRandomClicked() {
                     this.randomMode = true;
                     this.generateMap();
-                    this.findPath();
+                    this.gameStateManager.update("random");
                 }
                 findPath() {
                     let bestPath = PathFinding_1.PathFinding.find(this.map);
