@@ -73,6 +73,10 @@ System.register(["pixi.js"], function (exports_1, context_1) {
                     this.interactive = false;
                     this.buttonMode = false;
                 }
+                enable() {
+                    this.interactive = true;
+                    this.buttonMode = true;
+                }
                 changeTileType(type) {
                     if (type) {
                         this.type = type;

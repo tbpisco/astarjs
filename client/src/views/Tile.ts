@@ -88,6 +88,11 @@ export class Tile extends PIXI.Sprite {
        this.buttonMode = false;
     }
 
+    enable(){
+        this.interactive = true;
+        this.buttonMode = true;
+    }
+
     changeTileType(type?:number){
         if(type){
             this.type = type;

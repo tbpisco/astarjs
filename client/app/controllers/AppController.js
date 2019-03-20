@@ -113,6 +113,8 @@ System.register(["../views/MapView", "../utils/PathFinding", "../models/MapModel
                             tile.update();
                             if (this.randomMode)
                                 tile.disable();
+                            else
+                                tile.enable();
                         });
                     });
                 }

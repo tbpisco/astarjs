@@ -133,6 +133,7 @@ export class AppController {
                 tile.type = elementCol;
                 tile.update();
                 if(this.randomMode)tile.disable();
+                        else tile.enable();
             })
         })
     }
