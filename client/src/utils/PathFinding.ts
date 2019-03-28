@@ -1,5 +1,11 @@
-import { MapModel } from "../models/MapModel";
 import { Node } from "../models/Node";
+
+export enum Types {
+    START,
+    END,
+    WALKABLE,
+    NON_WALKABLE
+}
 
 export class PathFinding {
     
@@ -7,7 +13,7 @@ export class PathFinding {
         
     }
 
-    static find(map: MapModel): Node | null{
+    static find(map: number[][]): Node | null{
 
         let firstElement = PathFinding.findStart(map);
         let lastElement = PathFinding.findEnd(map);
@@ -15,7 +21,7 @@ export class PathFinding {
 
     }
 
-    static findBestPath(firstElement: Node, lastElement:Node, map: MapModel): Node | null{
+    static findBestPath(firstElement: Node, lastElement:Node, map: number[][]): Node | null{
 
         var closedList: Node[] = [];
         var openList: Node[]= [];
@@ -37,18 +43,18 @@ export class PathFinding {
         }
     }
 
-    static findEnd(map:MapModel): Node {
-        return PathFinding.findElement(map, 4);
+    static findEnd(map:number[][]): Node {
+        return PathFinding.findElement(map, Types.END);
     }
 
-    static findStart(map:MapModel): Node {
-        return PathFinding.findElement(map, 3);
+    static findStart(map:number[][]): Node {
+        return PathFinding.findElement(map, Types.START);
     }
 
-    static findElement(map:MapModel, value:number): Node {
+    static findElement(map:number[][], value:number): Node {
 
         let el = new Node(0,0);
-        map.get().forEach((element, indexRow) => {
+        map.forEach((element, indexRow) => {
             element.forEach((element, indexCol) => {
                 if(element == value){
                     el = new Node(indexRow, indexCol);
@@ -74,14 +80,14 @@ export class PathFinding {
         return (element.getRow() == element0.getRow() && element.getCol() == element0.getCol());
     }
 
-    static findAdjacents(map:MapModel, node:Node) : Node[] {
+    static findAdjacents(map:number[][], node:Node) : Node[] {
 
         let adjacents: Node[] = [];
 
         let verify = [[-1,-1], [-1,0] , [-1, 1], [0,-1], 
                       [0,1], [1,-1], [1,0] , [1, 1]];
 
-        let mapElements = map.get();
+        let mapElements = map;
         
         for(let v = 0; v < verify.length; v++){
 
@@ -89,7 +95,7 @@ export class PathFinding {
           var y = node.getCol() + verify[v][1];
 
           if(x > -1 && y > -1 && x < mapElements.length && y < mapElements[x].length 
-            && (mapElements[x][y] == 0 || mapElements[x][y] == 4 )){
+            && (mapElements[x][y] == Types.WALKABLE || mapElements[x][y] == Types.END )){
                 adjacents.push(new Node(x, y));
           }
         }
@@ -98,7 +104,7 @@ export class PathFinding {
     }
 
 
-    static findValidAdjacents(map:MapModel, node:Node, closedList:Node[], openList: Node[], lastElement:Node){
+    static findValidAdjacents(map:number[][], node:Node, closedList:Node[], openList: Node[], lastElement:Node){
         
         let validAdjacents = PathFinding.findAdjacents(map, node).filter(
             (elementAdjacent) => {

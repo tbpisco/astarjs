@@ -1,11 +1,12 @@
 import { MapView } from '../views/MapView';
-import { PathFinding } from '../utils/PathFinding';
+import { PathFinding, Types } from '../utils/PathFinding';
 import { Node } from '../models/Node';
 import { MapModel } from '../models/MapModel';
 import { Title } from '../components/Title';
 import { Instructions } from '../components/Instructions';
 import { GameStateManager } from '../states/GameStateManager';
 import Button from '../components/Button';
+import { TILE } from '../views/Tile';
 
 export class AppController {
 
@@ -140,8 +141,6 @@ export class AppController {
 
     onDoneClicked(){
         this.gameStateManager.update();
-       // this.app.stage.removeChild(this.buttonRandom);
-        //this.app.stage.removeChild(this.buttonDone);
         this.mapView.setState(this.gameStateManager);
     }
 
@@ -153,12 +152,27 @@ export class AppController {
         this.randomMode = true;
         this.generateMap();
         this.gameStateManager.update("random");
-        //this.findPath();
     }
 
     findPath(){
-       let bestPath = PathFinding.find(this.map);
+       let bestPath = PathFinding.find(this.gameMapToPathfind(this.map));
        if(bestPath)this.showResult(bestPath, this.createPath);
+    }
+
+    gameMapToPathfind(map: MapModel): number[][] {
+        return this.map.get().map(row=>{
+            return row.map(col => {
+                  if(col == TILE.END){
+                      return Types.END;
+                  } else if(col == TILE.START){
+                      return Types.START;
+                  } else if(col == TILE.GREEN){
+                      return Types.WALKABLE;
+                  } else {
+                      return Types.NON_WALKABLE;
+                  }
+             });
+        });
     }
 
     showResult(node:Node, func: Function){

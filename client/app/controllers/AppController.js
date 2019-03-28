@@ -1,6 +1,6 @@
-System.register(["../views/MapView", "../utils/PathFinding", "../models/MapModel", "../components/Title", "../components/Instructions", "../states/GameStateManager", "../components/Button"], function (exports_1, context_1) {
+System.register(["../views/MapView", "../utils/PathFinding", "../models/MapModel", "../components/Title", "../components/Instructions", "../states/GameStateManager", "../components/Button", "../views/Tile"], function (exports_1, context_1) {
     "use strict";
-    var MapView_1, PathFinding_1, MapModel_1, Title_1, Instructions_1, GameStateManager_1, Button_1, AppController;
+    var MapView_1, PathFinding_1, MapModel_1, Title_1, Instructions_1, GameStateManager_1, Button_1, Tile_1, AppController;
     var __moduleName = context_1 && context_1.id;
     return {
         setters: [
@@ -24,6 +24,9 @@ System.register(["../views/MapView", "../utils/PathFinding", "../models/MapModel
             },
             function (Button_1_1) {
                 Button_1 = Button_1_1;
+            },
+            function (Tile_1_1) {
+                Tile_1 = Tile_1_1;
             }
         ],
         execute: function () {
@@ -131,9 +134,27 @@ System.register(["../views/MapView", "../utils/PathFinding", "../models/MapModel
                     this.gameStateManager.update("random");
                 }
                 findPath() {
-                    let bestPath = PathFinding_1.PathFinding.find(this.map);
+                    let bestPath = PathFinding_1.PathFinding.find(this.gameMapToPathfind(this.map));
                     if (bestPath)
                         this.showResult(bestPath, this.createPath);
+                }
+                gameMapToPathfind(map) {
+                    return this.map.get().map(row => {
+                        return row.map(col => {
+                            if (col == Tile_1.TILE.END) {
+                                return PathFinding_1.Types.END;
+                            }
+                            else if (col == Tile_1.TILE.START) {
+                                return PathFinding_1.Types.START;
+                            }
+                            else if (col == Tile_1.TILE.GREEN) {
+                                return PathFinding_1.Types.WALKABLE;
+                            }
+                            else {
+                                return PathFinding_1.Types.NON_WALKABLE;
+                            }
+                        });
+                    });
                 }
                 showResult(node, func) {
                     let currentNode = node;

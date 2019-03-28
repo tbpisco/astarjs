@@ -1,6 +1,6 @@
 System.register(["../models/Node"], function (exports_1, context_1) {
     "use strict";
-    var Node_1, PathFinding;
+    var Node_1, Types, PathFinding;
     var __moduleName = context_1 && context_1.id;
     return {
         setters: [
@@ -9,6 +9,13 @@ System.register(["../models/Node"], function (exports_1, context_1) {
             }
         ],
         execute: function () {
+            (function (Types) {
+                Types[Types["START"] = 0] = "START";
+                Types[Types["END"] = 1] = "END";
+                Types[Types["WALKABLE"] = 2] = "WALKABLE";
+                Types[Types["NON_WALKABLE"] = 3] = "NON_WALKABLE";
+            })(Types || (Types = {}));
+            exports_1("Types", Types);
             PathFinding = class PathFinding {
                 constructor() {
                 }
@@ -36,14 +43,14 @@ System.register(["../models/Node"], function (exports_1, context_1) {
                     }
                 }
                 static findEnd(map) {
-                    return PathFinding.findElement(map, 4);
+                    return PathFinding.findElement(map, Types.END);
                 }
                 static findStart(map) {
-                    return PathFinding.findElement(map, 3);
+                    return PathFinding.findElement(map, Types.START);
                 }
                 static findElement(map, value) {
                     let el = new Node_1.Node(0, 0);
-                    map.get().forEach((element, indexRow) => {
+                    map.forEach((element, indexRow) => {
                         element.forEach((element, indexCol) => {
                             if (element == value) {
                                 el = new Node_1.Node(indexRow, indexCol);
@@ -70,12 +77,12 @@ System.register(["../models/Node"], function (exports_1, context_1) {
                     let adjacents = [];
                     let verify = [[-1, -1], [-1, 0], [-1, 1], [0, -1],
                         [0, 1], [1, -1], [1, 0], [1, 1]];
-                    let mapElements = map.get();
+                    let mapElements = map;
                     for (let v = 0; v < verify.length; v++) {
                         var x = node.getRow() + verify[v][0];
                         var y = node.getCol() + verify[v][1];
                         if (x > -1 && y > -1 && x < mapElements.length && y < mapElements[x].length
-                            && (mapElements[x][y] == 0 || mapElements[x][y] == 4)) {
+                            && (mapElements[x][y] == Types.WALKABLE || mapElements[x][y] == Types.END)) {
                             adjacents.push(new Node_1.Node(x, y));
                         }
                     }
