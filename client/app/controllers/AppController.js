@@ -135,8 +135,8 @@ System.register(["../views/MapView", "../utils/PathFinding", "../models/MapModel
                 }
                 findPath() {
                     let bestPath = PathFinding_1.PathFinding.find(this.gameMapToPathfind(this.map));
-                    if (bestPath)
-                        this.showResult(bestPath, this.createPath);
+                    if (bestPath.length > 0)
+                        this.showNodes(bestPath);
                 }
                 gameMapToPathfind(map) {
                     return this.map.get().map(row => {
@@ -155,19 +155,6 @@ System.register(["../views/MapView", "../utils/PathFinding", "../models/MapModel
                             }
                         });
                     });
-                }
-                showResult(node, func) {
-                    let currentNode = node;
-                    this.listPath = [];
-                    while (currentNode) {
-                        func.apply(this, [currentNode]);
-                        currentNode = currentNode.getParent();
-                        if (!currentNode)
-                            this.showNodes(this.listPath);
-                    }
-                }
-                createPath(node) {
-                    this.listPath.push(node);
                 }
                 showNodes(listPath) {
                     listPath.map((node, index) => {

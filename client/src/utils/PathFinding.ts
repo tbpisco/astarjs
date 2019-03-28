@@ -13,15 +13,13 @@ export class PathFinding {
         
     }
 
-    static find(map: number[][]): Node | null{
-
+    static find(map: number[][]): Node[]{
         let firstElement = PathFinding.findStart(map);
         let lastElement = PathFinding.findEnd(map);
         return PathFinding.findBestPath(firstElement, lastElement, map); 
-
     }
 
-    static findBestPath(firstElement: Node, lastElement:Node, map: number[][]): Node | null{
+    static findBestPath(firstElement: Node, lastElement:Node, map: number[][]): Node[]{
 
         var closedList: Node[] = [];
         var openList: Node[]= [];
@@ -37,10 +35,21 @@ export class PathFinding {
         }
 
         if(openList.length > 0){
-            return closedList[closedList.length-1];
+            return PathFinding.getPath(closedList[closedList.length-1]);
         } else {
-            return null;
+            return [];
         }
+    }
+
+    static getPath(node:Node):Node[] {
+        let currentNode = node;
+        let listPath = [];
+        while(currentNode){
+            listPath.push(currentNode);
+            currentNode = currentNode.getParent();
+            if(!currentNode)return listPath;
+        }
+        return [];
     }
 
     static findEnd(map:number[][]): Node {

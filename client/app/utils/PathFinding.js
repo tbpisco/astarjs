@@ -36,11 +36,22 @@ System.register(["../models/Node"], function (exports_1, context_1) {
                         isFinished = PathFinding.isObjectEqual(closedList[closedList.length - 1], lastElement) || openList.length == 0;
                     }
                     if (openList.length > 0) {
-                        return closedList[closedList.length - 1];
+                        return PathFinding.getPath(closedList[closedList.length - 1]);
                     }
                     else {
-                        return null;
+                        return [];
                     }
+                }
+                static getPath(node) {
+                    let currentNode = node;
+                    let listPath = [];
+                    while (currentNode) {
+                        listPath.push(currentNode);
+                        currentNode = currentNode.getParent();
+                        if (!currentNode)
+                            return listPath;
+                    }
+                    return [];
                 }
                 static findEnd(map) {
                     return PathFinding.findElement(map, Types.END);

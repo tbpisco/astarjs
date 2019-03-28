@@ -155,8 +155,8 @@ export class AppController {
     }
 
     findPath(){
-       let bestPath = PathFinding.find(this.gameMapToPathfind(this.map));
-       if(bestPath)this.showResult(bestPath, this.createPath);
+       let bestPath: Node[] = PathFinding.find(this.gameMapToPathfind(this.map));
+       if(bestPath.length > 0)this.showNodes(bestPath);
     }
 
     gameMapToPathfind(map: MapModel): number[][] {
@@ -173,20 +173,6 @@ export class AppController {
                   }
              });
         });
-    }
-
-    showResult(node:Node, func: Function){
-        let currentNode = node;
-        this.listPath = [];
-        while(currentNode){
-            func.apply(this, [currentNode]);
-            currentNode = currentNode.getParent();
-            if(!currentNode)this.showNodes(this.listPath);
-        }
-    }
-
-    createPath(node:Node){
-        this.listPath.push(node);
     }
 
     showNodes(listPath:Node[]){
