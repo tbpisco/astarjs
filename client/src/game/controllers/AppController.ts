@@ -1,6 +1,5 @@
 import { MapView } from '../views/MapView';
-import { PathFinding, Types } from '../utils/PathFinding';
-import { Node } from '../models/Node';
+import { PathFinding, Types } from '../../lib/PathFinding';
 import { MapModel } from '../models/MapModel';
 import { Title } from '../components/Title';
 import { Instructions } from '../components/Instructions';
@@ -155,7 +154,7 @@ export class AppController {
     }
 
     findPath(){
-       let bestPath: Node[] = PathFinding.find(this.gameMapToPathfind(this.map));
+       let bestPath: {col:number,row:number}[] = PathFinding.find(this.gameMapToPathfind(this.map));
        if(bestPath.length > 0)this.showNodes(bestPath);
     }
 
@@ -175,12 +174,13 @@ export class AppController {
         });
     }
 
-    showNodes(listPath:Node[]){
-        listPath.map((node, index) => {
-            let nodeParent = node.getParent();
+    showNodes(listPath:{col:number, row:number}[]){
+        let nodeParent;
+        listPath.forEach((node, index) => {
+            nodeParent = listPath[index+1];
             if(!nodeParent)return;
-            this.mapView.highlightRectangule(listPath.length, index, node.getRow(), node.getCol(),
-                                             nodeParent.getRow(), nodeParent.getCol());
+            this.mapView.highlightRectangule(index, node.row, node.col,
+                                             nodeParent.row, nodeParent.col);
         })
     }
 

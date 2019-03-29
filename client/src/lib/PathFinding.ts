@@ -1,4 +1,4 @@
-import { Node } from "../models/Node";
+import { Node } from "./Node";
 
 export enum Types {
     START,
@@ -13,13 +13,13 @@ export class PathFinding {
         
     }
 
-    static find(map: number[][]): Node[]{
+    static find(map: number[][]): {col:number,row:number}[]{
         let firstElement = PathFinding.findStart(map);
         let lastElement = PathFinding.findEnd(map);
         return PathFinding.findBestPath(firstElement, lastElement, map); 
     }
 
-    static findBestPath(firstElement: Node, lastElement:Node, map: number[][]): Node[]{
+    static findBestPath(firstElement: Node, lastElement:Node, map: number[][]): {col:number,row:number}[]{
 
         var closedList: Node[] = [];
         var openList: Node[]= [];
@@ -41,13 +41,17 @@ export class PathFinding {
         }
     }
 
-    static getPath(node:Node):Node[] {
+    static nodeToObject(node:Node){
+        return {col: node.getCol(), row: node.getRow()};
+    }
+
+    static getPath(node:Node):{col:number,row:number}[] {
         let currentNode = node;
         let listPath = [];
         while(currentNode){
-            listPath.push(currentNode);
+            listPath.push(this.nodeToObject(currentNode));
             currentNode = currentNode.getParent();
-            if(!currentNode)return listPath;
+            if(!currentNode)return listPath.reverse();
         }
         return [];
     }

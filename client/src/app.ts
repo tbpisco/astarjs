@@ -1,3 +1,3 @@
-import { AppController } from './controllers/AppController';
+import { AppController } from './game/controllers/AppController';
 
 const controller = new AppController();

@@ -127,7 +127,7 @@ export class MapView {
         this.saveTimeout = [];
     }
 
-    highlightRectangule(total:number, index:number, row: number, col: number, parentRow: number, parentCol: number){
+    highlightRectangule(index:number, row: number, col: number, parentRow: number, parentCol: number){
         let tile = this.tiles.get(`${col}-${row}`);
         let direction = TILE.RIGHT;
         if(col > parentCol && row === parentRow){
@@ -149,7 +149,7 @@ export class MapView {
         }
 
         if(index === 0)this.clearTimeoutList();
-        this.saveTimeout.push(setTimeout(() => {tile.highlight(direction);}, 200*(total-index)));
+        this.saveTimeout.push(setTimeout(() => {tile.highlight(direction);}, 200*index));
     }
 
     
