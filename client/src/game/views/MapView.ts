@@ -131,21 +131,21 @@ export class MapView {
         let tile = this.tiles.get(`${col}-${row}`);
         let direction = TILE.RIGHT;
         if(col > parentCol && row === parentRow){
-            direction = TILE.RIGHT;
-        } else if(col < parentCol && row === parentRow){
             direction = TILE.LEFT;
+        } else if(col < parentCol && row === parentRow){
+            direction = TILE.RIGHT;
         } else if(col == parentCol && row < parentRow){
-            direction = TILE.TOP;
-        } else if(col == parentCol && row > parentRow){
             direction = TILE.BOTTOM;
+        } else if(col == parentCol && row > parentRow){
+            direction = TILE.TOP;
         } else if(col < parentCol && row > parentRow){
-            direction = TILE.BOTTOM_LEFT;
-        } else if(col < parentCol && row < parentRow){
-            direction = TILE.TOP_LEFT;
-        } else if(col > parentCol && row < parentRow){
             direction = TILE.TOP_RIGHT;
-        } else if(col > parentCol && row > parentRow){
+        } else if(col < parentCol && row < parentRow){
             direction = TILE.BOTTOM_RIGHT;
+        } else if(col > parentCol && row < parentRow){
+            direction = TILE.BOTTOM_LEFT;
+        } else if(col > parentCol && row > parentRow){
+            direction = TILE.TOP_LEFT;
         }
 
         if(index === 0)this.clearTimeoutList();
