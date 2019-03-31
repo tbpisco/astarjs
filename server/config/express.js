@@ -9,9 +9,9 @@ app.use(compression());
 app.use(cors());
     
 app.get('/', function(req, res) {
-    res.sendFile('index.html', { root: "../client" }); 
+    res.sendFile('index.html', { root: "../client/examples" }); 
 });
     
-app.use(express.static('../client')); 
+app.use(express.static('../client/examples')); 
 
 module.exports = app;
