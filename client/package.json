@@ -6,7 +6,7 @@
   "scripts": {
     "compile": "tsc",
     "watch": "tsc -w",
-    "build": "tsc --outFile --module=system src/**/**/*.ts"
+    "build": "tsc --outFile --module=system src/**/*.ts"
   },
   "author": "",
   "license": "ISC",
