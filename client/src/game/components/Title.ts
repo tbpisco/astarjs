@@ -6,9 +6,7 @@ export class Title extends PIXI.Text {
             fontFamily: 'FuturaHandwritten',
             fontSize: 36,
             fontWeight: 'bold',
-            fill: ['#c3087e', '#e2961b'], // gradient
-            stroke: '#000',
-            strokeThickness: 4,
+            fill: '#c3087e',
             dropShadow: true,
             dropShadowColor: '#000000',
             dropShadowBlur: 3,
