@@ -5,8 +5,8 @@
   "main": "index.js",
   "scripts": {
     "compile": "tsc",
-    "watch": "tsc -w",
-    "build": "tsc --outFile --module=system src/**/**/*.ts"
+    "watch": "tsc -w", 
+    "build": "tsc && terser build/Node.js build/PathFinding.js -o build/pathfinding.min.js"
   },
   "author": "",
   "license": "ISC",
@@ -14,6 +14,7 @@
     "@types/jquery": "^2.0.42",
     "@types/pixi.js": "^4.8.2",
     "pixi.js": "^4.8.2",
+    "terser": "^4.0.0",
     "typescript": "^2.3.2"
   },
   "dependencies": {}

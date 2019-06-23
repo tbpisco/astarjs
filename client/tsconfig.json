@@ -1,0 +1,16 @@
+{
+    "compilerOptions": {
+        "target": "es6",
+        "outDir": "build",
+        "noEmitOnError": true, 
+        "noImplicitAny": true,
+        "removeComments": true,
+        "module": "system",
+        "strictNullChecks": true,
+        "experimentalDecorators": true
+    },
+
+    "include": [
+        "src/**/*"
+    ]
+}
