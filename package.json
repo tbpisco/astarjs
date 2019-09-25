@@ -1,17 +1,30 @@
 {
-  "name": "pathfinding",
+  "name": "PathFinding",
   "version": "1.0.0",
   "description": "",
-  "main": "server.js",
+  "main": "index.js",
   "scripts": {
-    "start": "cd server && node server.js"
+    "start": "webpack-dev-server --config ./webpack.example.config.js",
+    "compile:src": "tsc -d --importHelpers",
+    "compile:example": "tsc -p tsconfig.example.json -d --importHelpers",
+    "build": "webpack --env.production",
+    "watch": "tsc -w"
   },
   "author": "",
   "license": "ISC",
-  "dependencies": {
-    "body-parser": "^1.15.1",
-    "compression": "^1.7.2",
-    "cors": "^2.8.4",
-    "express": "^4.12.3"
-  }
+  "devDependencies": {
+    "@types/jquery": "^2.0.42",
+    "@types/pixi.js": "^4.8.2",
+    "open-browser-webpack-plugin": "^0.0.5",
+    "pixi.js": "^4.8.2",
+    "typescript": "^2.3.2",
+    "ts-loader": "^6.0.4",
+    "html-webpack-plugin": "^3.2.0",
+    "uglifyjs-webpack-plugin": "^2.2.0",
+    "webpack": "^4.39.2",
+    "webpack-cli": "^3.3.6",
+    "webpack-dev-server": "^3.8.0",
+    "webpack-simple-progress-plugin": "^0.0.4"
+  },
+  "dependencies": {}
 }
