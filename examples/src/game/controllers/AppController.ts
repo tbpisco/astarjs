@@ -6,6 +6,8 @@ import { Instructions } from '../components/Instructions';
 import { GameStateManager } from '../states/GameStateManager';
 import Button from '../components/Button';
 import { TILE } from '../views/Tile';
+import Application = PIXI.Application;
+import Loader = PIXI.loaders.Loader;
 
 export class AppController {
 
@@ -16,17 +18,16 @@ export class AppController {
     private mapPaddingLeftRight : number = this.size * 2;
 
     private gameStateManager : GameStateManager;
+    private pathFindingManager:PathFinding = new PathFinding();
 
     private mapView : MapView = new MapView(this.size);
     private resources : any;
     private domElement : HTMLDivElement;
-    private app : PIXI.Application; 
+    private app : Application;
 
     private randomMode : boolean = false;
 
     private map : MapModel;
-
-    private listPath: Node[];
 
     public instructions:Instructions;
     public buttonDone:Button;
@@ -35,13 +36,13 @@ export class AppController {
 
     constructor(){
 
-        const loader = new PIXI.loaders.Loader();
+        const loader = new Loader();
         loader.add("tile-set","../images/tile-set_01.png")
               .load(this.setup.bind(this));
 
     }
 
-    setup(loader: PIXI.loaders.Loader, res : any){
+    setup(loader: Loader, res : any){
 
         this.resources = res["tile-set"];
 
@@ -57,8 +58,7 @@ export class AppController {
 
     init(width : number, height : number){ 
 
-        this.app = new PIXI.Application(width, height, 
-                        { antialias: true , transparent: true});
+        this.app = new Application(width, height, { antialias: true , transparent: true});
 
         let domElement = document.body.querySelector("#map");
         if(domElement)this.domElement = domElement as HTMLDivElement;
@@ -154,7 +154,7 @@ export class AppController {
     }
 
     findPath(){
-       let bestPath: {col:number,row:number}[] = PathFinding.find(this.gameMapToPathfind(this.map));
+       let bestPath: {col:number,row:number}[] = this.pathFindingManager.find(this.gameMapToPathfind(this.map));
        if(bestPath.length > 0)this.showNodes(bestPath);
     }
 
