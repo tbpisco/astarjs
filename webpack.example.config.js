@@ -36,7 +36,7 @@ module.exports = options => {
         ],
 
         resolve: {
-            extensions: [".ts", ".js", ".json"/*, ".jpg", ".png", ".eot", ".ttf", ".woff", ".woff2"*/]
+            extensions: [".ts", ".js", ".json"]
         },
 
         devServer: {

@@ -75,7 +75,7 @@ export class AppController {
         mapViewContainer.y = this.mapPaddingTopBottom/5 * 4;
         this.app.stage.addChild(mapViewContainer);
 
-        let title = new Title("Path Finding", width);
+        let title = new Title("PathFinding", width);
         title.x = (( width ) - title.width)/2;
         title.y = 0;
         this.app.stage.addChild(title);

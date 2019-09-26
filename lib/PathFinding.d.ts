@@ -5,20 +5,22 @@ export declare enum Types {
     NON_WALKABLE = 3
 }
 export declare class PathFinding {
+    private DEFAULT_DISTANCE;
+    private DIAGONAL_DISTANCE;
     constructor();
     find(map: number[][]): {
         col: number;
         row: number;
     }[];
-    private findBestPath;
-    private nodeToObject;
-    private getPath;
-    private findEnd;
-    private findStart;
+    private findStartElement;
+    private findEndElement;
     private findElement;
-    private getValueMove;
-    private distanceBetweenNodes;
-    private isObjectEqual;
-    private findAdjacents;
+    private findBestPath;
     private findValidAdjacents;
+    private distanceBetweenNodes;
+    private getMoveValue;
+    private findAdjacents;
+    private getPath;
+    private nodeToObject;
+    private isNodeEqual;
 }

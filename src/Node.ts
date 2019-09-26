@@ -1,17 +1,15 @@
 export class Node {
 
-    private row: number;
-    private col: number;
-    private value: number;
-    private h: number;
-    private g: number;
+    private row: number; //row position on the map
+    private col: number; // column position on the map
+    private h: number;//distance to the end of the path
+    private g: number;//distance traveled since the start of the path
     private parent: Node | null;
 
     constructor(row:number , col:number){
     
         this.row = row;
         this.col = col;
-        this.value = 0;
         this.h = 0;
         this.g = 0;
         this.parent = null;
@@ -40,10 +38,6 @@ export class Node {
      
     getG(): number{
        return this.g + ((this.parent)? this.parent.getG() : 0);
-    }
-     
-    setValue(value:number){
-       this.value =  value;
     }
      
     getValue():number{
