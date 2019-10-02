@@ -1,2 +1,2 @@
 export { Node } from './Node';
-export { PathFinding, Types } from './PathFinding';
+export { PathFinding } from './PathFinding';

@@ -1,1 +1,0 @@
-{"version":3,"file":"State.js","sourceRoot":"","sources":["../../../../../src/game/states/State.ts"],"names":[],"mappings":"","sourcesContent":["interface State {\r\n\r\n    readonly instructions: string;\r\n    readonly stateType: string;\r\n\r\n    update(type?:string): void;\r\n}"]}

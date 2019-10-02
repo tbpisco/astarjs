@@ -7,7 +7,14 @@ export declare enum Types {
 export declare class PathFinding {
     private DEFAULT_DISTANCE;
     private DIAGONAL_DISTANCE;
+    private walkableTypes;
+    private start;
+    private end;
     constructor();
+    setWalkable(...args: number[]): this;
+    setStart(start: number): this;
+    setEnd(end: number): this;
+    private gameMapToPathfind;
     find(map: number[][]): {
         col: number;
         row: number;

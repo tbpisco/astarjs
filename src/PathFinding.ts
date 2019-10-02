@@ -11,15 +11,58 @@ export class PathFinding {
 
 	private DEFAULT_DISTANCE:number = 10;
 	private DIAGONAL_DISTANCE:number = 14;
+	private walkableTypes:number[] = [];
+	private start:number;
+	private end:number;
 
     constructor(){
 
+	}
+	
+	public setWalkable(...args:number[]){
+		this.walkableTypes = this.walkableTypes.concat(...args);
+		return this;
+	}
+
+	public setStart(start:number){
+		this.start = start;
+		return this;
+	}
+
+	public setEnd(end:number){
+		this.end = end;
+		return this;
+	}
+
+	private gameMapToPathfind(map: number[][]): number[][] {
+        return map.map(row=>{
+            return row.map(id => {
+				if(this.start == id){
+					return Types.START;
+				} else if(this.end == id){
+					return Types.END;
+				} else if(this.walkableTypes.indexOf(id) > -1){
+                      return Types.WALKABLE;
+                  } else {
+                      return Types.NON_WALKABLE;
+                  }
+             });
+        });
     }
 
     public find(map: number[][]): {col:number,row:number}[]{
-        let firstElement = this.findStartElement(map);
-        let lastElement = this.findEndElement(map);
-        return this.findBestPath(firstElement, lastElement, map);
+		if(!this.start){
+			throw new Error('There is no start point. Please, use setStart() to configure the path\'s start point.');
+		}
+
+		if(!this.end){
+			throw new Error('There is no end point. Please, use setEnd() to configure the path\'s end point.');
+		}
+
+		let finalMap:number[][] = this.gameMapToPathfind(map);
+        let firstElement = this.findStartElement(finalMap);
+        let lastElement = this.findEndElement(finalMap);
+        return this.findBestPath(firstElement, lastElement, finalMap);
     }
 
 	private findStartElement(map:number[][]): Node {

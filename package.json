@@ -37,6 +37,7 @@
   "keywords": [
     "pathfinding",
     "astar",
-    "path"
+    "path",
+    "a*"
   ]
 }

@@ -1,1 +1,0 @@
-{"version":3,"file":"app.js","sourceRoot":"","sources":["../../../src/app.ts"],"names":[],"mappings":";;AAAA,kEAAiE;AAEjE,IAAM,UAAU,GAAG,IAAI,6BAAa,EAAE,CAAC","sourcesContent":["import { AppController } from './game/controllers/AppController';\r\n\r\nconst controller = new AppController();"]}

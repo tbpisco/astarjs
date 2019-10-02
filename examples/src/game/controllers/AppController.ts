@@ -1,5 +1,5 @@
 import { MapView } from '../views/MapView';
-import { PathFinding, Types } from '../../../../src/';
+import { PathFinding } from '../../../../src/';
 import { MapModel } from '../models/MapModel';
 import { Title } from '../components/Title';
 import { Instructions } from '../components/Instructions';
@@ -154,24 +154,9 @@ export class AppController {
     }
 
     findPath(){
-       let bestPath: {col:number,row:number}[] = this.pathFindingManager.find(this.gameMapToPathfind(this.map));
+       this.pathFindingManager.setWalkable(TILE.GREEN).setEnd(TILE.END).setStart(TILE.START);
+       let bestPath: {col:number,row:number}[] = this.pathFindingManager.find(this.map.get());
        if(bestPath.length > 0)this.showNodes(bestPath);
-    }
-
-    gameMapToPathfind(map: MapModel): number[][] {
-        return this.map.get().map(row=>{
-            return row.map(col => {
-                  if(col == TILE.END){
-                      return Types.END;
-                  } else if(col == TILE.START){
-                      return Types.START;
-                  } else if(col == TILE.GREEN){
-                      return Types.WALKABLE;
-                  } else {
-                      return Types.NON_WALKABLE;
-                  }
-             });
-        });
     }
 
     showNodes(listPath:{col:number, row:number}[]){
