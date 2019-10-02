@@ -2,7 +2,7 @@
 
 Pathfinding algorithm library.
 
-#Install
+# Install
 
 npm install astarjs --save-dev
 
