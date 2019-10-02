@@ -1,6 +1,6 @@
 {
-  "name": "PathFinding",
-  "version": "1.0.0",
+  "name": "astarjs",
+  "version": "0.0.0",
   "description": "",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
@@ -36,7 +36,7 @@
   ],
   "keywords": [
     "pathfinding",
-    "star",
+    "astar",
     "path"
   ]
 }
