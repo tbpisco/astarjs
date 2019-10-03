@@ -61,7 +61,7 @@ export class PathFinding {
 
 		let finalMap:number[][] = this.gameMapToPathfind(map);
         let firstElement = this.findStartElement(finalMap);
-        let lastElement = this.findEndElement(finalMap);
+		let lastElement = this.findEndElement(finalMap);
         return this.findBestPath(firstElement, lastElement, finalMap);
     }
 
@@ -97,7 +97,7 @@ export class PathFinding {
 
         while(!isFinished){
             openList = this.findValidAdjacents(map, closedList[closedList.length -1], closedList, openList, lastElement);
-            if(openList.length > 0)closedList.push(openList.pop() as Node);
+			if(openList.length > 0)closedList.push(openList.pop() as Node);
             isFinished = this.isNodeEqual(closedList[closedList.length-1],lastElement) || openList.length == 0;
         }
 
@@ -109,8 +109,8 @@ export class PathFinding {
     	//get all adjacents position possibilities that we don't have in the closed list
 		let validAdjacents = this.findAdjacents(map, currentNode).filter(
 			(elementAdjacent:Node) => {
-				return closedList.some((element:Node) => {
-					return !this.isNodeEqual(element, elementAdjacent)
+				return !closedList.some((element:Node) => {
+					return this.isNodeEqual(element, elementAdjacent)
 				})
 			});
 
@@ -203,6 +203,6 @@ export class PathFinding {
 
 	private isNodeEqual(element:Node, element0:Node):boolean{
         return (element.getRow() == element0.getRow() && element.getCol() == element0.getCol());
-    }
+	}
 
 }
