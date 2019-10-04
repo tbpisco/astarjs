@@ -12,8 +12,8 @@ export class PathFinding {
 	private DEFAULT_DISTANCE:number = 10;
 	private DIAGONAL_DISTANCE:number = 14;
 	private walkableTypes:number[] = [];
-	private start:number;
-	private end:number;
+	private start:number|{row:number, col:number};
+	private end:number|{row:number, col:number};
 
     constructor(){
 
@@ -24,28 +24,34 @@ export class PathFinding {
 		return this;
 	}
 
-	public setStart(start:number){
+	public setStart(start:number|{row:number, col:number}){
 		this.start = start;
 		return this;
 	}
 
-	public setEnd(end:number){
+	public setEnd(end:number|{row:number, col:number}){
 		this.end = end;
 		return this;
 	}
 
 	private gameMapToPathfind(map: number[][]): number[][] {
-        return map.map(row=>{
-            return row.map(id => {
-				if(this.start == id){
+		const isStartObject:boolean = typeof this.start === "number";
+		const isEndObject:boolean = typeof this.end === "number";
+        return map.map((row, rowIndex)=>{
+            return row.map((id, colIndex) => {
+				if(isStartObject && this.start == id ||
+					!isStartObject && (this.start as {row:number, col:number}).row == rowIndex && 
+					(this.start as {row:number, col:number}).col == colIndex){
 					return Types.START;
-				} else if(this.end == id){
+				} else if(isEndObject && this.end == id ||
+					!isEndObject && (this.end as {row:number, col:number}).row == rowIndex && 
+					(this.end as {row:number, col:number}).col == colIndex){
 					return Types.END;
 				} else if(this.walkableTypes.indexOf(id) > -1){
                       return Types.WALKABLE;
-                  } else {
+                } else {
                       return Types.NON_WALKABLE;
-                  }
+                }
              });
         });
     }
@@ -60,8 +66,8 @@ export class PathFinding {
 		}
 
 		let finalMap:number[][] = this.gameMapToPathfind(map);
-        let firstElement = this.findStartElement(finalMap);
-		let lastElement = this.findEndElement(finalMap);
+		let firstElement = (typeof this.start !== "number") ? new Node(this.start.row, this.start.col) : this.findStartElement(finalMap);
+		let lastElement = (typeof this.end !== "number") ? new Node(this.end.row, this.end.col) : this.findEndElement(finalMap);
         return this.findBestPath(firstElement, lastElement, finalMap);
     }
 

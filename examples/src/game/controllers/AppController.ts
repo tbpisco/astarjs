@@ -75,13 +75,13 @@ export class AppController {
         mapViewContainer.y = this.mapPaddingTopBottom/5 * 4;
         this.app.stage.addChild(mapViewContainer);
 
-        let title = new Title("PathFinding", width);
-        title.x = (( width ) - title.width)/2;
+        let title = new Title("PATHFINDING", width);
+        title.x = (width - title.width)*0.5;
         title.y = 0;
         this.app.stage.addChild(title);
 
         this.instructions = new Instructions(this.gameStateManager.currentState.instructions, width - this.mapPaddingLeftRight);
-        this.instructions.x = this.mapPaddingLeftRight/2;
+        this.instructions.x = this.mapPaddingLeftRight*0.5;
         this.instructions.y = title.height;
         this.app.stage.addChild(this.instructions);
 

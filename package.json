@@ -1,7 +1,7 @@
 {
   "name": "astarjs",
-  "version": "0.0.1",
-  "description": "",
+  "version": "0.0.2",
+  "description": "Pathfinding algorithm library.",
   "main": "lib/index.js",
   "typings": "lib/index.d.ts",
   "scripts": {
@@ -11,8 +11,12 @@
     "build": "webpack --env.production",
     "watch": "tsc -w"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "Thatiane Pisco",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:tbpisco/astarjs.git"
+  },
+  "homepage": "https://github.com/RobotlegsJS/RobotlegsJS-Pixi#readme",
   "devDependencies": {
     "@types/jquery": "^2.0.42",
     "@types/pixi.js": "^4.8.2",

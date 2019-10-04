@@ -12,8 +12,14 @@ export declare class PathFinding {
     private end;
     constructor();
     setWalkable(...args: number[]): this;
-    setStart(start: number): this;
-    setEnd(end: number): this;
+    setStart(start: number | {
+        row: number;
+        col: number;
+    }): this;
+    setEnd(end: number | {
+        row: number;
+        col: number;
+    }): this;
     private gameMapToPathfind;
     find(map: number[][]): {
         col: number;

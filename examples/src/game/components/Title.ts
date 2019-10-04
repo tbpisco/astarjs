@@ -3,15 +3,15 @@ export class Title extends PIXI.Text {
     constructor(text:string, width: number){
 
         var style = new PIXI.TextStyle({
-            fontFamily: 'FuturaHandwritten',
+            fontFamily: 'Helvetica',
             fontSize: 36,
             fontWeight: 'bold',
-            fill: '#c3087e',
+            fill: '#ebce8d',
             dropShadow: true,
-            dropShadowColor: '#000000',
+            dropShadowColor: '#f8eec7',
             dropShadowBlur: 3,
-            dropShadowAngle: Math.PI / 6,
-            dropShadowDistance: 2,
+            dropShadowAngle: Math.PI / 4,
+            dropShadowDistance: 3,
             wordWrap: true,
             align: 'center',
             wordWrapWidth: width
