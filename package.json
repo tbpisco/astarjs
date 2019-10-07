@@ -12,6 +12,7 @@
     "watch": "tsc -w"
   },
   "author": "Thatiane Pisco",
+  "license": "MIT",
   "repository": {
     "type": "git",
     "url": "git@github.com:tbpisco/astarjs.git"

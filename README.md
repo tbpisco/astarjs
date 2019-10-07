@@ -13,7 +13,7 @@ Usage
 ---
 
 ```typescript
-import { PathFinding, Types } from 'astarjs';
+import { PathFinding } from 'astarjs';
 
 let map = [ [0,  0,  14, 23, 23, 0,  0,  23, 0,  0,  0,  2,  0,  0],
             [0,  0,  0,  0,  0,  0,  13, 1,  0,  0,  0,  0,  0,  13],
@@ -43,7 +43,7 @@ or
 
 ```typescript
 
-import { PathFinding, Types } from 'astarjs';
+import { PathFinding } from 'astarjs';
 
 let map = [ [0,  0,  14, 23, 23, 0,  0,  23, 0,  0,  0,  2,  0,  0],
             [0,  0,  0,  0,  0,  0,  13, 1,  0,  0,  0,  0,  0,  13],
@@ -82,3 +82,5 @@ npm start
 
 License
 ---
+
+[MIT](https://github.com/tbpisco/astarjs/blob/master/LICENSE)
