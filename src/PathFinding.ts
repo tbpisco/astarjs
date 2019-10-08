@@ -57,11 +57,11 @@ export class PathFinding {
     }
 
     public find(map: number[][]): {col:number,row:number}[]{
-		if(!this.start){
+		if(this.start == undefined || this.start == null){
 			throw new Error('There is no start point. Please, use setStart() to configure the path\'s start point.');
 		}
 
-		if(!this.end){
+		if(this.end == undefined || this.end == null){
 			throw new Error('There is no end point. Please, use setEnd() to configure the path\'s end point.');
 		}
 
@@ -72,16 +72,24 @@ export class PathFinding {
     }
 
 	private findStartElement(map:number[][]): Node {
-		return this.findElement(map, Types.START);
+    	let startPoint:Node = this.findElement(map, Types.START) as Node;
+    	if(startPoint == null){
+    		throw new Error('Couldn\'t find a start point.');
+		}
+		return startPoint;
 	}
 
 	private findEndElement(map:number[][]): Node {
-		return this.findElement(map, Types.END);
+		let endPoint:Node = this.findElement(map, Types.END) as Node;
+		if(endPoint == null){
+			throw new Error('Couldn\'t find a end point.');
+		}
+		return endPoint;
 	}
 
-	private findElement(map:number[][], value:number): Node {
+	private findElement(map:number[][], value:number): Node | null {
 
-		let el = new Node(0,0);
+		let el = null;
 		map.forEach((element, indexRow) => {
 			element.forEach((element, indexCol) => {
 				if(element == value){
@@ -90,7 +98,6 @@ export class PathFinding {
 			});
 		});
 		return el;
-
 	}
 
     private findBestPath(firstElement: Node, lastElement:Node, map: number[][]): {col:number,row:number}[]{
@@ -198,9 +205,8 @@ export class PathFinding {
         while(currentNode){
             listPath.push(this.nodeToObject(currentNode));
             currentNode = currentNode.getParent();
-            if(!currentNode)return listPath.reverse();
         }
-        return [];
+        return listPath.reverse();
     }
 
 	private nodeToObject(node:Node){
