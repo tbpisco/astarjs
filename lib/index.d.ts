@@ -1,1 +1,1 @@
-export { PathFinding } from './PathFinding';
+export { PathFinding, Heuristic } from './PathFinding';

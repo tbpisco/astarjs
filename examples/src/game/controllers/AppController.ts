@@ -1,5 +1,5 @@
 import { MapView } from '../views/MapView';
-import { PathFinding } from '../../../../src/';
+import { PathFinding, Heuristic } from '../../../../src/';
 import { MapModel } from '../models/MapModel';
 import { Title } from '../components/Title';
 import { Instructions } from '../components/Instructions';
@@ -18,7 +18,7 @@ export class AppController {
     private mapPaddingLeftRight : number = this.size * 2;
 
     private gameStateManager : GameStateManager;
-    private pathFindingManager:PathFinding = new PathFinding();
+    private pathFindingManager:PathFinding = new PathFinding({heuristic:Heuristic.MANHATTAN, allowDiagonal:false});
 
     private mapView : MapView = new MapView(this.size);
     private resources : any;

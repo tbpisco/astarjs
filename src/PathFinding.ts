@@ -7,16 +7,27 @@ export enum Types {
     NON_WALKABLE
 }
 
+export enum Heuristic {
+	MANHATTAN,
+	DIAGONAL
+}
+
 export class PathFinding {
 
 	private DEFAULT_DISTANCE:number = 10;
 	private DIAGONAL_DISTANCE:number = 14;
+
+	private heuristic:Heuristic = Heuristic.MANHATTAN;
+	private allowDiagonal:boolean = false;
 	private walkableTypes:number[] = [];
 	private start:number|{row:number, col:number};
 	private end:number|{row:number, col:number};
 
-    constructor(){
-
+    constructor(options?:{heuristic:Heuristic, allowDiagonal?:boolean}){
+		if(options && options.heuristic){
+			this.heuristic = options.heuristic;
+			this.allowDiagonal = options.allowDiagonal || false;
+		}
 	}
 	
 	public setWalkable(...args:number[]){
@@ -88,13 +99,12 @@ export class PathFinding {
 	}
 
 	private findElement(map:number[][], value:number): Node | null {
-
 		let el = null;
 		map.forEach((element, indexRow) => {
 			element.forEach((element, indexCol) => {
 				if(element == value){
 					el = new Node(indexRow, indexCol);
-				}
+				} 
 			});
 		});
 		return el;
@@ -155,7 +165,7 @@ export class PathFinding {
 		//update distance values for the potencial new positions in the open list
 		validAdjacentsNewOpenList.forEach((element) => {
 			element.setParent(currentNode);
-			element.setH(this.distanceBetweenNodes(element, lastElement, this.DEFAULT_DISTANCE));
+			element.setH(this.distanceBetweenNodes(element, lastElement));
 			element.setG(this.getMoveValue(currentNode, element));
 			openList.push(element);
 		});
@@ -165,10 +175,15 @@ export class PathFinding {
 		return openList;
 	}
 
-	private distanceBetweenNodes(initialNode:Node, finalNode:Node, val:number){
+	private distanceBetweenNodes(initialNode:Node, finalNode:Node){
 		let col = Math.abs(finalNode.getCol() - initialNode.getCol());
 		let row = Math.abs(finalNode.getRow() - initialNode.getRow());
-		return col*val + row*val;
+
+		if(this.heuristic === Heuristic.MANHATTAN){
+			return this.DEFAULT_DISTANCE*(col + row);
+		} else {
+			return this.DEFAULT_DISTANCE*(col + row) + (this.DIAGONAL_DISTANCE -2*this.DEFAULT_DISTANCE)*Math.min(col,row);
+		}
 	}
 
 	private getMoveValue(node:Node, newNode:Node){
@@ -179,20 +194,40 @@ export class PathFinding {
 	private findAdjacents(map:number[][], node:Node) : Node[] {
 
 		let adjacents: Node[] = [];
-
-		let verify = [[-1,-1], [-1,0] , [-1, 1], [0,-1],
-			[0,1], [1,-1], [1,0] , [1, 1]];
+		let diagonal = [[-1,-1], [-1,1], [1,-1], [1,1]];
+		let manhattan = [[-1,0], [0,-1], [0,1], [1,0]];
 
 		let mapElements = map;
+		let x, y = 0;
 
-		for(let v = 0; v < verify.length; v++){
-
-			let x = node.getRow() + verify[v][0];
-			let y = node.getCol() + verify[v][1];
+		for(let v = 0; v < manhattan.length; v++){
+			x = node.getRow() + manhattan[v][0];
+			y = node.getCol() + manhattan[v][1];
 
 			if(x > -1 && y > -1 && x < mapElements.length && y < mapElements[x].length
 				&& (mapElements[x][y] == Types.WALKABLE || mapElements[x][y] == Types.END )){
 				adjacents.push(new Node(x, y));
+			}
+		}
+
+		if(this.heuristic === Heuristic.DIAGONAL){
+			for(let v = 0; v < diagonal.length; v++){
+				x = node.getRow() + diagonal[v][0];
+				y = node.getCol() + diagonal[v][1];
+	
+				if(x > -1 && y > -1 && x < mapElements.length && y < mapElements[x].length
+					&& (mapElements[x][y] == Types.WALKABLE || mapElements[x][y] == Types.END )){
+					if(!this.allowDiagonal){
+						if(diagonal[v][0] == -1 && diagonal[v][1] == -1 && (mapElements[x+1][y] == Types.WALKABLE && mapElements[x][y+1] == Types.WALKABLE)
+						|| diagonal[v][0] == -1 && diagonal[v][1] == 1 && (mapElements[x][y-1] == Types.WALKABLE && mapElements[x+1][y] == Types.WALKABLE)
+						|| diagonal[v][0] == 1 && diagonal[v][1] == -1 && (mapElements[x-1][y] == Types.WALKABLE && mapElements[x][y+1] == Types.WALKABLE)
+						|| diagonal[v][0] == 1 && diagonal[v][1] == 1 && (mapElements[x][y-1] == Types.WALKABLE && mapElements[x-1][y] == Types.WALKABLE)){
+							adjacents.push(new Node(x, y));
+						}
+					} else { 
+						adjacents.push(new Node(x, y));
+					}
+				}
 			}
 		}
 

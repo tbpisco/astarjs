@@ -60,12 +60,27 @@ export class Tile extends PIXI.Sprite {
         this.addChild(this.background);
 
         this.element = new PIXI.Sprite();
-        this.element.anchor.set(0.5,0.5);
+        this.element.anchor.set(0.5);
         this.element.texture = new PIXI.Texture(this.tex, 
             this.getFrameByType(0), 
             new Rectangle(0, 0, this.texSize,this.texSize), 
             new Rectangle(0, 0, this.size, this.size));
         this.addChild(this.element);
+
+        if(type != TILE.BORDER_TOP_LEFT && type != TILE.BORDER_MIDDLE_LEFT &&
+            type != TILE.BORDER_BOTTOM_LEFT && type != TILE.BORDER_TOP_MIDDLE &&
+            type != TILE.BORDER_BOTTOM_MIDDLE && type != TILE.BORDER_TOP_RIGHT &&
+            type != TILE.BORDER_MIDDLE_RIGHT && type != TILE.BORDER_BOTTOM_RIGHT){
+                let border = new PIXI.Graphics();
+                let borderWidth = 1;
+                border.lineStyle(borderWidth,0xa6f27d,0.5);
+                border.moveTo(-this.background.width*0.5, -this.background.height*0.5);
+                border.lineTo(this.background.width*0.5, -this.background.height*0.5);
+                border.lineTo(this.background.width*0.5, this.background.height*0.5);
+                border.lineTo(-this.background.width*0.5, this.background.height*0.5);
+                border.lineTo(-this.background.width*0.5, -this.background.height*0.5);
+                this.addChild(border);
+        }
             
         this.tex.baseTexture.scaleMode = PIXI.SCALE_MODES.NEAREST;
         this.update();
