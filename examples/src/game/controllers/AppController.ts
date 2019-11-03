@@ -18,7 +18,7 @@ export class AppController {
     private mapPaddingLeftRight : number = this.size * 2;
 
     private gameStateManager : GameStateManager;
-    private pathFindingManager:PathFinding = new PathFinding({heuristic:Heuristic.MANHATTAN, allowDiagonal:false});
+    private pathFindingManager:PathFinding;
 
     private mapView : MapView = new MapView(this.size);
     private resources : any;
@@ -154,9 +154,10 @@ export class AppController {
     }
 
     findPath(){
-       this.pathFindingManager.setWalkable(TILE.GREEN).setEnd(TILE.END).setStart(TILE.START);
-       let bestPath: {col:number,row:number}[] = this.pathFindingManager.find(this.map.get());
-       if(bestPath.length > 0)this.showNodes(bestPath);
+        this.pathFindingManager = new PathFinding({heuristic:Heuristic.DIAGONAL, allowDiagonal:true});
+        this.pathFindingManager.setWalkable(TILE.GREEN).setEnd(TILE.END).setStart(TILE.START);
+        let bestPath: {col:number,row:number}[] = this.pathFindingManager.find(this.map.get());
+        if(bestPath.length > 0)this.showNodes(bestPath);
     }
 
     showNodes(listPath:{col:number, row:number}[]){

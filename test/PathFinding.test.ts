@@ -1,10 +1,10 @@
-import { assert , expect } from "chai";
+import {assert, expect} from "chai";
 
 import "../src/PathFinding";
-import {PathFinding} from '../src';
-import {Utils, TILE} from './entry';
+import {Heuristic, PathFinding} from '../src';
+import {TILE, Utils} from './entry';
 
-describe("ContainsPatch", () => {
+describe("PathFinding MANHATTAN", () => {
 	let pfManager: PathFinding;
 
 	beforeEach(() => {
@@ -143,8 +143,56 @@ describe("ContainsPatch", () => {
 	});
 
 	it("PathFinding find method always an result ", () => {
-		new Array(100).fill(null).forEach((num, numIndex) =>{
-			let map = Utils.createRandomMap(100,100);
+		new Array(60).fill(null).forEach((num, numIndex) =>{
+			let map = Utils.createRandomMap(20,20);
+			pfManager.setWalkable(0);
+			pfManager.setStart(TILE.START);
+			pfManager.setEnd(TILE.END);
+			let result = pfManager.find(map as number[][]);
+			assert.isArray(result);
+		})
+	});
+});
+
+describe("PathFinding DIAGONAL", () => {
+	let pfManager: PathFinding;
+
+	beforeEach(() => {
+		pfManager = new PathFinding({heuristic:Heuristic.DIAGONAL, allowDiagonal:true});
+	});
+
+	afterEach(() => {
+		// @ts-ignore
+		pfManager = null;
+	});
+
+	it("PathFinding find method always an result ", () => {
+		new Array(60).fill(null).forEach((num, numIndex) =>{
+			let map = Utils.createRandomMap(20,20);
+			pfManager.setWalkable(0);
+			pfManager.setStart(TILE.START);
+			pfManager.setEnd(TILE.END);
+			let result = pfManager.find(map as number[][]);
+			assert.isArray(result);
+		})
+	});
+});
+
+describe("PathFinding DIAGONAL, allowDiagonal: false", () => {
+	let pfManager: PathFinding;
+
+	beforeEach(() => {
+		pfManager = new PathFinding({heuristic:Heuristic.DIAGONAL});
+	});
+
+	afterEach(() => {
+		// @ts-ignore
+		pfManager = null;
+	});
+
+	it("PathFinding find method always an result ", () => {
+		new Array(60).fill(null).forEach((num, numIndex) =>{
+			let map = Utils.createRandomMap(20,20);
 			pfManager.setWalkable(0);
 			pfManager.setStart(TILE.START);
 			pfManager.setEnd(TILE.END);
