@@ -8,6 +8,7 @@ import Button from '../components/Button';
 import { TILE } from '../views/Tile';
 import Application = PIXI.Application;
 import Loader = PIXI.loaders.Loader;
+import { SettingsMenu } from '../components/SettingsMenu';
 
 export class AppController {
 
@@ -33,6 +34,7 @@ export class AppController {
     public buttonDone:Button;
     public buttonRandom:Button;
     public buttonReset:Button;
+    public settingsMenu: SettingsMenu;
 
     constructor(){
 
@@ -97,15 +99,24 @@ export class AppController {
         this.buttonReset = new Button(310, this.instructions.y + this.instructions.height + 15 , 100, 20);
         this.buttonReset.setText("RESET");
         this.buttonReset.clicked = this.onResetClicked.bind(this);
+
+        this.settingsMenu = new SettingsMenu();
+        this.settingsMenu.x = 130;
+        this.settingsMenu.y = 510;
+        this.app.stage.addChild(this.settingsMenu);
+        
     }
 
     buildView(){
         this.buttonDone.x = 310;
         this.app.stage.addChild(this.buttonDone);
+        this.buttonRandom.reset();
         this.app.stage.removeChild(this.buttonRandom);
     }
 
     removeButtonView(){
+        this.buttonDone.reset();
+        this.buttonRandom.reset();
         this.app.stage.removeChild(this.buttonDone);
         this.app.stage.removeChild(this.buttonRandom);
     }
@@ -116,6 +127,8 @@ export class AppController {
 
     onResetClicked(){
         this.gameStateManager.update();
+        this.buttonDone.reset();
+        this.buttonReset.reset();
         this.app.stage.removeChild(this.buttonDone);
         this.app.stage.removeChild(this.buttonReset);
         this.app.stage.addChild(this.buttonRandom);
@@ -154,7 +167,24 @@ export class AppController {
     }
 
     findPath(){
-        this.pathFindingManager = new PathFinding({heuristic:Heuristic.DIAGONAL, allowDiagonal:true});
+        let heuristic:Heuristic;
+        let allowDiagonal:boolean = false;
+        switch(this.settingsMenu.selectedMode){
+            case "manhattan":
+                heuristic = Heuristic.MANHATTAN;
+            break;
+            case "diagonal":
+                heuristic = Heuristic.DIAGONAL;
+            break;
+            case "allDiagonals":
+                heuristic = Heuristic.DIAGONAL;
+                allowDiagonal = true;
+            break;
+            default:
+                heuristic = Heuristic.MANHATTAN;
+        }
+        
+        this.pathFindingManager = new PathFinding({heuristic,allowDiagonal});
         this.pathFindingManager.setWalkable(TILE.GREEN).setEnd(TILE.END).setStart(TILE.START);
         let bestPath: {col:number,row:number}[] = this.pathFindingManager.find(this.map.get());
         if(bestPath.length > 0)this.showNodes(bestPath);
