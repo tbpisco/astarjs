@@ -38,7 +38,9 @@ export declare class PathFinding {
     private findEndElement;
     private findElement;
     private findBestPath;
-    private findValidAdjacents;
+    private updateLists;
+    private elementNotExistsInside;
+    private elementExistsInside;
     private distanceBetweenNodes;
     private getMoveValue;
     private findAdjacents;
