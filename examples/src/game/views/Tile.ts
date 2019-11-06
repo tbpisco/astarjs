@@ -1,4 +1,8 @@
-import { Rectangle, Texture } from "pixi.js";
+import Texture = PIXI.Texture;
+import Graphics = PIXI.Graphics;
+import Rectangle = PIXI.Rectangle;
+import Resource = PIXI.loaders.Resource;
+import Sprite = PIXI.Sprite;
 
 export enum TILE {
     GREEN,
@@ -27,7 +31,7 @@ export enum TILE {
     HOUSE
 }
 
-export class Tile extends PIXI.Sprite {
+export class Tile extends Sprite {
 
     private size : number;
     private col : number;
@@ -35,12 +39,12 @@ export class Tile extends PIXI.Sprite {
     public type : number;
     public typePos : number = 0;
     public availableTypes : number[] = [TILE.GREEN, TILE.HOUSE, TILE.WATER, TILE.TREES, TILE.MOUNTAIN, TILE.MOUNTAIN_BROWN]; 
-    public background : PIXI.Sprite; 
-    public element : PIXI.Sprite;
+    public background : Sprite; 
+    public element : Sprite;
     private tex : any;
     private texSize : number = 16;
 
-    constructor(type: number, col: number, row: number, size: number, resources: PIXI.loaders.Resource){
+    constructor(type: number, col: number, row: number, size: number, resources: Resource){
         super();
         this.tex = resources.texture;
         this.col = col;
@@ -51,17 +55,17 @@ export class Tile extends PIXI.Sprite {
         this.setTypePos(this.type);
         this.scale.set(size/this.texSize);
 
-        this.background = new PIXI.Sprite();
+        this.background = new Sprite();
         this.background.anchor.set(0.5,0.5);
-        this.background.texture = new PIXI.Texture(this.tex, 
+        this.background.texture = new Texture(this.tex, 
             this.getFrameByType(0), 
             new Rectangle(0, 0, this.texSize, this.texSize), 
             new Rectangle(0, 0, this.size, this.size));
         this.addChild(this.background);
 
-        this.element = new PIXI.Sprite();
+        this.element = new Sprite();
         this.element.anchor.set(0.5);
-        this.element.texture = new PIXI.Texture(this.tex, 
+        this.element.texture = new Texture(this.tex, 
             this.getFrameByType(0), 
             new Rectangle(0, 0, this.texSize,this.texSize), 
             new Rectangle(0, 0, this.size, this.size));
@@ -71,7 +75,7 @@ export class Tile extends PIXI.Sprite {
             type != TILE.BORDER_BOTTOM_LEFT && type != TILE.BORDER_TOP_MIDDLE &&
             type != TILE.BORDER_BOTTOM_MIDDLE && type != TILE.BORDER_TOP_RIGHT &&
             type != TILE.BORDER_MIDDLE_RIGHT && type != TILE.BORDER_BOTTOM_RIGHT){
-                let border = new PIXI.Graphics();
+                let border = new Graphics();
                 let borderWidth = 1;
                 border.lineStyle(borderWidth,0xa6f27d,0.5);
                 border.moveTo(-this.background.width*0.5, -this.background.height*0.5);
@@ -125,7 +129,7 @@ export class Tile extends PIXI.Sprite {
         if(background.indexOf(this.type) > -1)this.background.visible = true;
             else this.background.visible = false;
 
-        this.element.texture = new PIXI.Texture(this.tex, 
+        this.element.texture = new Texture(this.tex, 
             this.getFrameByType(this.type), 
             new Rectangle(0, 0, this.texSize, this.texSize), 
             new Rectangle(0, 0, this.size, this.size));
@@ -137,7 +141,7 @@ export class Tile extends PIXI.Sprite {
         this.update();
     }
 
-    getFrameByType(type: number) : PIXI.Rectangle {
+    getFrameByType(type: number) : Rectangle {
         switch(type){
             case TILE.BOTTOM_LEFT:
                 return new Rectangle(0*16,41*16,this.texSize,this.texSize);

@@ -201,20 +201,22 @@ export class PathFinding {
 
 		let adjacents: Node[] = [];
 		let diagonal = [[-1,-1], [-1,1], [1,-1], [1,1]];
-		let manhattan = [[-1,0], [0,-1], [0,1], [1,0]];
+		let square = [[-1,0], [0,-1], [0,1], [1,0]];
 
 		let mapElements = map;
 		let x, y = 0;
 
-		for(let v = 0; v < manhattan.length; v++){
-			x = node.getRow() + manhattan[v][0];
-			y = node.getCol() + manhattan[v][1];
+		for(let v = 0; v < square.length; v++){
+			x = node.getRow() + square[v][0];
+			y = node.getCol() + square[v][1];
 
 			if(x > -1 && y > -1 && x < mapElements.length && y < mapElements[x].length
 				&& (mapElements[x][y] == Types.WALKABLE || mapElements[x][y] == Types.END )){
 				adjacents.push(new Node(x, y));
 			}
 		}
+
+		let addAdjacents = false;
 
 		if(this.heuristic === Heuristic.DIAGONAL){
 			for(let v = 0; v < diagonal.length; v++){
@@ -223,11 +225,16 @@ export class PathFinding {
 	
 				if(x > -1 && y > -1 && x < mapElements.length && y < mapElements[x].length
 					&& (mapElements[x][y] == Types.WALKABLE || mapElements[x][y] == Types.END )){
+						
 					if(!this.allowDiagonal){
-						if(diagonal[v][0] == -1 && diagonal[v][1] == -1 && (mapElements[x+1][y] == Types.WALKABLE && mapElements[x][y+1] == Types.WALKABLE)
-						|| diagonal[v][0] == -1 && diagonal[v][1] == 1 && (mapElements[x+1][y] == Types.WALKABLE && mapElements[x][y-1] == Types.WALKABLE)
-						|| diagonal[v][0] == 1 && diagonal[v][1] == -1 && (mapElements[x-1][y] == Types.WALKABLE && mapElements[x][y+1] == Types.WALKABLE)
-						|| diagonal[v][0] == 1 && diagonal[v][1] == 1 && (mapElements[x-1][y] == Types.WALKABLE && mapElements[x][y-1] == Types.WALKABLE)){
+						addAdjacents = false;
+						for (let index = 0; index < diagonal.length; index++) {
+							if(index == v && mapElements[x-diagonal[v][0]][y] == Types.WALKABLE && 
+								mapElements[x][y-diagonal[v][1]] == Types.WALKABLE){
+									addAdjacents = true;
+							}
+						}
+						if(addAdjacents){
 							adjacents.push(new Node(x, y));
 						}
 					} else { 

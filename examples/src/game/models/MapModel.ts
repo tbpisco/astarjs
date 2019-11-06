@@ -7,7 +7,7 @@ export class MapModel{
     private col: number;
 
     constructor(col: number, row: number, isRandom: boolean){
-        this.map = (isRandom) ? this.createRandomMap(col, row) : this.createEmptyMap(col, row);
+        this.map = isRandom ? this.createRandomMap(col, row) : this.createEmptyMap(col, row);
         this.row = row;
         this.col = col;
     }
@@ -27,7 +27,7 @@ export class MapModel{
     createEmptyMap(col: number, row: number): number[][] {
         let array: number[][] = [];
         for (let index = 0; index < row; index++) {
-            array.push(new Array(col+1).join("0").split("").map((element) => 0));
+            array.push(new Array(col).fill(0));
         }
         return array;
     }
@@ -35,7 +35,7 @@ export class MapModel{
     createRandomMap(col: number, row: number): number[][] {
         let array: number[][] = [];
         for (let index = 0; index < row; index++) {
-            array.push(new Array(col+1).join("0").split("").map((element) => {
+            array.push(new Array(col).fill(0).map((element) => {
                 let num = Math.floor(Math.random()*20);
                 if(num < 15){
                     return TILE.GREEN;

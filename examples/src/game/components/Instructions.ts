@@ -1,8 +1,11 @@
-export class Instructions extends PIXI.Text {
+import Text = PIXI.Text;
+import TextStyle = PIXI.TextStyle;
+
+export class Instructions extends Text {
 
     constructor(text:string, width: number){
 
-        var style = new PIXI.TextStyle({
+        let style = new TextStyle({
             fontFamily: 'Arial',
             fontSize: 16,
             fontWeight: 'bold',
@@ -13,7 +16,5 @@ export class Instructions extends PIXI.Text {
         });
 
         super(text, style);
-
     }
-
 }

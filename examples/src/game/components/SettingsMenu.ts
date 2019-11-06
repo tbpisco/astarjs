@@ -1,4 +1,3 @@
-import * as PIXI from 'pixi.js';
 import Button from './Button';
 import Container = PIXI.Container;
 

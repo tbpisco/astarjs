@@ -19,7 +19,7 @@ export class AppController {
     private mapPaddingLeftRight : number = this.size * 2;
 
     private gameStateManager : GameStateManager;
-    private pathFindingManager:PathFinding;
+    private pathFindingManager : PathFinding;
 
     private mapView : MapView = new MapView(this.size);
     private resources : any;
@@ -70,12 +70,11 @@ export class AppController {
     setupView(width : number, height : number){
 
         this.map = new MapModel(this.mapCol, this.mapRow, this.randomMode);
-        if(this.randomMode)this.mapView.disableTiles();
 
-        let mapViewContainer = this.mapView.createStage(this.map, this.resources);
-        mapViewContainer.x = this.mapPaddingLeftRight/2;
-        mapViewContainer.y = this.mapPaddingTopBottom/5 * 4;
-        this.app.stage.addChild(mapViewContainer);
+        this.mapView.createStage(this.map, this.resources);
+        this.mapView.x = this.mapPaddingLeftRight/2;
+        this.mapView.y = this.mapPaddingTopBottom/5 * 4;
+        this.app.stage.addChild(this.mapView);
 
         let title = new Title("PATHFINDING", width);
         title.x = (width - title.width)*0.5;
@@ -126,6 +125,7 @@ export class AppController {
     }
 
     onResetClicked(){
+        this.mapView.clearTimeoutList();
         this.gameStateManager.update();
         this.buttonDone.reset();
         this.buttonReset.reset();
