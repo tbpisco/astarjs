@@ -142,7 +142,22 @@ describe("PathFinding MANHATTAN", () => {
 		expect(result1).to.eql(result0);
 	});
 
-	it("PathFinding find method always an result ", () => {
+	it("PathFinding find method return a result", () => {
+		const map = [
+			[0,0,0,0,8,0,0],
+			[0,0,0,0,0,3,0],
+			[0,0,3,0,0,0,0],
+			[0,0,3,0,3,3,3],
+			[0,0,0,0,4,0,3]];
+		pfManager.setWalkable(0);
+		pfManager.setStart(4);
+		pfManager.setEnd(8);
+		let result = pfManager.find(map);
+		assert.isArray(result);
+		assert(result.length > 0);
+	});
+
+	it("PathFinding find method always return an array.", () => {
 		new Array(60).fill(null).forEach((num, numIndex) =>{
 			let map = Utils.createRandomMap(20,20);
 			pfManager.setWalkable(0);
@@ -166,7 +181,7 @@ describe("PathFinding DIAGONAL", () => {
 		pfManager = null;
 	});
 
-	it("PathFinding find method always an result ", () => {
+	it("PathFinding find method always return an array.", () => {
 		new Array(60).fill(null).forEach((num, numIndex) =>{
 			let map = Utils.createRandomMap(20,20);
 			pfManager.setWalkable(0);
@@ -190,7 +205,7 @@ describe("PathFinding DIAGONAL, allowDiagonal: false", () => {
 		pfManager = null;
 	});
 
-	it("PathFinding find method always an result ", () => {
+	it("PathFinding find method always return an array.", () => {
 		new Array(60).fill(null).forEach((num, numIndex) =>{
 			let map = Utils.createRandomMap(20,20);
 			pfManager.setWalkable(0);

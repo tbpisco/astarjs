@@ -115,35 +115,37 @@ export class PathFinding {
 		let closedList: Node[] = [];
 		let openList: Node[]= [];
 		let isFinished: boolean = false;
-
+		let lastNode:Node = firstElement;
+		let lastNodeAdjacents;
         closedList.push(firstElement);
 
         while(!isFinished){
-            openList = this.findValidAdjacents(map, closedList[closedList.length -1], closedList, openList, lastElement);
+            this.updateLists(map, lastNode, closedList, openList, lastElement);
 			if(openList.length > 0)closedList.push(openList.pop() as Node);
-            isFinished = this.isNodeEqual(closedList[closedList.length-1],lastElement) || openList.length == 0;
+
+			lastNode = closedList[closedList.length -1];
+
+			lastNodeAdjacents = this.findAdjacents(map, lastNode).filter(
+				(elementAdjacent:Node) =>
+					this.elementNotExistsInside(openList, elementAdjacent) &&
+					this.elementNotExistsInside(closedList, elementAdjacent));
+
+            isFinished = this.isNodeEqual(closedList[closedList.length-1],lastElement) ||
+				(openList.length == 0 && !lastNodeAdjacents.length);
         }
 
         return (openList.length > 0) ? this.getPath(closedList[closedList.length-1]) : [];
     }
 
-	private findValidAdjacents(map:number[][], currentNode:Node, closedList:Node[], openList: Node[], lastElement:Node){
+	private updateLists(map:number[][], currentNode:Node, closedList:Node[], openList: Node[], lastElement:Node){
 
     	//get all adjacents position possibilities that we don't have in the closed list
 		let validAdjacents = this.findAdjacents(map, currentNode).filter(
-			(elementAdjacent:Node) => {
-				return !closedList.some((element:Node) => {
-					return this.isNodeEqual(element, elementAdjacent)
-				})
-			});
+			(elementAdjacent:Node) => this.elementNotExistsInside(closedList, elementAdjacent));
 
 		//get all adjacents position possibilities that we have in the open list and don't have inside the closed list
 		let validAdjacentsOpenList = validAdjacents.filter(
-			(elementAdjacent:Node) => {
-				return openList.some((element:Node) => {
-					return this.isNodeEqual(element, elementAdjacent)
-				})
-			});
+			(elementAdjacent:Node) => this.elementExistsInside(openList, elementAdjacent));
 
 		//update distance values if the new potencial Node position on the path is longer than the current one
 		validAdjacentsOpenList.forEach((elementAdjacent:Node) => {
@@ -156,11 +158,7 @@ export class PathFinding {
 
 		//get all adjacents posiiton possibilities that we don't have in the open list and don't have inside the closed list
 		let validAdjacentsNewOpenList = validAdjacents.filter(
-			(elementAdjacent:Node) => {
-				return !openList.some((element:Node) => {
-					return this.isNodeEqual(element, elementAdjacent)
-				})
-			});
+			(elementAdjacent:Node) => this.elementNotExistsInside(openList, elementAdjacent));
 
 		//update distance values for the potencial new positions in the open list
 		validAdjacentsNewOpenList.forEach((element) => {
@@ -171,8 +169,16 @@ export class PathFinding {
 		});
 
 		openList.sort((a,b) => b.getValue() - a.getValue());
+	}
 
-		return openList;
+	private elementNotExistsInside(list:Node[], element:Node){
+		return !this.elementExistsInside(list, element);
+	}
+
+	private elementExistsInside(list:Node[], element:Node){
+		return list.some((el:Node) => {
+			return this.isNodeEqual(el, element)
+		})
 	}
 
 	private distanceBetweenNodes(initialNode:Node, finalNode:Node){
@@ -219,9 +225,9 @@ export class PathFinding {
 					&& (mapElements[x][y] == Types.WALKABLE || mapElements[x][y] == Types.END )){
 					if(!this.allowDiagonal){
 						if(diagonal[v][0] == -1 && diagonal[v][1] == -1 && (mapElements[x+1][y] == Types.WALKABLE && mapElements[x][y+1] == Types.WALKABLE)
-						|| diagonal[v][0] == -1 && diagonal[v][1] == 1 && (mapElements[x][y-1] == Types.WALKABLE && mapElements[x+1][y] == Types.WALKABLE)
+						|| diagonal[v][0] == -1 && diagonal[v][1] == 1 && (mapElements[x+1][y] == Types.WALKABLE && mapElements[x][y-1] == Types.WALKABLE)
 						|| diagonal[v][0] == 1 && diagonal[v][1] == -1 && (mapElements[x-1][y] == Types.WALKABLE && mapElements[x][y+1] == Types.WALKABLE)
-						|| diagonal[v][0] == 1 && diagonal[v][1] == 1 && (mapElements[x][y-1] == Types.WALKABLE && mapElements[x-1][y] == Types.WALKABLE)){
+						|| diagonal[v][0] == 1 && diagonal[v][1] == 1 && (mapElements[x-1][y] == Types.WALKABLE && mapElements[x][y-1] == Types.WALKABLE)){
 							adjacents.push(new Node(x, y));
 						}
 					} else { 
