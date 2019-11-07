@@ -72,7 +72,7 @@ Options
 
 Heuristic.MANHATTAN
 ---
-
+```typescript
 let map = [ [0,  0,  14, 23, 23, 0],
             [0,  0,  0,  0,  0,  0],
             [0,  0,  0,  0,  0,  0],
@@ -86,25 +86,25 @@ let pathFindingManager = new PathFinding(options);
 this.pathFindingManager.setWalkable(0); 
 this.pathFindingManager.setEnd({col: 5, row: 2});
 this.pathFindingManager.setStart({col: 2, row: 6});
-
+```
 Heuristic.DIAGONAL 
 ---
-
+```typescript
 let options: {heuristic?:Heuristic,allowDiagonal?:boolean} = {heuristic:Heuristic.DIAGONAL};
 let pathFindingManager = new PathFinding(options);
 this.pathFindingManager.setWalkable(0); 
 this.pathFindingManager.setEnd({col: 5, row: 2});
 this.pathFindingManager.setStart({col: 2, row: 6});
-
+```
 Heuristic.DIAGONAL (allow diagonal)
 ---
-
+```typescript
 let options: {heuristic?:Heuristic,allowDiagonal?:boolean} = {heuristic:Heuristic.DIAGONAL, allowDiagonal:true};
 let pathFindingManager = new PathFinding(options);
 this.pathFindingManager.setWalkable(0); 
 this.pathFindingManager.setEnd({col: 5, row: 2});
 this.pathFindingManager.setStart({col: 2, row: 6});
-
+```
 [See full example here](https://github.com/tbpisco/astarjs/tree/master/examples)
 
 Running the example
