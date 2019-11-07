@@ -1,5 +1,5 @@
 import { MapView } from '../views/MapView';
-import { PathFinding } from '../../../../src/';
+import { PathFinding, Heuristic } from '../../../../src/';
 import { MapModel } from '../models/MapModel';
 import { Title } from '../components/Title';
 import { Instructions } from '../components/Instructions';
@@ -8,6 +8,7 @@ import Button from '../components/Button';
 import { TILE } from '../views/Tile';
 import Application = PIXI.Application;
 import Loader = PIXI.loaders.Loader;
+import { SettingsMenu } from '../components/SettingsMenu';
 
 export class AppController {
 
@@ -18,7 +19,7 @@ export class AppController {
     private mapPaddingLeftRight : number = this.size * 2;
 
     private gameStateManager : GameStateManager;
-    private pathFindingManager:PathFinding = new PathFinding();
+    private pathFindingManager : PathFinding;
 
     private mapView : MapView = new MapView(this.size);
     private resources : any;
@@ -33,6 +34,7 @@ export class AppController {
     public buttonDone:Button;
     public buttonRandom:Button;
     public buttonReset:Button;
+    public settingsMenu: SettingsMenu;
 
     constructor(){
 
@@ -68,12 +70,11 @@ export class AppController {
     setupView(width : number, height : number){
 
         this.map = new MapModel(this.mapCol, this.mapRow, this.randomMode);
-        if(this.randomMode)this.mapView.disableTiles();
 
-        let mapViewContainer = this.mapView.createStage(this.map, this.resources);
-        mapViewContainer.x = this.mapPaddingLeftRight/2;
-        mapViewContainer.y = this.mapPaddingTopBottom/5 * 4;
-        this.app.stage.addChild(mapViewContainer);
+        this.mapView.createStage(this.map, this.resources);
+        this.mapView.x = this.mapPaddingLeftRight/2;
+        this.mapView.y = this.mapPaddingTopBottom/5 * 4;
+        this.app.stage.addChild(this.mapView);
 
         let title = new Title("PATHFINDING", width);
         title.x = (width - title.width)*0.5;
@@ -97,15 +98,24 @@ export class AppController {
         this.buttonReset = new Button(310, this.instructions.y + this.instructions.height + 15 , 100, 20);
         this.buttonReset.setText("RESET");
         this.buttonReset.clicked = this.onResetClicked.bind(this);
+
+        this.settingsMenu = new SettingsMenu();
+        this.settingsMenu.x = 130;
+        this.settingsMenu.y = 510;
+        this.app.stage.addChild(this.settingsMenu);
+        
     }
 
     buildView(){
         this.buttonDone.x = 310;
         this.app.stage.addChild(this.buttonDone);
+        this.buttonRandom.reset();
         this.app.stage.removeChild(this.buttonRandom);
     }
 
     removeButtonView(){
+        this.buttonDone.reset();
+        this.buttonRandom.reset();
         this.app.stage.removeChild(this.buttonDone);
         this.app.stage.removeChild(this.buttonRandom);
     }
@@ -115,7 +125,10 @@ export class AppController {
     }
 
     onResetClicked(){
+        this.mapView.clearTimeoutList();
         this.gameStateManager.update();
+        this.buttonDone.reset();
+        this.buttonReset.reset();
         this.app.stage.removeChild(this.buttonDone);
         this.app.stage.removeChild(this.buttonReset);
         this.app.stage.addChild(this.buttonRandom);
@@ -154,9 +167,27 @@ export class AppController {
     }
 
     findPath(){
-       this.pathFindingManager.setWalkable(TILE.GREEN).setEnd(TILE.END).setStart(TILE.START);
-       let bestPath: {col:number,row:number}[] = this.pathFindingManager.find(this.map.get());
-       if(bestPath.length > 0)this.showNodes(bestPath);
+        let heuristic:Heuristic;
+        let allowDiagonal:boolean = false;
+        switch(this.settingsMenu.selectedMode){
+            case "manhattan":
+                heuristic = Heuristic.MANHATTAN;
+            break;
+            case "diagonal":
+                heuristic = Heuristic.DIAGONAL;
+            break;
+            case "allDiagonals":
+                heuristic = Heuristic.DIAGONAL;
+                allowDiagonal = true;
+            break;
+            default:
+                heuristic = Heuristic.MANHATTAN;
+        }
+        
+        this.pathFindingManager = new PathFinding({heuristic,allowDiagonal});
+        this.pathFindingManager.setWalkable(TILE.GREEN).setEnd(TILE.END).setStart(TILE.START);
+        let bestPath: {col:number,row:number}[] = this.pathFindingManager.find(this.map.get());
+        if(bestPath.length > 0)this.showNodes(bestPath);
     }
 
     showNodes(listPath:{col:number, row:number}[]){

@@ -1,10 +1,10 @@
-import { assert , expect } from "chai";
+import {assert, expect} from "chai";
 
 import "../src/PathFinding";
-import {PathFinding} from '../src';
-import {Utils, TILE} from './entry';
+import {Heuristic, PathFinding} from '../src';
+import {TILE, Utils} from './entry';
 
-describe("ContainsPatch", () => {
+describe("PathFinding MANHATTAN", () => {
 	let pfManager: PathFinding;
 
 	beforeEach(() => {
@@ -142,9 +142,72 @@ describe("ContainsPatch", () => {
 		expect(result1).to.eql(result0);
 	});
 
-	it("PathFinding find method always an result ", () => {
-		new Array(100).fill(null).forEach((num, numIndex) =>{
-			let map = Utils.createRandomMap(100,100);
+	it("PathFinding find method return a result", () => {
+		const map = [
+			[0,0,0,0,8,0,0],
+			[0,0,0,0,0,3,0],
+			[0,0,3,0,0,0,0],
+			[0,0,3,0,3,3,3],
+			[0,0,0,0,4,0,3]];
+		pfManager.setWalkable(0);
+		pfManager.setStart(4);
+		pfManager.setEnd(8);
+		let result = pfManager.find(map);
+		assert.isArray(result);
+		assert(result.length > 0);
+	});
+
+	it("PathFinding find method always return an array.", () => {
+		new Array(60).fill(null).forEach((num, numIndex) =>{
+			let map = Utils.createRandomMap(20,20);
+			pfManager.setWalkable(0);
+			pfManager.setStart(TILE.START);
+			pfManager.setEnd(TILE.END);
+			let result = pfManager.find(map as number[][]);
+			assert.isArray(result);
+		})
+	});
+});
+
+describe("PathFinding DIAGONAL", () => {
+	let pfManager: PathFinding;
+
+	beforeEach(() => {
+		pfManager = new PathFinding({heuristic:Heuristic.DIAGONAL, allowDiagonal:true});
+	});
+
+	afterEach(() => {
+		// @ts-ignore
+		pfManager = null;
+	});
+
+	it("PathFinding find method always return an array.", () => {
+		new Array(60).fill(null).forEach((num, numIndex) =>{
+			let map = Utils.createRandomMap(20,20);
+			pfManager.setWalkable(0);
+			pfManager.setStart(TILE.START);
+			pfManager.setEnd(TILE.END);
+			let result = pfManager.find(map as number[][]);
+			assert.isArray(result);
+		})
+	});
+});
+
+describe("PathFinding DIAGONAL, allowDiagonal: false", () => {
+	let pfManager: PathFinding;
+
+	beforeEach(() => {
+		pfManager = new PathFinding({heuristic:Heuristic.DIAGONAL});
+	});
+
+	afterEach(() => {
+		// @ts-ignore
+		pfManager = null;
+	});
+
+	it("PathFinding find method always return an array.", () => {
+		new Array(60).fill(null).forEach((num, numIndex) =>{
+			let map = Utils.createRandomMap(20,20);
 			pfManager.setWalkable(0);
 			pfManager.setStart(TILE.START);
 			pfManager.setEnd(TILE.END);

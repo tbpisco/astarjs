@@ -4,13 +4,22 @@ export declare enum Types {
     WALKABLE = 2,
     NON_WALKABLE = 3
 }
+export declare enum Heuristic {
+    MANHATTAN = 0,
+    DIAGONAL = 1
+}
 export declare class PathFinding {
     private DEFAULT_DISTANCE;
     private DIAGONAL_DISTANCE;
+    private heuristic;
+    private allowDiagonal;
     private walkableTypes;
     private start;
     private end;
-    constructor();
+    constructor(options?: {
+        heuristic: Heuristic;
+        allowDiagonal?: boolean;
+    });
     setWalkable(...args: number[]): this;
     setStart(start: number | {
         row: number;
@@ -29,7 +38,9 @@ export declare class PathFinding {
     private findEndElement;
     private findElement;
     private findBestPath;
-    private findValidAdjacents;
+    private updateLists;
+    private elementNotExistsInside;
+    private elementExistsInside;
     private distanceBetweenNodes;
     private getMoveValue;
     private findAdjacents;

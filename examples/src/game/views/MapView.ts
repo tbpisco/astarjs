@@ -6,18 +6,20 @@ import { Start } from '../states/Start';
 import { End } from '../states/End';
 import { Build } from '../states/Build';
 import { Initial } from '../states/Initial';
+import Container = PIXI.Container;
+import Resource = PIXI.loaders.Resource;
 
-export class MapView {
+export class MapView extends Container {
  
     private size:number;
     public tiles = new Map();
     private map: MapModel;
-    private container: PIXI.Container = new PIXI.Container();
     private saveTimeout: number[] = [];
 
     private gameStateManager:GameStateManager;
 
     constructor(size: number){
+        super()
         this.size = size;
     }
 
@@ -25,7 +27,7 @@ export class MapView {
         this.gameStateManager = gameStateManager;
     }
 
-    createStage(map:MapModel, resources: PIXI.loaders.Resource): PIXI.Container {
+    createStage(map:MapModel, resources: Resource) {
 
         this.map = map;
         this.map.get().forEach((elementRow, indexRow) => {
@@ -47,13 +49,11 @@ export class MapView {
                 this.tiles.set(`${indexCol}-${indexRow}`, button );
                 tile.x = indexCol*this.size;
                 tile.y =  indexRow*this.size;
-                this.container.addChild(tile);
+                this.addChild(tile);
             })
         })
 
         this.createBorder(resources, this.map.getCol(), this.map.getRow());
-
-        return this.container;
     }
 
     createBorder(resources:any, col:number, row:number){
@@ -87,7 +87,7 @@ export class MapView {
         let border = new Tile(type, 0, 0, this.size, resources);
         border.x = x*this.size;
         border.y = y*this.size;
-        this.container.addChild(border);
+        this.addChild(border);
     }
 
     setMap(map:MapModel){
@@ -116,10 +116,6 @@ export class MapView {
             this.gameStateManager.update();
         } 
         
-    }
-
-    disableTiles(){
-       // this.tiles.forEach((element) => element.disable());
     }
 
     clearTimeoutList(){
@@ -151,7 +147,4 @@ export class MapView {
         if(index === 0)this.clearTimeoutList();
         this.saveTimeout.push(setTimeout(() => {tile.highlight(direction);}, 200*index));
     }
-
-    
-    
 }

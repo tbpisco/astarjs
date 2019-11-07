@@ -1,28 +1,49 @@
-export default class Button extends PIXI.Sprite {
+import Sprite = PIXI.Sprite;
+import Text = PIXI.Text;
+import TextStyle = PIXI.TextStyle;
+import Graphics = PIXI.Graphics;
+import ObservablePoint = PIXI.ObservablePoint;
 
-    private _text: PIXI.Text;
+export default class Button extends Sprite {
+
+    private _text: Text;
 
     private _cb: Function;
+    private _id:string;
+    private _selected:boolean;
 
-    constructor(x: number, y: number, width: number, height: number) {
+    public get id():string{
+        return this._id;
+    }
+
+    public set id(id:string){
+        this._id = id;
+    }
+
+    constructor(x: number, y: number, width: number, height: number, selected:boolean = false) {
         super();
+        this._selected = selected;
         this.create(x, y, width, height);
     }
 
     create(x: number, y: number, width: number, height: number) {
 
-        let gfx = new PIXI.Graphics();
+        let gfx = new Graphics();
         gfx.beginFill(0xffffff, 1);
         gfx.drawRoundedRect(0, 0, width, height, height / 5);
         gfx.endFill();
         this.texture = gfx.generateCanvasTexture();
+
+        if(this._selected){
+            this.tint = 0x333333;
+        } 
 
         this.x = x;
         this.y = y;
         this.anchor.x = 0.5;
         this.anchor.y = 0.5;
 
-        var style = new PIXI.TextStyle({
+        let style = new TextStyle({
             fontFamily: 'Arial',
             fontSize: 16,
             fontWeight: 'bold',
@@ -32,8 +53,8 @@ export default class Button extends PIXI.Sprite {
             wordWrapWidth: width
         });
 
-        this._text = new PIXI.Text("", style);
-        this._text.anchor = new PIXI.ObservablePoint(()=>{},this, 0.5, 0.5);
+        this._text = new Text("", style);
+        this._text.anchor = new ObservablePoint(()=>{},this, 0.5, 0.5);
         this.addChild(this._text);
 
         this.interactive = true;
@@ -47,21 +68,24 @@ export default class Button extends PIXI.Sprite {
         }, this);
 
         this.on("mouseover", () => {
+            if(this._selected)return;
             this.onHover();
         }, this);
 
         this.on("mouseout", () => {
+            if(this._selected)return;
             this.onOut();
         }, this);
     }
 
-    public setText(val: string, style?: PIXI.TextStyle) {
+    public setText(val: string, style?: TextStyle) {
         this._text.text = val;
         if(style)this._text.style = style;
     }
 
     private onDown() {
         this.tint = 0xffffff;
+        this._selected = true;
     }
 
     private onUp() {
@@ -73,14 +97,10 @@ export default class Button extends PIXI.Sprite {
 
     private onHover() {
         this.tint = 0x333333;
-        this.scale.x = 1.2;
-        this.scale.y = 1.2;
     }
 
     private onOut() {
         this.tint = 0xffffff;
-        this.scale.x = 1;
-        this.scale.y = 1;
     }
 
     public get clicked() {
@@ -91,5 +111,8 @@ export default class Button extends PIXI.Sprite {
         this._cb = cb;
     }
 
-
+    public reset(){
+        this._selected = false;
+        this.tint = 0xffffff;
+    }
 }

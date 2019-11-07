@@ -1,8 +1,11 @@
-export class Title extends PIXI.Text {
+import Text = PIXI.Text;
+import TextStyle = PIXI.TextStyle;
+
+export class Title extends Text {
 
     constructor(text:string, width: number){
 
-        var style = new PIXI.TextStyle({
+        let style = new TextStyle({
             fontFamily: 'Helvetica',
             fontSize: 36,
             fontWeight: 'bold',
@@ -10,7 +13,7 @@ export class Title extends PIXI.Text {
             dropShadow: true,
             dropShadowColor: '#f8eec7',
             dropShadowBlur: 3,
-            dropShadowAngle: Math.PI / 4,
+            dropShadowAngle: Math.PI*0.25,
             dropShadowDistance: 3,
             wordWrap: true,
             align: 'center',

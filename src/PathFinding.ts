@@ -7,16 +7,27 @@ export enum Types {
     NON_WALKABLE
 }
 
+export enum Heuristic {
+	MANHATTAN,
+	DIAGONAL
+}
+
 export class PathFinding {
 
 	private DEFAULT_DISTANCE:number = 10;
 	private DIAGONAL_DISTANCE:number = 14;
+
+	private heuristic:Heuristic = Heuristic.MANHATTAN;
+	private allowDiagonal:boolean = false;
 	private walkableTypes:number[] = [];
 	private start:number|{row:number, col:number};
 	private end:number|{row:number, col:number};
 
-    constructor(){
-
+    constructor(options?:{heuristic:Heuristic, allowDiagonal?:boolean}){
+		if(options && options.heuristic){
+			this.heuristic = options.heuristic;
+			this.allowDiagonal = options.allowDiagonal || false;
+		}
 	}
 	
 	public setWalkable(...args:number[]){
@@ -88,13 +99,12 @@ export class PathFinding {
 	}
 
 	private findElement(map:number[][], value:number): Node | null {
-
 		let el = null;
 		map.forEach((element, indexRow) => {
 			element.forEach((element, indexCol) => {
 				if(element == value){
 					el = new Node(indexRow, indexCol);
-				}
+				} 
 			});
 		});
 		return el;
@@ -105,35 +115,37 @@ export class PathFinding {
 		let closedList: Node[] = [];
 		let openList: Node[]= [];
 		let isFinished: boolean = false;
-
+		let lastNode:Node = firstElement;
+		let lastNodeAdjacents;
         closedList.push(firstElement);
 
         while(!isFinished){
-            openList = this.findValidAdjacents(map, closedList[closedList.length -1], closedList, openList, lastElement);
+            this.updateLists(map, lastNode, closedList, openList, lastElement);
 			if(openList.length > 0)closedList.push(openList.pop() as Node);
-            isFinished = this.isNodeEqual(closedList[closedList.length-1],lastElement) || openList.length == 0;
+
+			lastNode = closedList[closedList.length -1];
+
+			lastNodeAdjacents = this.findAdjacents(map, lastNode).filter(
+				(elementAdjacent:Node) =>
+					this.elementNotExistsInside(openList, elementAdjacent) &&
+					this.elementNotExistsInside(closedList, elementAdjacent));
+
+            isFinished = this.isNodeEqual(closedList[closedList.length-1],lastElement) ||
+				(openList.length == 0 && !lastNodeAdjacents.length);
         }
 
         return (openList.length > 0) ? this.getPath(closedList[closedList.length-1]) : [];
     }
 
-	private findValidAdjacents(map:number[][], currentNode:Node, closedList:Node[], openList: Node[], lastElement:Node){
+	private updateLists(map:number[][], currentNode:Node, closedList:Node[], openList: Node[], lastElement:Node){
 
     	//get all adjacents position possibilities that we don't have in the closed list
 		let validAdjacents = this.findAdjacents(map, currentNode).filter(
-			(elementAdjacent:Node) => {
-				return !closedList.some((element:Node) => {
-					return this.isNodeEqual(element, elementAdjacent)
-				})
-			});
+			(elementAdjacent:Node) => this.elementNotExistsInside(closedList, elementAdjacent));
 
 		//get all adjacents position possibilities that we have in the open list and don't have inside the closed list
 		let validAdjacentsOpenList = validAdjacents.filter(
-			(elementAdjacent:Node) => {
-				return openList.some((element:Node) => {
-					return this.isNodeEqual(element, elementAdjacent)
-				})
-			});
+			(elementAdjacent:Node) => this.elementExistsInside(openList, elementAdjacent));
 
 		//update distance values if the new potencial Node position on the path is longer than the current one
 		validAdjacentsOpenList.forEach((elementAdjacent:Node) => {
@@ -146,29 +158,38 @@ export class PathFinding {
 
 		//get all adjacents posiiton possibilities that we don't have in the open list and don't have inside the closed list
 		let validAdjacentsNewOpenList = validAdjacents.filter(
-			(elementAdjacent:Node) => {
-				return !openList.some((element:Node) => {
-					return this.isNodeEqual(element, elementAdjacent)
-				})
-			});
+			(elementAdjacent:Node) => this.elementNotExistsInside(openList, elementAdjacent));
 
 		//update distance values for the potencial new positions in the open list
 		validAdjacentsNewOpenList.forEach((element) => {
 			element.setParent(currentNode);
-			element.setH(this.distanceBetweenNodes(element, lastElement, this.DEFAULT_DISTANCE));
+			element.setH(this.distanceBetweenNodes(element, lastElement));
 			element.setG(this.getMoveValue(currentNode, element));
 			openList.push(element);
 		});
 
 		openList.sort((a,b) => b.getValue() - a.getValue());
-
-		return openList;
 	}
 
-	private distanceBetweenNodes(initialNode:Node, finalNode:Node, val:number){
+	private elementNotExistsInside(list:Node[], element:Node){
+		return !this.elementExistsInside(list, element);
+	}
+
+	private elementExistsInside(list:Node[], element:Node){
+		return list.some((el:Node) => {
+			return this.isNodeEqual(el, element)
+		})
+	}
+
+	private distanceBetweenNodes(initialNode:Node, finalNode:Node){
 		let col = Math.abs(finalNode.getCol() - initialNode.getCol());
 		let row = Math.abs(finalNode.getRow() - initialNode.getRow());
-		return col*val + row*val;
+
+		if(this.heuristic === Heuristic.MANHATTAN){
+			return this.DEFAULT_DISTANCE*(col + row);
+		} else {
+			return this.DEFAULT_DISTANCE*(col + row) + (this.DIAGONAL_DISTANCE -2*this.DEFAULT_DISTANCE)*Math.min(col,row);
+		}
 	}
 
 	private getMoveValue(node:Node, newNode:Node){
@@ -179,20 +200,47 @@ export class PathFinding {
 	private findAdjacents(map:number[][], node:Node) : Node[] {
 
 		let adjacents: Node[] = [];
-
-		let verify = [[-1,-1], [-1,0] , [-1, 1], [0,-1],
-			[0,1], [1,-1], [1,0] , [1, 1]];
+		let diagonal = [[-1,-1], [-1,1], [1,-1], [1,1]];
+		let square = [[-1,0], [0,-1], [0,1], [1,0]];
 
 		let mapElements = map;
+		let x, y = 0;
 
-		for(let v = 0; v < verify.length; v++){
-
-			let x = node.getRow() + verify[v][0];
-			let y = node.getCol() + verify[v][1];
+		for(let v = 0; v < square.length; v++){
+			x = node.getRow() + square[v][0];
+			y = node.getCol() + square[v][1];
 
 			if(x > -1 && y > -1 && x < mapElements.length && y < mapElements[x].length
 				&& (mapElements[x][y] == Types.WALKABLE || mapElements[x][y] == Types.END )){
 				adjacents.push(new Node(x, y));
+			}
+		}
+
+		let addAdjacents = false;
+
+		if(this.heuristic === Heuristic.DIAGONAL){
+			for(let v = 0; v < diagonal.length; v++){
+				x = node.getRow() + diagonal[v][0];
+				y = node.getCol() + diagonal[v][1];
+	
+				if(x > -1 && y > -1 && x < mapElements.length && y < mapElements[x].length
+					&& (mapElements[x][y] == Types.WALKABLE || mapElements[x][y] == Types.END )){
+						
+					if(!this.allowDiagonal){
+						addAdjacents = false;
+						for (let index = 0; index < diagonal.length; index++) {
+							if(index == v && mapElements[x-diagonal[v][0]][y] == Types.WALKABLE && 
+								mapElements[x][y-diagonal[v][1]] == Types.WALKABLE){
+									addAdjacents = true;
+							}
+						}
+						if(addAdjacents){
+							adjacents.push(new Node(x, y));
+						}
+					} else { 
+						adjacents.push(new Node(x, y));
+					}
+				}
 			}
 		}
 
