@@ -70,7 +70,7 @@ returns
 Options
 ---
 
-Starting from version **1.0.0** user can choose the algoritm Heuristic between **MANHATTAN** and **DIAGONAL**. See the differences and how to configure it bellow.
+From version **1.0.0** on, user can choose the algoritm Heuristic between **MANHATTAN** and **DIAGONAL**. See the differences and how to configure it bellow.
 
 ## Heuristic.MANHATTAN
 
@@ -112,7 +112,7 @@ let bestPath = this.pathFindingManager.find(map);
 ```
 ## Heuristic.DIAGONAL 
 
-### not allow diagonal
+### DO NOT allow diagonal
 
 ```typescript
 
@@ -150,7 +150,7 @@ let bestPath = this.pathFindingManager.find(map);
 * 
 * */
 ```
-### allow diagonal
+### Allow diagonal
 
 ```typescript
 
