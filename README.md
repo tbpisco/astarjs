@@ -70,7 +70,7 @@ returns
 Options
 ---
 
-From version **1.0.0** on, user can choose the algoritm Heuristic between **MANHATTAN** and **DIAGONAL**. See the differences and how to configure it bellow.
+From version **1.0.0** on, user can choose the algorithm Heuristic between **MANHATTAN** and **DIAGONAL**. See the differences and how to configure it bellow.
 
 ## Heuristic.MANHATTAN
 

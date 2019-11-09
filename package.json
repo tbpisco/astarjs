@@ -64,6 +64,9 @@
     "pathfinding",
     "astar",
     "path",
-    "a*"
+    "a*",
+    "heuristic",
+    "manhattan",
+    "diagonal"
   ]
 }
