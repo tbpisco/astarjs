@@ -67,8 +67,7 @@ returns
 2: {col: 5, row: 6}
 3: {col: 5, row: 7}*/
 ```
-Options
----
+# Options
 
 From version **1.0.0** on, user can choose the algorithm Heuristic between **MANHATTAN** and **DIAGONAL**. See the differences and how to configure it bellow.
 
@@ -197,10 +196,7 @@ From version **1.1.0** on, user can setup weight for walkable tiles.
 To setup walkable tiles weight use setWalkable function as bellow:
 
 ```typescript
-.setWalkable(
-            0,
-            {type: 1, weight:0.5},
-            {type: 2, weight:2})
+.setWalkable(0,{type: 1, weight:0.5},{type: 2, weight:2});
 ```
 Tiles with unspecified weight will use the default value of 0.
 
@@ -219,24 +215,18 @@ let map = [ [2,  0,  0,  0,  0,  0],
 			[0,  0,  0,  0,  0,  3]];
             
 let pfManager = new PathFinding();            
-pfManager.setWalkable(
-			{type: 0},
-            {type: 1, weight:2}).setEnd(3).setStart(2);
+pfManager.setWalkable({type: 0},{type: 1, weight:2}).setEnd(3).setStart(2);
 let bestPath = pfManager.find(map);
 ```
 or 
 
 ```typescript
-pfManager.setWalkable(
-			0,
-            {type: 1, weight:2}).setEnd(3).setStart(2);
+pfManager.setWalkable(0,{type: 1, weight:2}).setEnd(3).setStart(2);
 ```
 or
 
 ```typescript
-pfManager.setWalkable(
-			{type: 0, weight:0},
-            {type: 1, weight:2}).setEnd(3).setStart(2);
+pfManager.setWalkable({type: 0, weight:0},{type: 1, weight:2}).setEnd(3).setStart(2);
 
 /*
 * bestPath = [{col: 0, row: 0}, {col: 1, row: 0}, {col: 2, row: 0}, {col: 3, row: 0},
