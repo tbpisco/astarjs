@@ -25,11 +25,11 @@ let map = [ [0,  0,  14, 23, 23, 0,  0,  23, 0,  0,  0,  2,  0,  0],
             [0,  0,  0,  23, 0,  4,  0,  0,  0,  1,  0,  23, 0,  2]];
 
 let pathFindingManager = new PathFinding();
-this.pathFindingManager.setWalkable(0) // or this.pathFindingManager.setWalkable(0, 10, 11); 
-                       .setEnd(4)
-                       .setStart(3);
+pathFindingManager.setWalkable(0) // or this.pathFindingManager.setWalkable(0, 10, 11); 
+                    .setEnd(4)
+                    .setStart(3);
 
-let bestPath: {col:number,row:number}[] = this.pathFindingManager.find(map);
+let bestPath: {col:number,row:number}[] = pathFindingManager.find(map);
 /*
 returns
 0: {col: 5, row: 4}
@@ -55,11 +55,11 @@ let map = [ [0,  0,  14, 23, 23, 0,  0,  23, 0,  0,  0,  2,  0,  0],
             [0,  0,  0,  23, 0,  0,  0,  0,  0,  1,  0,  23, 0,  2]];
 
 let pathFindingManager = new PathFinding();
-this.pathFindingManager.setWalkable(0); // or this.pathFindingManager.setWalkable(0, 10, 11); 
-this.pathFindingManager.setEnd({col: 5, row: 7});
-this.pathFindingManager.setStart({col: 5, row: 4});
+pathFindingManager.setWalkable(0); // or this.pathFindingManager.setWalkable(0, 10, 11); 
+pathFindingManager.setEnd({col: 5, row: 7});
+pathFindingManager.setStart({col: 5, row: 4});
 
-let bestPath: {col:number,row:number}[] = this.pathFindingManager.find(map);
+let bestPath: {col:number,row:number}[] = pathFindingManager.find(map);
 /*
 returns
 0: {col: 5, row: 4}
@@ -71,6 +71,8 @@ Options
 ---
 
 From version **1.0.0** on, user can choose the algorithm Heuristic between **MANHATTAN** and **DIAGONAL**. See the differences and how to configure it bellow.
+
+# Heuristic
 
 ## Heuristic.MANHATTAN
 
@@ -87,10 +89,10 @@ let map = [ [0,  0,  2,  2,  2,  0],
             [2,  0,  0,  0,  0,  2]];
 
 let pathFindingManager = new PathFinding({heuristic: Heuristic.MANHATTAN});
-this.pathFindingManager.setWalkable(0)
-                        .setEnd({col: 5, row: 2})
-                        .setStart({col: 2, row: 6});
-let bestPath = this.pathFindingManager.find(map);
+pathFindingManager.setWalkable(0)
+                    .setEnd({col: 5, row: 2})
+                    .setStart({col: 2, row: 6});
+let bestPath = pathFindingManager.find(map);
 
 /*
 * bestPath = {col: 2, row: 6}, {col: 3, row: 6}, {col: 3, row: 5}, {col: 3, row: 4},
@@ -127,10 +129,10 @@ let map = [ [0,  0,  2,  2,  2,  0],
             [2,  0,  0,  0,  0,  2]];
 
 let pathFindingManager = new PathFinding({heuristic:Heuristic.DIAGONAL});
-this.pathFindingManager.setWalkable(0)
-                        .setEnd({col: 5, row: 2})
-                        .setStart({col: 2, row: 6});
-let bestPath = this.pathFindingManager.find(map);
+pathFindingManager.setWalkable(0)
+                    .setEnd({col: 5, row: 2})
+                    .setStart({col: 2, row: 6});
+let bestPath = pathFindingManager.find(map);
 
 /*
 * bestPath = [{col: 2, row: 6}, {col: 3, row: 5}, {col: 3, row: 4},
@@ -165,10 +167,10 @@ let map = [ [0,  0,  2,  2,  2,  0],
             [2,  0,  0,  0,  0,  2]];
 
 let pathFindingManager = new PathFinding({heuristic:Heuristic.DIAGONAL, allowDiagonal:true});
-this.pathFindingManager.setWalkable(0)
-                        .setEnd({col: 5, row: 2})
-                        .setStart({col: 2, row: 6});
-let bestPath = this.pathFindingManager.find(map);
+pathFindingManager.setWalkable(0)
+                    .setEnd({col: 5, row: 2})
+                    .setStart({col: 2, row: 6});
+let bestPath = pathFindingManager.find(map);
 
 /*
 * bestPath = [{col: 2, row: 6}, {col: 3, row: 5}, {col: 4, row: 4},
@@ -188,6 +190,112 @@ let bestPath = this.pathFindingManager.find(map);
 * 
 * */
 ```
+
+# Weight
+
+From version **1.1.0** on, user can setup weight for walkable tiles.
+To setup walkable tiles weight use setWalkable function as bellow:
+
+```typescript
+.setWalkable(
+            0,
+            {type: 1, weight:0.5},
+            {type: 2, weight:2})
+```
+Tiles with unspecified weight will use the default value of 0.
+
+## Example with walkable tiles weight
+
+```typescript
+
+import { PathFinding } from 'astarjs';
+
+let map = [ [2,  0,  0,  0,  0,  0],
+			[0,  0,  1,  1,  0,  0],
+			[0,  0,  1,  1,  0,  0],
+			[0,  0,  1,  1,  0,  0],
+			[0,  0,  1,  1,  0,  0],
+			[0,  0,  0,  0,  0,  0],
+			[0,  0,  0,  0,  0,  3]];
+            
+let pfManager = new PathFinding();            
+pfManager.setWalkable(
+			{type: 0},
+            {type: 1, weight:2}).setEnd(3).setStart(2);
+let bestPath = pfManager.find(map);
+```
+or 
+
+```typescript
+pfManager.setWalkable(
+			0,
+            {type: 1, weight:2}).setEnd(3).setStart(2);
+```
+or
+
+```typescript
+pfManager.setWalkable(
+			{type: 0, weight:0},
+            {type: 1, weight:2}).setEnd(3).setStart(2);
+
+/*
+* bestPath = [{col: 0, row: 0}, {col: 1, row: 0}, {col: 2, row: 0}, {col: 3, row: 0},
+ {col: 4, row: 0}, {col: 4, row: 1}, {col: 4, row: 2}, {col: 4, row: 3}, {col: 4, row: 4},
+ {col: 4, row: 5}, {col: 5, row: 5}, {col: 5, row: 6}]
+*
+* E -> End
+* S -> Start
+* # -> Path
+* 
+*  [[2,  #,  #,  #,  #,  0],
+	[0,  0,  1,  1,  #,  0],
+	[0,  0,  1,  1,  #,  0],
+	[0,  0,  1,  1,  #,  0],
+	[0,  0,  1,  1,  #,  0],
+	[0,  0,  0,  0,  #,  0],
+	[0,  0,  0,  0,  #,  3]];
+* 
+* */
+```
+
+## Example with same map as bellow but without walkable tiles weight
+
+```typescript
+
+import { PathFinding } from 'astarjs';
+
+let map = [ [2,  0,  0,  0,  0,  0],
+			[0,  0,  1,  1,  0,  0],
+			[0,  0,  1,  1,  0,  0],
+			[0,  0,  1,  1,  0,  0],
+			[0,  0,  1,  1,  0,  0],
+			[0,  0,  0,  0,  0,  0],
+			[0,  0,  0,  0,  0,  3]];
+            
+let pfManager = new PathFinding();            
+pfManager.setWalkable(0,1).setEnd(3).setStart(2);
+let bestPath = pfManager.find(map);
+
+/*
+* bestPath =  [{col: 0, row: 0}, {col: 0, row: 1}, {col: 0, row: 2}, {col: 1, row: 2},
+                {col: 2, row: 2}, {col: 2, row: 3}, {col: 3, row: 3}, {col: 3, row: 4},
+                {col: 4, row: 4}, {col: 4, row: 5}, {col: 5, row: 5}, {col: 5, row: 6}]
+*
+* E -> End
+* S -> Start
+* # -> Path
+* 
+*  [[2,  0,  0,  0,  0,  0],
+	[#,  0,  1,  1,  0,  0],
+	[#,  #,  #,  1,  0,  0],
+	[0,  0,  #,  #,  0,  0],
+	[0,  0,  1,  #,  #,  0],
+	[0,  0,  0,  0,  #,  #],
+	[0,  0,  0,  0,  0,  3]];
+* 
+* */
+```
+
 [See full example here](https://github.com/tbpisco/astarjs/tree/master/examples)
 
 Running the example
