@@ -1,5 +1,6 @@
 export enum TILE{
 	GREEN,
+	GRASS,
 	HOUSE,
 	MOUNTAIN_BROWN,
 	MOUNTAIN,
@@ -16,7 +17,9 @@ export class Utils {
 		for (let index = 0; index < row; index++) {
 			array.push(new Array(col + 1).join("0").split("").map((element) => {
 				let num = Math.floor(Math.random() * 20);
-				if (num < 15) {
+				if(num < 14){
+                    return TILE.GRASS;
+                } else if (num < 15) {
 					return TILE.GREEN;
 				} else if (num == 16) {
 					return TILE.HOUSE;

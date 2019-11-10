@@ -9,7 +9,7 @@ export enum Types {
 
 export interface WalkableTile {
 	type:number;
-	weight:number;
+	weight?:number;
 }
 
 export enum Heuristic {
@@ -71,9 +71,10 @@ export class PathFinding {
 					(this.end as {row:number, col:number}).col == colIndex){
 					return Types.END;
 				} else if(this.isTileWalkable(id)){
-                      return this.getTileWalkable(id).weight;
+					let item = this.getTileWalkable(id);
+                    return item.weight ? item.weight : 0;
                 } else {
-                      return Types.NON_WALKABLE;
+                     return Types.NON_WALKABLE;
                 }
              });
         });
