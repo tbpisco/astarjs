@@ -6,6 +6,7 @@ import Sprite = PIXI.Sprite;
 
 export enum TILE {
     GREEN,
+    GRASS,
     WATER,
     TREES,
     START,
@@ -38,7 +39,7 @@ export class Tile extends Sprite {
     private row : number;
     public type : number;
     public typePos : number = 0;
-    public availableTypes : number[] = [TILE.GREEN, TILE.HOUSE, TILE.WATER, TILE.TREES, TILE.MOUNTAIN, TILE.MOUNTAIN_BROWN]; 
+    public availableTypes : number[] = [TILE.GREEN, TILE.GRASS, TILE.HOUSE, TILE.WATER, TILE.TREES, TILE.MOUNTAIN, TILE.MOUNTAIN_BROWN]; 
     public background : Sprite; 
     public element : Sprite;
     private tex : any;
@@ -56,19 +57,13 @@ export class Tile extends Sprite {
         this.scale.set(size/this.texSize);
 
         this.background = new Sprite();
-        this.background.anchor.set(0.5,0.5);
-        this.background.texture = new Texture(this.tex, 
-            this.getFrameByType(0), 
-            new Rectangle(0, 0, this.texSize, this.texSize), 
-            new Rectangle(0, 0, this.size, this.size));
+        this.background.anchor.set(0.5);
+        this.background.texture = this.getTexture(0);
         this.addChild(this.background);
 
         this.element = new Sprite();
         this.element.anchor.set(0.5);
-        this.element.texture = new Texture(this.tex, 
-            this.getFrameByType(0), 
-            new Rectangle(0, 0, this.texSize,this.texSize), 
-            new Rectangle(0, 0, this.size, this.size));
+        this.element.texture = this.getTexture(0);
         this.addChild(this.element);
 
         if(type != TILE.BORDER_TOP_LEFT && type != TILE.BORDER_MIDDLE_LEFT &&
@@ -116,7 +111,7 @@ export class Tile extends Sprite {
         if(type){
             this.type = type;
         } else {
-            this.typePos = (this.typePos + 1 ) % 6;
+            this.typePos = (this.typePos + 1 ) % this.availableTypes.length;
             this.type = this.availableTypes[this.typePos];
         }
         this.update();
@@ -126,22 +121,37 @@ export class Tile extends Sprite {
         let background = [TILE.WATER, TILE.HOUSE, TILE.TREES, TILE.START, TILE.END, 
             TILE.MOUNTAIN, TILE.MOUNTAIN_BROWN, TILE.TOP_RIGHT, TILE.TOP_LEFT, TILE.TOP,
             TILE.BOTTOM, TILE.RIGHT, TILE.LEFT, TILE.BOTTOM_LEFT, TILE.BOTTOM_RIGHT];
-        if(background.indexOf(this.type) > -1)this.background.visible = true;
-            else this.background.visible = false;
+        if(background.indexOf(this.type) > -1){
+            this.background.visible = true;
+            this.background.texture = this.getTexture(0);
+        } else {
+            this.background.visible = false;
+        } 
 
-        this.element.texture = new Texture(this.tex, 
-            this.getFrameByType(this.type), 
-            new Rectangle(0, 0, this.texSize, this.texSize), 
-            new Rectangle(0, 0, this.size, this.size));
+        this.element.texture = this.getTexture(this.type);
     }
 
     highlight(direction:number){
         if(this.type == TILE.START || this.type == TILE.END)return;
-        this.type = direction;
-        this.update();
+        if(this.type == TILE.GRASS){
+            this.type = direction;
+            this.update();
+            this.background.visible = true;
+            this.background.texture = this.getTexture(TILE.GRASS);
+        } else {
+            this.type = direction;
+            this.update();
+        }
     }
 
-    getFrameByType(type: number) : Rectangle {
+    getTexture(type: number): Texture {
+        return new Texture(this.tex, 
+            this.getFrameByType(type), 
+            new Rectangle(0, 0, this.texSize, this.texSize), 
+            new Rectangle(0, 0, this.size, this.size));
+    }
+
+    getFrameByType(type: number): Rectangle {
         switch(type){
             case TILE.BOTTOM_LEFT:
                 return new Rectangle(0*16,41*16,this.texSize,this.texSize);
@@ -205,6 +215,9 @@ export class Tile extends Sprite {
             break;
             case TILE.GREEN:
                 return new Rectangle(16,0,this.texSize,this.texSize);
+            break;
+            case TILE.GRASS:
+                return new Rectangle(16*3,0,this.texSize,this.texSize);
             break;
             case TILE.WATER:
                 return new Rectangle(4*16,2*16,this.texSize,this.texSize);
