@@ -3,10 +3,10 @@
 Pathfinding algorithm library.
 
 - [Install](#Install)
-Usage
-Options
-Weight
-[Documentation](#Documentation)
+- [Usage](#Usage)
+- [Options](#Options)
+- [Weight](#Weight)
+- [Documentation](#Documentation)
 
 # Install
 
