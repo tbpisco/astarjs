@@ -7,6 +7,7 @@ Pathfinding algorithm library.
 - [Options](#Options)
 - [Weight](#Weight)
 - [Documentation](#Documentation)
+- [License](#License)
 
 # Install
 
@@ -312,6 +313,8 @@ let bestPath = pfManager.find(map);
 | ------------- |:-------------:| ----------------------------------------------------------------------------------------------------------|
 | options       | Object        | `Optional` The optional pathfinding options                                                               |
 
+
+**new Pathfinding(options)**
 
 | new Pathfinding(options)      | *Name*        | *Type*      | *Default*            | *Description*                                        |
 |-------------------------------| ----------------------------------------------------------------------------------------------------------|
