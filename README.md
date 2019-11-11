@@ -312,6 +312,8 @@ let bestPath = pfManager.find(map);
 | *Name*        | *Type*        | *Description*                                                                                             |
 | ------------- |:-------------:| ----------------------------------------------------------------------------------------------------------|
 | options       | Object        | `Optional` The optional pathfinding options                                                               |
+
+
 | new Pathfinding(options)      | *Name*        | *Type*      | *Default*            | *Description*                                        |
 |-------------------------------| --------------|-------------|----------------------|------------------------------------------------------|
 |                               | heuristic     | Heuristic   | Heuristic.MANHATTAN  | `Optional` Type of heuristic used on the pathfinding algorithm. Choose between Heuristic.MANHATTAN and Heuristic.DIAGONAL.| 
