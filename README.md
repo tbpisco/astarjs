@@ -290,39 +290,41 @@ let bestPath = pfManager.find(map);
 
 ## PathFinding
 
-new PathFinding(options)
+**new PathFinding(options)**
 
 | *Name*        | *Type*        | *Description*                                                                                             |
 | ------------- |:-------------:| ----------------------------------------------------------------------------------------------------------|
 | options       | Object        | `Optional` The optional pathfinding options                                                               |
+
+
 |                               | *Name*        | *Type*      | *Default*            | *Description*                                        |   
-|                               | ----------------------------------------------------------------------------------------------------------|
+|-------------------------------| ----------------------------------------------------------------------------------------------------------|
 |                               | heuristic     | Heuristic   | Heuristic.MANHATTAN  | `Optional` Type of heuristic used on the pathfinding algorithm. Choose between Heuristic.MANHATTAN and Heuristic.DIAGONAL.| 
 |                               | allowDiagonal | boolean     | false                | `Optional` When using Heuristic.DIAGONAL, user can force path on the diagonal direction even if the adjacents tiles are non-walkable.|  
 
 
-setWalkable(...args:(number|WalkableTile)[])
+**setWalkable(...args:(number|WalkableTile)[])**
 
 | *Name*        | *Type*        | *Description*                                                                                             |
 | ------------- |:-------------:| ----------------------------------------------------------------------------------------------------------|
 | arg           | Array         | An array of numbers and/or WalkableTile type. WalkableTile{type:number, weight:number}, weight is the percentage that a tile is "heaviest" than the default weight.|          
 
 
-setStart(start:number|{row:number, col:number})
+**setStart(start:number|{row:number, col:number})**
 
 | *Name*        | *Type*        | *Description*                                                                                             |
 | ------------- |:-------------:| ----------------------------------------------------------------------------------------------------------|
 | start         | Object/number | A number that represents the start point or the start point row/col position.                             |
 
 
-setEnd(end:number|{row:number, col:number})
+**setEnd(end:number|{row:number, col:number})**
 
 | *Name*        | *Type*        | *Description*                                                                                             |
 | ------------- |:-------------:| ----------------------------------------------------------------------------------------------------------|
 | end           | Object/number | A number that represents the start point or the start point row/col position.                             |
 
 
-find(map: number[][]): {col:number,row:number}[]
+**find(map: number[][]): {col:number,row:number}[]**
 
 | *Name*        | *Type*        | *Description*                                                                                             |
 | ------------- |:-------------:| ----------------------------------------------------------------------------------------------------------|
