@@ -2,15 +2,19 @@
 
 Pathfinding algorithm library.
 
-Install
----
+- [Install](#Install)
+Usage
+Options
+Weight
+[Documentation](#Documentation)
+
+# Install
 
 ```bash
 npm install astarjs --save
 ```
 
-Usage
----
+# Usage
 
 ```typescript
 import { PathFinding } from 'astarjs';
@@ -67,6 +71,18 @@ returns
 2: {col: 5, row: 6}
 3: {col: 5, row: 7}*/
 ```
+[See full example here](https://github.com/tbpisco/astarjs/tree/master/examples)
+
+Running the example
+---
+
+Run the following commands to run the example:
+
+```bash
+npm install
+npm start
+```
+
 # Options
 
 From version **1.0.0** on, user can choose the algorithm Heuristic between **MANHATTAN** and **DIAGONAL**. See the differences and how to configure it bellow.
@@ -330,20 +346,6 @@ let bestPath = pfManager.find(map);
 | ------------- |:-------------:| ----------------------------------------------------------------------------------------------------------|
 | map           | Array         | An two dimensional Array of numbers. Returns an array of {col:number,row:number}, where the first array position is the start point and the last array position is the end point.|
 
-
-[See full example here](https://github.com/tbpisco/astarjs/tree/master/examples)
-
-Running the example
----
-
-Run the following commands to run the example:
-
-```bash
-npm install
-npm start
-```
-
-License
----
+# License
 
 [MIT](https://github.com/tbpisco/astarjs/blob/master/LICENSE)
