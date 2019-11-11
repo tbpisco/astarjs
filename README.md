@@ -297,7 +297,7 @@ let bestPath = pfManager.find(map);
 | options       | Object        | `Optional` The optional pathfinding options                                                               |
 
 
-|                               | *Name*        | *Type*      | *Default*            | *Description*                                        |   
+| new Pathfinding(options)      | *Name*        | *Type*      | *Default*            | *Description*                                        |
 |-------------------------------| ----------------------------------------------------------------------------------------------------------|
 |                               | heuristic     | Heuristic   | Heuristic.MANHATTAN  | `Optional` Type of heuristic used on the pathfinding algorithm. Choose between Heuristic.MANHATTAN and Heuristic.DIAGONAL.| 
 |                               | allowDiagonal | boolean     | false                | `Optional` When using Heuristic.DIAGONAL, user can force path on the diagonal direction even if the adjacents tiles are non-walkable.|  
