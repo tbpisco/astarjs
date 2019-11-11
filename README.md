@@ -238,12 +238,12 @@ pfManager.setWalkable({type: 0, weight:0},{type: 1, weight:2}).setEnd(3).setStar
 * # -> Path
 * 
 *  [[2,  #,  #,  #,  #,  0],
-	[0,  0,  1,  1,  #,  0],
-	[0,  0,  1,  1,  #,  0],
-	[0,  0,  1,  1,  #,  0],
-	[0,  0,  1,  1,  #,  0],
-	[0,  0,  0,  0,  #,  0],
-	[0,  0,  0,  0,  #,  3]];
+*	[0,  0,  1,  1,  #,  0],
+*	[0,  0,  1,  1,  #,  0],
+*	[0,  0,  1,  1,  #,  0],
+*	[0,  0,  1,  1,  #,  0],
+*	[0,  0,  0,  0,  #,  0],
+*	[0,  0,  0,  0,  #,  3]];
 * 
 * */
 ```
@@ -276,15 +276,58 @@ let bestPath = pfManager.find(map);
 * # -> Path
 * 
 *  [[2,  0,  0,  0,  0,  0],
-	[#,  0,  1,  1,  0,  0],
-	[#,  #,  #,  1,  0,  0],
-	[0,  0,  #,  #,  0,  0],
-	[0,  0,  1,  #,  #,  0],
-	[0,  0,  0,  0,  #,  #],
-	[0,  0,  0,  0,  0,  3]];
+*	[#,  0,  1,  1,  0,  0],
+*	[#,  #,  #,  1,  0,  0],
+*	[0,  0,  #,  #,  0,  0],
+*	[0,  0,  1,  #,  #,  0],
+*	[0,  0,  0,  0,  #,  #],
+*	[0,  0,  0,  0,  0,  3]];
 * 
 * */
 ```
+
+# Documentation
+
+## PathFinding
+
+new PathFinding(options)
+
+| *Name*        | *Type*        | *Description*                                                                                             |
+| ------------- |:-------------:| ----------------------------------------------------------------------------------------------------------|
+| options       | Object        | optional - The optional pathfinding                                                                       |
+|                               | *Name*        | *Type*      | *Default*            | *Description*                                        |   
+|                               | ----------------------------------------------------------------------------------------------------------|
+|                               | heuristic     | Heuristic   | Heuristic.MANHATTAN  | Optional - Type of heuristic used on the pathfinding |   |                                                                                    | algorithm. Choose between Heuristic.MANHATTAN and    |   |                                                                                    | Heuristic.DIAGONAL.                                  | 
+|                               | allowDiagonal | boolean     | false                | Optional - When using Heuristic.DIAGONAL, user can   |
+|                                                                                    | force path on the diagonal direction even if the     |
+|                                                                                    | adjacents tiles are non-walkable.                    |  
+
+setWalkable(...args:(number|WalkableTile)[])
+
+| *Name*        | *Type*        | *Description*                                                                                             |
+| ------------- |:-------------:| ----------------------------------------------------------------------------------------------------------|
+| arg           | Array         | An array of numbers and/or WalkableTile type. WalkableTile{type:number, weight:number}, weight is the     |
+|                               | percentage that a tile is "heaviest" than the default weight.                                             |          
+setStart(start:number|{row:number, col:number})
+
+| *Name*        | *Type*        | *Description*                                                                                             |
+| ------------- |:-------------:| ----------------------------------------------------------------------------------------------------------|
+| start         | Object/number | A number that represents the start point or the start point row/col position.                             |
+
+
+setEnd(end:number|{row:number, col:number})
+
+| *Name*        | *Type*        | *Description*                                                                                             |
+| ------------- |:-------------:| ----------------------------------------------------------------------------------------------------------|
+| end           | Object/number | A number that represents the start point or the start point row/col position.                             |
+
+find(map: number[][]): {col:number,row:number}[]
+
+| *Name*        | *Type*        | *Description*                                                                                             |
+| ------------- |:-------------:| ----------------------------------------------------------------------------------------------------------|
+| map           | Array         | An two dimensional Array of numbers. Returns an array of {col:number,row:number}, where the first array   |
+|                               | position is the start point and the last array position is the end point.                                 |
+
 
 [See full example here](https://github.com/tbpisco/astarjs/tree/master/examples)
 
