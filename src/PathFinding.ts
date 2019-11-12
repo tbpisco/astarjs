@@ -1,10 +1,15 @@
 import { Node } from "./Node";
 
 export enum Types {
-    START,
-    END,
-    WALKABLE,
-    NON_WALKABLE
+    START = 's',
+    END = 'e',
+    WALKABLE = 'w',
+    NON_WALKABLE = 'nw'
+}
+
+export interface WalkableTile {
+	type:number;
+	weight?:number;
 }
 
 export enum Heuristic {
@@ -19,7 +24,7 @@ export class PathFinding {
 
 	private heuristic:Heuristic = Heuristic.MANHATTAN;
 	private allowDiagonal:boolean = false;
-	private walkableTypes:number[] = [];
+	private walkableTypes:(number|WalkableTile)[] = [];
 	private start:number|{row:number, col:number};
 	private end:number|{row:number, col:number};
 
@@ -30,8 +35,15 @@ export class PathFinding {
 		}
 	}
 	
-	public setWalkable(...args:number[]){
-		this.walkableTypes = this.walkableTypes.concat(...args);
+	public setWalkable(...args:(number|WalkableTile)[]){
+		this.walkableTypes = this.walkableTypes.concat(...args)
+			.map((tileType: number | WalkableTile) => {
+				if(Object.prototype.toString.apply(tileType).indexOf('Number') > -1){
+					return {type: tileType as number, weight:1};
+				} else {
+					return tileType
+				}
+			})
 		return this;
 	}
 
@@ -45,7 +57,7 @@ export class PathFinding {
 		return this;
 	}
 
-	private gameMapToPathfind(map: number[][]): number[][] {
+	private gameMapToPathfind(map: number[][]): (number|Types)[][] {
 		const isStartObject:boolean = typeof this.start === "number";
 		const isEndObject:boolean = typeof this.end === "number";
         return map.map((row, rowIndex)=>{
@@ -58,14 +70,23 @@ export class PathFinding {
 					!isEndObject && (this.end as {row:number, col:number}).row == rowIndex && 
 					(this.end as {row:number, col:number}).col == colIndex){
 					return Types.END;
-				} else if(this.walkableTypes.indexOf(id) > -1){
-                      return Types.WALKABLE;
+				} else if(this.isTileWalkable(id)){
+					let item = this.getTileWalkable(id);
+                    return item.weight ? item.weight : 0;
                 } else {
-                      return Types.NON_WALKABLE;
+                     return Types.NON_WALKABLE;
                 }
              });
         });
-    }
+	}
+	
+	private isTileWalkable(mapItem:number) {
+		return this.walkableTypes.some((type:WalkableTile) => type.type == mapItem);
+	}
+
+	private getTileWalkable(mapItem:number):WalkableTile {
+		return this.walkableTypes.filter((type:WalkableTile) => type.type == mapItem)[0] as WalkableTile;
+	}
 
     public find(map: number[][]): {col:number,row:number}[]{
 		if(this.start == undefined || this.start == null){
@@ -76,13 +97,13 @@ export class PathFinding {
 			throw new Error('There is no end point. Please, use setEnd() to configure the path\'s end point.');
 		}
 
-		let finalMap:number[][] = this.gameMapToPathfind(map);
-		let firstElement = (typeof this.start !== "number") ? new Node(this.start.row, this.start.col) : this.findStartElement(finalMap);
-		let lastElement = (typeof this.end !== "number") ? new Node(this.end.row, this.end.col) : this.findEndElement(finalMap);
+		let finalMap:(number|Types)[][] = this.gameMapToPathfind(map);
+		let firstElement = (typeof this.start !== "number") ? new Node(this.start.row, this.start.col, 0) : this.findStartElement(finalMap);
+		let lastElement = (typeof this.end !== "number") ? new Node(this.end.row, this.end.col, 0) : this.findEndElement(finalMap);
         return this.findBestPath(firstElement, lastElement, finalMap);
     }
 
-	private findStartElement(map:number[][]): Node {
+	private findStartElement(map:(number|Types)[][]): Node {
     	let startPoint:Node = this.findElement(map, Types.START) as Node;
     	if(startPoint == null){
     		throw new Error('Couldn\'t find a start point.');
@@ -90,7 +111,7 @@ export class PathFinding {
 		return startPoint;
 	}
 
-	private findEndElement(map:number[][]): Node {
+	private findEndElement(map:(number|Types)[][]): Node {
 		let endPoint:Node = this.findElement(map, Types.END) as Node;
 		if(endPoint == null){
 			throw new Error('Couldn\'t find a end point.');
@@ -98,19 +119,19 @@ export class PathFinding {
 		return endPoint;
 	}
 
-	private findElement(map:number[][], value:number): Node | null {
+	private findElement(map:(number|Types)[][], value:(number|Types)): Node | null {
 		let el = null;
 		map.forEach((element, indexRow) => {
 			element.forEach((element, indexCol) => {
 				if(element == value){
-					el = new Node(indexRow, indexCol);
+					el = new Node(indexRow, indexCol, 0);
 				} 
 			});
 		});
 		return el;
 	}
 
-    private findBestPath(firstElement: Node, lastElement:Node, map: number[][]): {col:number,row:number}[]{
+    private findBestPath(firstElement: Node, lastElement:Node, map: (number|Types)[][]): {col:number,row:number}[]{
 
 		let closedList: Node[] = [];
 		let openList: Node[]= [];
@@ -137,7 +158,7 @@ export class PathFinding {
         return (openList.length > 0) ? this.getPath(closedList[closedList.length-1]) : [];
     }
 
-	private updateLists(map:number[][], currentNode:Node, closedList:Node[], openList: Node[], lastElement:Node){
+	private updateLists(map:(number|Types)[][], currentNode:Node, closedList:Node[], openList: Node[], lastElement:Node){
 
     	//get all adjacents position possibilities that we don't have in the closed list
 		let validAdjacents = this.findAdjacents(map, currentNode).filter(
@@ -193,11 +214,11 @@ export class PathFinding {
 	}
 
 	private getMoveValue(node:Node, newNode:Node){
-		if(node.getRow() != newNode.getRow() && node.getCol() != newNode.getCol()) return this.DIAGONAL_DISTANCE;
-		else return this.DEFAULT_DISTANCE;
+		if(node.getRow() != newNode.getRow() && node.getCol() != newNode.getCol()) return this.DIAGONAL_DISTANCE*(1+newNode.getWeight());
+		else return this.DEFAULT_DISTANCE*(1+newNode.getWeight());
 	}
 
-	private findAdjacents(map:number[][], node:Node) : Node[] {
+	private findAdjacents(map:(number|Types)[][], node:Node) : Node[] {
 
 		let adjacents: Node[] = [];
 		let diagonal = [[-1,-1], [-1,1], [1,-1], [1,1]];
@@ -211,8 +232,8 @@ export class PathFinding {
 			y = node.getCol() + square[v][1];
 
 			if(x > -1 && y > -1 && x < mapElements.length && y < mapElements[x].length
-				&& (mapElements[x][y] == Types.WALKABLE || mapElements[x][y] == Types.END )){
-				adjacents.push(new Node(x, y));
+				&& (this.isNumber(mapElements[x][y]) || mapElements[x][y] == Types.END )){
+				adjacents.push(new Node(x, y, mapElements[x][y] as number));
 			}
 		}
 
@@ -224,27 +245,31 @@ export class PathFinding {
 				y = node.getCol() + diagonal[v][1];
 	
 				if(x > -1 && y > -1 && x < mapElements.length && y < mapElements[x].length
-					&& (mapElements[x][y] == Types.WALKABLE || mapElements[x][y] == Types.END )){
+					&& (this.isNumber(mapElements[x][y]) || mapElements[x][y] == Types.END )){
 						
 					if(!this.allowDiagonal){
 						addAdjacents = false;
 						for (let index = 0; index < diagonal.length; index++) {
-							if(index == v && mapElements[x-diagonal[v][0]][y] == Types.WALKABLE && 
-								mapElements[x][y-diagonal[v][1]] == Types.WALKABLE){
+							if(index == v && this.isNumber(mapElements[x-diagonal[v][0]][y]) && 
+								this.isNumber(mapElements[x][y-diagonal[v][1]])){
 									addAdjacents = true;
 							}
 						}
 						if(addAdjacents){
-							adjacents.push(new Node(x, y));
+							adjacents.push(new Node(x, y, mapElements[x][y] as number));
 						}
 					} else { 
-						adjacents.push(new Node(x, y));
+						adjacents.push(new Node(x, y, mapElements[x][y] as number));
 					}
 				}
 			}
 		}
 
 		return adjacents;
+	}
+
+	private isNumber(item:number|Types): boolean {
+		return Object.prototype.toString.apply(item).indexOf('Number') > -1
 	}
 
 	private getPath(node:Node):{col:number,row:number}[] {

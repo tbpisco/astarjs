@@ -185,7 +185,9 @@ export class AppController {
         }
         
         this.pathFindingManager = new PathFinding({heuristic,allowDiagonal});
-        this.pathFindingManager.setWalkable(TILE.GREEN).setEnd(TILE.END).setStart(TILE.START);
+        this.pathFindingManager.setWalkable(
+            {type: TILE.GREEN, weight:0},
+            {type: TILE.GRASS, weight:2}).setEnd(TILE.END).setStart(TILE.START);
         let bestPath: {col:number,row:number}[] = this.pathFindingManager.find(this.map.get());
         if(bestPath.length > 0)this.showNodes(bestPath);
     }

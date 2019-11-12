@@ -216,3 +216,38 @@ describe("PathFinding DIAGONAL, allowDiagonal: false", () => {
 		})
 	});
 });
+
+describe("PathFinding using walkable tiles weight", () => {
+	let pfManager: PathFinding;
+
+	beforeEach(() => {
+		pfManager = new PathFinding({heuristic:Heuristic.DIAGONAL});
+	});
+
+	afterEach(() => {
+		// @ts-ignore
+		pfManager = null;
+	});
+
+	it("PathFinding find method always return an array.", () => {
+		new Array(20).fill(null).forEach((num, numIndex) =>{
+			let map = Utils.createRandomMap(20,20);
+			pfManager.setWalkable(
+				{type: TILE.GREEN},
+				{type: TILE.GRASS, weight:2}).setEnd(TILE.END).setStart(TILE.START);
+			let result = pfManager.find(map as number[][]);
+			assert.isArray(result);
+		})
+	});
+
+	it("PathFinding find method always return an array.", () => {
+		new Array(20).fill(null).forEach((num, numIndex) =>{
+			let map = Utils.createRandomMap(20,20);
+			pfManager.setWalkable(
+				TILE.GREEN,
+				{type: TILE.GRASS, weight:2}).setEnd(TILE.END).setStart(TILE.START);
+			let result = pfManager.find(map as number[][]);
+			assert.isArray(result);
+		})
+	});
+});
