@@ -314,10 +314,10 @@ let bestPath = pfManager.find(map);
 | options       | Object        | `Optional` pathfinding algorithm options                                                               |
 
 
-| options                       | *Name*        | *Type*      | *Default*            | *Description*                                        |
-|-------------------------------| --------------|-------------|----------------------|------------------------------------------------------|
-|                               | heuristic     | Heuristic   | Heuristic.MANHATTAN  | `Optional` Type of heuristic used for the pathfinding algorithm. Choose between Heuristic.MANHATTAN and Heuristic.DIAGONAL.| 
-|                               | allowDiagonal | boolean     | false                | `Optional` When using Heuristic.DIAGONAL, user can force path on the diagonal direction even if the adjacents tiles are non-walkable.|  
+| options?:{heuristic:Heuristic, allowDiagonal?:boolean}| *Name*        | *Type*      | *Default*            | *Description*                                        |
+|-------------------------------------------------------| --------------|-------------|----------------------|------------------------------------------------------|
+|                                                       | heuristic     | Heuristic   | Heuristic.MANHATTAN  | `Optional` Type of heuristic used for the pathfinding algorithm. Choose between Heuristic.MANHATTAN and Heuristic.DIAGONAL.| 
+|                                                       | allowDiagonal | boolean     | false                | `Optional` When using Heuristic.DIAGONAL, user can force path on the diagonal direction even if the adjacents tiles are non-walkable.|  
 
 
 ### setWalkable(...args:(number|WalkableTile)[])
