@@ -1,12 +1,14 @@
 export declare class Node {
-    private row;
-    private col;
-    private h;
-    private g;
-    private parent;
-    constructor(row: number, col: number);
+    private _row;
+    private _col;
+    private _h;
+    private _g;
+    private _weight;
+    private _parent;
+    constructor(row: number, col: number, weight?: number);
     getRow(): number;
     getCol(): number;
+    getWeight(): number;
     setH(value: number): void;
     getH(): number;
     setG(value: number): void;
