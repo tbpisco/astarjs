@@ -1,10 +1,9 @@
-import {assert, expect} from "chai";
+import { assert, expect } from 'chai';
+import '../src/PathFinding';
+import { Heuristic, PathFinding } from '../src';
+import { TILE, Utils } from './entry';
 
-import "../src/PathFinding";
-import {Heuristic, PathFinding} from '../src';
-import {TILE, Utils} from './entry';
-
-describe("PathFinding MANHATTAN", () => {
+describe('PathFinding MANHATTAN', () => {
 	let pfManager: PathFinding;
 
 	beforeEach(() => {
@@ -12,242 +11,264 @@ describe("PathFinding MANHATTAN", () => {
 	});
 
 	afterEach(() => {
-		// @ts-ignore
+		// @ts-expect-error to cleanup object for the next case
 		pfManager = null;
 	});
 
-	it("PathFinding instance has find method ", () => {
+	it('PathFinding instance has find method ', () => {
 		assert.isNotNull(pfManager.find);
 		assert.isFunction(pfManager.find);
 	});
 
-	it("PathFinding instance has setStart method ", () => {
+	it('PathFinding instance has setStart method ', () => {
 		assert.isNotNull(pfManager.setStart);
 		assert.isFunction(pfManager.setStart);
 	});
 
-	it("PathFinding instance has setEnd method ", () => {
+	it('PathFinding instance has setEnd method ', () => {
 		assert.isNotNull(pfManager.setEnd);
 		assert.isFunction(pfManager.setEnd);
 	});
 
-	it("PathFinding instance has setWalkable method ", () => {
+	it('PathFinding instance has setWalkable method ', () => {
 		assert.isNotNull(pfManager.setWalkable);
 		assert.isFunction(pfManager.setWalkable);
 	});
 
-	it("PathFinding Error - There is no start point ", () => {
-		const map = [[0,0,4,0,0,0,0],
-					 [3,3,3,0,0,0,0],
-					 [3,3,3,3,0,0,0],
-					 [0,3,3,3,0,0,0],
-					 [0,0,8,3,0,0,0]];
+	it('PathFinding Error - There is no start point ', () => {
+		const map = [
+			[0, 0, 4, 0, 0, 0, 0],
+			[3, 3, 3, 0, 0, 0, 0],
+			[3, 3, 3, 3, 0, 0, 0],
+			[0, 3, 3, 3, 0, 0, 0],
+			[0, 0, 8, 3, 0, 0, 0],
+		];
 		pfManager.setWalkable(0);
-		assert.throws(pfManager.find.bind(pfManager, map),'There is no start point. Please, use setStart() to configure the path\'s start point.');
+		assert.throws(
+			pfManager.find.bind(pfManager, map),
+			"There is no start point. Please, use setStart() to configure the path's start point.",
+		);
 	});
 
-	it("PathFinding Error - There is no end point ", () => {
-		const map = [[0,0,4,0,0,0,0],
-			[3,3,3,0,0,0,0],
-			[3,3,3,3,0,0,0],
-			[0,3,3,3,0,0,0],
-			[0,0,0,3,0,0,0]];
+	it('PathFinding Error - There is no end point ', () => {
+		const map = [
+			[0, 0, 4, 0, 0, 0, 0],
+			[3, 3, 3, 0, 0, 0, 0],
+			[3, 3, 3, 3, 0, 0, 0],
+			[0, 3, 3, 3, 0, 0, 0],
+			[0, 0, 0, 3, 0, 0, 0],
+		];
 		pfManager.setWalkable(0);
 		pfManager.setStart(4);
-		assert.throws(pfManager.find.bind(pfManager, map),'There is no end point. Please, use setEnd() to configure the path\'s end point.');
+		assert.throws(
+			pfManager.find.bind(pfManager, map),
+			"There is no end point. Please, use setEnd() to configure the path's end point.",
+		);
 	});
 
 	it("PathFinding Error - Couldn't find start point ", () => {
-		const map = [[0,0,4,0,0,0,0],
-			[3,3,3,0,0,0,0],
-			[3,3,3,3,0,0,0],
-			[0,3,3,3,0,0,0],
-			[0,0,8,3,0,0,0]];
+		const map = [
+			[0, 0, 4, 0, 0, 0, 0],
+			[3, 3, 3, 0, 0, 0, 0],
+			[3, 3, 3, 3, 0, 0, 0],
+			[0, 3, 3, 3, 0, 0, 0],
+			[0, 0, 8, 3, 0, 0, 0],
+		];
 		pfManager.setWalkable(0);
 		pfManager.setStart(10);
 		pfManager.setEnd(12);
-		assert.throws(pfManager.find.bind(pfManager, map),'Couldn\'t find a start point.');
+		assert.throws(pfManager.find.bind(pfManager, map), "Couldn't find a start point.");
 	});
 
 	it("PathFinding Error - Couldn't find end point ", () => {
-		const map = [[0,0,4,0,0,0,0],
-			[3,3,3,0,0,0,0],
-			[3,3,3,3,0,0,0],
-			[0,3,3,3,0,0,0],
-			[0,0,8,3,0,0,0]];
+		const map = [
+			[0, 0, 4, 0, 0, 0, 0],
+			[3, 3, 3, 0, 0, 0, 0],
+			[3, 3, 3, 3, 0, 0, 0],
+			[0, 3, 3, 3, 0, 0, 0],
+			[0, 0, 8, 3, 0, 0, 0],
+		];
 		pfManager.setWalkable(0);
 		pfManager.setStart(4);
 		pfManager.setEnd(12);
-		assert.throws(pfManager.find.bind(pfManager, map),'Couldn\'t find a end point.');
+		assert.throws(pfManager.find.bind(pfManager, map), "Couldn't find a end point.");
 	});
 
-	it("PathFinding find method returns an array ", () => {
-		const map = [[0,0,4,0,0,0,0],
-					 [0,0,0,0,0,0,0],
-					 [0,0,0,0,0,0,0],
-					 [0,0,0,0,0,0,0],
-					 [0,0,8,0,0,0,0]];
+	it('PathFinding find method returns an array ', () => {
+		const map = [
+			[0, 0, 4, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0, 0, 0],
+			[0, 0, 8, 0, 0, 0, 0],
+		];
 		pfManager.setWalkable(0);
 		pfManager.setStart(4);
 		pfManager.setEnd(8);
-		let result = pfManager.find(map);
+		const result = pfManager.find(map);
 		assert.isArray(result);
-		result.forEach(node => {
+		result.forEach((node) => {
 			expect(node).to.have.property('row');
 			expect(node).to.have.property('col');
-		})
+		});
 	});
 
-	it("PathFinding find method returns an empty array ", () => {
-		const map = [[0,0,4,0,0,0,0],
-					 [3,3,3,0,0,0,0],
-					 [3,3,3,3,0,0,0],
-					 [0,3,3,3,0,0,0],
-					 [0,0,8,3,0,0,0]];
+	it('PathFinding find method returns an empty array ', () => {
+		const map = [
+			[0, 0, 4, 0, 0, 0, 0],
+			[3, 3, 3, 0, 0, 0, 0],
+			[3, 3, 3, 3, 0, 0, 0],
+			[0, 3, 3, 3, 0, 0, 0],
+			[0, 0, 8, 3, 0, 0, 0],
+		];
 		pfManager.setWalkable(0);
 		pfManager.setStart(4);
 		pfManager.setEnd(8);
-		let result = pfManager.find(map);
+		const result = pfManager.find(map);
 		assert.isArray(result);
 		assert(result.length == 0);
 	});
 
-	it("PathFinding find method returns same result array for the same search ", () => {
-		const map0 = [[0,0,4,0,0,0,0],
-					  [0,0,0,0,0,0,0],
-					  [0,0,0,0,0,0,0],
-					  [0,0,0,0,0,0,0],
-					  [0,0,8,0,0,0,0]];
+	it('PathFinding find method returns same result array for the same search ', () => {
+		const map0 = [
+			[0, 0, 4, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0, 0, 0],
+			[0, 0, 8, 0, 0, 0, 0],
+		];
 
 		pfManager.setWalkable(0);
 		pfManager.setStart(4);
 		pfManager.setEnd(8);
 
-		let result0 = pfManager.find(map0);
+		const result0 = pfManager.find(map0);
 		assert.isArray(result0);
 
-		const map1 = [[0,0,0,0,0,0,0],
-					  [0,0,0,0,0,0,0],
-					  [0,0,0,0,0,0,0],
-					  [0,0,0,0,0,0,0],
-					  [0,0,0,0,0,0,0]];
+		const map1 = [
+			[0, 0, 0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0, 0, 0],
+			[0, 0, 0, 0, 0, 0, 0],
+		];
 
 		pfManager.setWalkable(0);
-		pfManager.setStart({row:0, col:2});
-		pfManager.setEnd({row:4, col:2});
+		pfManager.setStart({ row: 0, col: 2 });
+		pfManager.setEnd({ row: 4, col: 2 });
 
-		let result1 = pfManager.find(map1);
+		const result1 = pfManager.find(map1);
 		assert.isArray(result1);
 
 		expect(result1).to.eql(result0);
 	});
 
-	it("PathFinding find method return a result", () => {
+	it('PathFinding find method return a result', () => {
 		const map = [
-			[0,0,0,0,8,0,0],
-			[0,0,0,0,0,3,0],
-			[0,0,3,0,0,0,0],
-			[0,0,3,0,3,3,3],
-			[0,0,0,0,4,0,3]];
+			[0, 0, 0, 0, 8, 0, 0],
+			[0, 0, 0, 0, 0, 3, 0],
+			[0, 0, 3, 0, 0, 0, 0],
+			[0, 0, 3, 0, 3, 3, 3],
+			[0, 0, 0, 0, 4, 0, 3],
+		];
 		pfManager.setWalkable(0);
 		pfManager.setStart(4);
 		pfManager.setEnd(8);
-		let result = pfManager.find(map);
+		const result = pfManager.find(map);
 		assert.isArray(result);
 		assert(result.length > 0);
 	});
 
-	it("PathFinding find method always return an array.", () => {
-		new Array(60).fill(null).forEach((num, numIndex) =>{
-			let map = Utils.createRandomMap(20,20);
+	it('PathFinding find method always return an array.', () => {
+		new Array(60).fill(null).forEach(() => {
+			const map = Utils.createRandomMap(20, 20);
 			pfManager.setWalkable(0);
 			pfManager.setStart(TILE.START);
 			pfManager.setEnd(TILE.END);
-			let result = pfManager.find(map as number[][]);
+			const result = pfManager.find(map as number[][]);
 			assert.isArray(result);
-		})
+		});
 	});
 });
 
-describe("PathFinding DIAGONAL", () => {
+describe('PathFinding DIAGONAL', () => {
 	let pfManager: PathFinding;
 
 	beforeEach(() => {
-		pfManager = new PathFinding({heuristic:Heuristic.DIAGONAL, allowDiagonal:true});
+		pfManager = new PathFinding({ heuristic: Heuristic.DIAGONAL, allowDiagonal: true });
 	});
 
 	afterEach(() => {
-		// @ts-ignore
+		// @ts-expect-error to cleanup object for the next case
 		pfManager = null;
 	});
 
-	it("PathFinding find method always return an array.", () => {
-		new Array(60).fill(null).forEach((num, numIndex) =>{
-			let map = Utils.createRandomMap(20,20);
+	it('PathFinding find method always return an array.', () => {
+		new Array(60).fill(null).forEach(() => {
+			const map = Utils.createRandomMap(20, 20);
 			pfManager.setWalkable(0);
 			pfManager.setStart(TILE.START);
 			pfManager.setEnd(TILE.END);
-			let result = pfManager.find(map as number[][]);
+			const result = pfManager.find(map as number[][]);
 			assert.isArray(result);
-		})
+		});
 	});
 });
 
-describe("PathFinding DIAGONAL, allowDiagonal: false", () => {
+describe('PathFinding DIAGONAL, allowDiagonal: false', () => {
 	let pfManager: PathFinding;
 
 	beforeEach(() => {
-		pfManager = new PathFinding({heuristic:Heuristic.DIAGONAL});
+		pfManager = new PathFinding({ heuristic: Heuristic.DIAGONAL });
 	});
 
 	afterEach(() => {
-		// @ts-ignore
+		// @ts-expect-error to cleanup object for the next case
 		pfManager = null;
 	});
 
-	it("PathFinding find method always return an array.", () => {
-		new Array(60).fill(null).forEach((num, numIndex) =>{
-			let map = Utils.createRandomMap(20,20);
+	it('PathFinding find method always return an array.', () => {
+		new Array(60).fill(null).forEach(() => {
+			const map = Utils.createRandomMap(20, 20);
 			pfManager.setWalkable(0);
 			pfManager.setStart(TILE.START);
 			pfManager.setEnd(TILE.END);
-			let result = pfManager.find(map as number[][]);
+			const result = pfManager.find(map as number[][]);
 			assert.isArray(result);
-		})
+		});
 	});
 });
 
-describe("PathFinding using walkable tiles weight", () => {
+describe('PathFinding using walkable tiles weight', () => {
 	let pfManager: PathFinding;
 
 	beforeEach(() => {
-		pfManager = new PathFinding({heuristic:Heuristic.DIAGONAL});
+		pfManager = new PathFinding({ heuristic: Heuristic.DIAGONAL });
 	});
 
 	afterEach(() => {
-		// @ts-ignore
+		// @ts-expect-error to cleanup object for the next case
 		pfManager = null;
 	});
 
-	it("PathFinding find method always return an array.", () => {
-		new Array(20).fill(null).forEach((num, numIndex) =>{
-			let map = Utils.createRandomMap(20,20);
-			pfManager.setWalkable(
-				{type: TILE.GREEN},
-				{type: TILE.GRASS, weight:2}).setEnd(TILE.END).setStart(TILE.START);
-			let result = pfManager.find(map as number[][]);
+	it('PathFinding find method always return an array.', () => {
+		new Array(20).fill(null).forEach(() => {
+			const map = Utils.createRandomMap(20, 20);
+			pfManager
+				.setWalkable({ type: TILE.GREEN }, { type: TILE.GRASS, weight: 2 })
+				.setEnd(TILE.END)
+				.setStart(TILE.START);
+			const result = pfManager.find(map as number[][]);
 			assert.isArray(result);
-		})
+		});
 	});
 
-	it("PathFinding find method always return an array.", () => {
-		new Array(20).fill(null).forEach((num, numIndex) =>{
-			let map = Utils.createRandomMap(20,20);
-			pfManager.setWalkable(
-				TILE.GREEN,
-				{type: TILE.GRASS, weight:2}).setEnd(TILE.END).setStart(TILE.START);
-			let result = pfManager.find(map as number[][]);
+	it('PathFinding find method always return an array.', () => {
+		new Array(20).fill(null).forEach(() => {
+			const map = Utils.createRandomMap(20, 20);
+			pfManager.setWalkable(TILE.GREEN, { type: TILE.GRASS, weight: 2 }).setEnd(TILE.END).setStart(TILE.START);
+			const result = pfManager.find(map as number[][]);
 			assert.isArray(result);
-		})
+		});
 	});
 });

@@ -1,18 +1,16 @@
-const webpack = require("webpack");
 const path = require("path");
-const UglifyJsPlugin = require("uglifyjs-webpack-plugin");
+const TerserPlugin = require("terser-webpack-plugin");
 
-module.exports = env => {
+module.exports = (options) => {
 
-    if (!env) env = { production: false, karma: false };
+    if (!options) options = { production: false, karma: false };
 
-    let mode = env.production ? "production" : "development";
-    let tsconfig = !env.karma ? "tsconfig.json" : "tsconfig.test.json";
-    let output = env.production ? "dist" : "dist-test";
-    let filename = env.karma ? "[name].[hash].js" : (env.production ? "pathfinding.min.js" : "pathfinding.js");
+    let tsconfig = !options.karma ? "tsconfig.json" : "tsconfig.test.json";
+    let output = options.production ? "dist" : "dist-test";
+    let filename = options.karma ? "[name].[hash].js" : (options.production ? "pathfinding.min.js" : "pathfinding.js");
 
     return {
-        mode: mode,
+        mode: options.production ? 'production': 'development',
 
         entry: {
             main: path.join(__dirname, "src/index.ts")
@@ -21,57 +19,39 @@ module.exports = env => {
         output: {
             path: path.join(__dirname, output),
             filename: filename,
-
-            libraryTarget: "var",
-            library: "Pathfinding"
+            library: {
+                name: "Pathfinding",
+                type: "var"
+            } 
         },
 
-        devtool: env.production ? undefined : "inline-source-map",
+        devtool: options.production ? undefined : 'source-map',
 
         module: {
             rules: [
                 {
-                    test: /\.ts$/,
-                    loader: "ts-loader?configFile=" + tsconfig
-                },
-                {
-                    test: ((env.production) /* disable this loader for production builds */
-                        ? /^$/
-                        : /^.*(src).*\.ts$/),
-                    loader: "istanbul-instrumenter-loader",
-                    query: {
-                        embedSource: true
-                    },
-                    enforce: "post"
+                    test: /\.ts(x)?$/,
+					loader: 'ts-loader',
+					exclude: /node_modules/,
+                    options: {
+                        configFile: tsconfig
+                    }
                 }
             ]
         },
 
-        plugins: (
-            (env.production)
-                ? []
-                : [ new webpack.SourceMapDevToolPlugin({ test: /\.ts$/i }) ]
-        ),
-
-        optimization:
-            (env.production)
-                ? {
-                    concatenateModules: true,
-                    minimize: true,
-                    minimizer: [
-                        new UglifyJsPlugin({
-                            cache: true,
-                            parallel: 4,
-                            uglifyOptions: {
-                                output: {
-                                    comments: false
-                                }
-                            }
-                        })
-                    ]
-                }
-                : {}
-        ,
+        optimization: {
+			minimize: options.production,
+			minimizer: [
+				new TerserPlugin({
+					terserOptions: {
+						ecma: 5,
+						compress: { drop_console: true },
+						output: { comments: false, beautify: false },
+					},
+				}),
+			],
+		},
 
         resolve: {
             extensions: [".ts", ".js", ".json"]

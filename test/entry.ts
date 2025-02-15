@@ -1,4 +1,4 @@
-export enum TILE{
+export enum TILE {
 	GREEN,
 	GRASS,
 	HOUSE,
@@ -7,36 +7,40 @@ export enum TILE{
 	WATER,
 	TREES,
 	START,
-	END
+	END,
 }
 
 export class Utils {
-
-	public static createRandomMap(col: number, row: number): (string|number)[][] {
-		let array: number[][] = [];
+	public static createRandomMap(col: number, row: number): (string | number)[][] {
+		const array: number[][] = [];
 		for (let index = 0; index < row; index++) {
-			array.push(new Array(col + 1).join("0").split("").map((element) => {
-				let num = Math.floor(Math.random() * 20);
-				if(num < 14){
-                    return TILE.GRASS;
-                } else if (num < 15) {
-					return TILE.GREEN;
-				} else if (num == 16) {
-					return TILE.HOUSE;
-				} else if (num == 17) {
-					return TILE.MOUNTAIN_BROWN;
-				} else if (num == 18) {
-					return TILE.MOUNTAIN;
-				} else if (num == 19) {
-					return TILE.WATER;
-				} else {
-					return TILE.TREES;
-				}
-			}));
+			array.push(
+				new Array(col + 1)
+					.join('0')
+					.split('')
+					.map(() => {
+						const num = Math.floor(Math.random() * 20);
+						if (num < 14) {
+							return TILE.GRASS;
+						} else if (num < 15) {
+							return TILE.GREEN;
+						} else if (num == 16) {
+							return TILE.HOUSE;
+						} else if (num == 17) {
+							return TILE.MOUNTAIN_BROWN;
+						} else if (num == 18) {
+							return TILE.MOUNTAIN;
+						} else if (num == 19) {
+							return TILE.WATER;
+						} else {
+							return TILE.TREES;
+						}
+					}),
+			);
 		}
 
-		let r = Math.floor(Math.random() * row);
-		let c = Math.floor(Math.random() * col);
+		const r = Math.floor(Math.random() * row);
+		const c = Math.floor(Math.random() * col);
 
 		array[r][c] = TILE.START;
 
