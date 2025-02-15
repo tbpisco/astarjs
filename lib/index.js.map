@@ -1,1 +1,1 @@
-{"version":3,"file":"index.js","sourceRoot":"","sources":["../src/index.ts"],"names":[],"mappings":";;AAAA,6CAAuD;AAA9C,oCAAA,WAAW,CAAA;AAAE,kCAAA,SAAS,CAAA","sourcesContent":["export { PathFinding, Heuristic } from './PathFinding';"]}
+{"version":3,"file":"index.js","sourceRoot":"","sources":["../src/index.ts"],"names":[],"mappings":";;;AAAA,6CAAuD;AAA9C,0GAAA,WAAW,OAAA;AAAE,wGAAA,SAAS,OAAA","sourcesContent":["export { PathFinding, Heuristic } from './PathFinding';\n"]}

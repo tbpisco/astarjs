@@ -1,0 +1,6 @@
+**/package.json
+**/package-lock.json
+**/dist/
+**/lib/
+tsconfig.json
+webpack.config.js 

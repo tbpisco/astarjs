@@ -1,10 +1,7 @@
 {
-  "extends": "./tsconfig.json",
-  "compilerOptions": {
-    "outDir": "lib-test"
-  },
-  "include": [
-    "./src/**/*.ts",
-    "./test/**/*.ts"
-  ]
+	"extends": "./tsconfig.json",
+	"compilerOptions": {
+		"outDir": "lib-test"
+	},
+	"include": ["./src/**/*.ts", "./test/**/*.ts"]
 }
