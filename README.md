@@ -72,17 +72,7 @@ returns
 2: {col: 5, row: 6}
 3: {col: 5, row: 7}*/
 ```
-[See full example here](https://github.com/tbpisco/astarjs/tree/master/examples)
-
-Running the example
----
-
-Run the following commands to run the example:
-
-```bash
-npm install
-npm start
-```
+[See full example here](https://github.com/tbpisco/astarjs-example)
 
 # Options
 
