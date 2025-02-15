@@ -3,11 +3,10 @@ const TerserPlugin = require("terser-webpack-plugin");
 
 module.exports = (options) => {
 
-    if (!options) options = { production: false, karma: false };
+    if (!options) options = { production: false};
 
-    let tsconfig = !options.karma ? "tsconfig.json" : "tsconfig.test.json";
     let output = options.production ? "dist" : "dist-test";
-    let filename = options.karma ? "[name].[hash].js" : (options.production ? "pathfinding.min.js" : "pathfinding.js");
+    let filename = options.production ? "pathfinding.min.js" : "pathfinding.js";
 
     return {
         mode: options.production ? 'production': 'development',
