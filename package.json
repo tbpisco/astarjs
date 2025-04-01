@@ -16,7 +16,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git@github.com:tbpisco/astarjs.git"
+    "url": "git+ssh://git@github.com/tbpisco/astarjs.git"
   },
   "homepage": "https://github.com/tbpisco/astarjs#readme",
   "devDependencies": {
