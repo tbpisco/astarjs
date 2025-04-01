@@ -203,9 +203,38 @@ From version **1.1.0** on, user can setup weight for walkable tiles.
 To setup it use **setWalkable** method as bellow:
 
 ```typescript
-.setWalkable(0,{type: 1, weight:0.5},{type: 2, weight:2});
+.setWalkable({type: 1, weight:0.5},{type: 2, weight:1});
 ```
-Tiles with unspecified weight will use the default value of 0.
+
+In this case, **setWalkable** can receive an indefinite list of arguments with the following data type:
+
+{type:number, weight:number} or number
+
+**type** here is used to differentiate between terrain types (like grass, pathway, sand, etc...) and each type can have a different **weight**. The weight will increase the movement cost.
+
+Example:
+
+```typescript
+.setWalkable(0, { type: 1, weight: 0.5 }, { type: 2, weight: 2 });
+```
+
+When you use **number** as argument, in this case, 0, the library will read it as **{ type: 0, weight: 0 }**.
+
+Here the type 0 might be something easier to walk through, like a pathway, type 1 might be grass and type 2, a slow terrain like sand.
+
+If you are not using tiles with different movement costs, you can set just as
+
+```typescript
+.setWalkable(0, 1, 2);
+```
+
+In that case, the library will treat this as 
+
+```typescript
+.setWalkable({ type: 0, weight: 0 }, { type: 1, weight: 0 }, { type: 2, weight: 0 });
+```
+
+**Tiles types with unspecified weight will use the default value of 0.**
 
 ## Example with walkable tiles weight
 
@@ -213,44 +242,46 @@ Tiles with unspecified weight will use the default value of 0.
 
 import { PathFinding } from 'astarjs';
 
-let map = [ [2,  0,  0,  0,  0,  0],
-			[0,  0,  1,  1,  0,  0],
-			[0,  0,  1,  1,  0,  0],
-			[0,  0,  1,  1,  0,  0],
-			[0,  0,  1,  1,  0,  0],
-			[0,  0,  0,  0,  0,  0],
-			[0,  0,  0,  0,  0,  3]];
+let map = [ [2,  0,  1,  1,  0,  0],
+		[0,  0,  1,  1,  0,  0],
+		[1,  0,  1,  1,  0,  0],
+		[0,  0,  1,  1,  0,  0],
+		[0,  0,  1,  1,  0,  0],
+		[0,  0,  0,  0,  0,  0],
+		[0,  0,  0,  0,  0,  3]];
             
 let pfManager = new PathFinding();            
-pfManager.setWalkable({type: 0},{type: 1, weight:2}).setEnd(3).setStart(2);
+pfManager.setWalkable({type: 0},{type: 1, weight:3}).setEnd(3).setStart(2);
 let bestPath = pfManager.find(map);
 ```
 or 
 
 ```typescript
-pfManager.setWalkable(0,{type: 1, weight:2}).setEnd(3).setStart(2);
+pfManager.setWalkable(0,{type: 1, weight: 3}).setEnd(3).setStart(2);
 ```
 or
 
 ```typescript
-pfManager.setWalkable({type: 0, weight:0},{type: 1, weight:2}).setEnd(3).setStart(2);
+pfManager.setWalkable({type: 0, weight: 0},{type: 1, weight: 3}).setEnd(3).setStart(2);
+
 
 /*
-* bestPath = [{col: 0, row: 0}, {col: 1, row: 0}, {col: 2, row: 0}, {col: 3, row: 0},
- {col: 4, row: 0}, {col: 4, row: 1}, {col: 4, row: 2}, {col: 4, row: 3}, {col: 4, row: 4},
- {col: 4, row: 5}, {col: 5, row: 5}, {col: 5, row: 6}]
+* bestPath = [{ col: 0, row: 0 },{ col: 0, row: 1 },{ col: 1, row: 1 },{ col: 1, row: 2 },
+              { col: 1, row: 3 },{ col: 1, row: 4 },{ col: 1, row: 5 },{ col: 1, row: 6 },
+              { col: 2, row: 6 },{ col: 3, row: 6 },{ col: 4, row: 6 },{ col: 5, row: 6 }]
 *
 * E -> End
 * S -> Start
 * # -> Path
 * 
-*  [[2,  #,  #,  #,  #,  0],
-*	[0,  0,  1,  1,  #,  0],
-*	[0,  0,  1,  1,  #,  0],
-*	[0,  0,  1,  1,  #,  0],
-*	[0,  0,  1,  1,  #,  0],
-*	[0,  0,  0,  0,  #,  0],
-*	[0,  0,  0,  0,  #,  3]];
+*  [[S,  0,  1,  1,  0,  0],
+*   [#,  #,  1,  1,  0,  0],
+*   [1,  #,  1,  1,  0,  0],
+*   [0,  #,  1,  1,  0,  0],
+*   [0,  #,  1,  1,  0,  0],
+*   [0,  #,  0,  0,  0,  0],
+*   [0,  #,  #,  #,  #,  E]];
+* 
 * 
 * */
 ```
@@ -261,9 +292,9 @@ pfManager.setWalkable({type: 0, weight:0},{type: 1, weight:2}).setEnd(3).setStar
 
 import { PathFinding } from 'astarjs';
 
-let map = [ [2,  0,  0,  0,  0,  0],
+let map = [ [2,  0,  1,  1,  0,  0],
 			[0,  0,  1,  1,  0,  0],
-			[0,  0,  1,  1,  0,  0],
+			[1,  0,  1,  1,  0,  0],
 			[0,  0,  1,  1,  0,  0],
 			[0,  0,  1,  1,  0,  0],
 			[0,  0,  0,  0,  0,  0],
@@ -274,21 +305,21 @@ pfManager.setWalkable(0,1).setEnd(3).setStart(2);
 let bestPath = pfManager.find(map);
 
 /*
-* bestPath =  [{col: 0, row: 0}, {col: 0, row: 1}, {col: 0, row: 2}, {col: 1, row: 2},
-                {col: 2, row: 2}, {col: 2, row: 3}, {col: 3, row: 3}, {col: 3, row: 4},
-                {col: 4, row: 4}, {col: 4, row: 5}, {col: 5, row: 5}, {col: 5, row: 6}]
+* bestPath = [{ col: 0, row: 0 },{ col: 0, row: 1 },{ col: 0, row: 2 },{ col: 0, row: 3 },
+              { col: 0, row: 4 },{ col: 0, row: 5 },{ col: 0, row: 6 },{ col: 1, row: 6 },
+              { col: 2, row: 6 },{ col: 3, row: 6 },{ col: 4, row: 6 },{ col: 5, row: 6 }]
 *
 * E -> End
 * S -> Start
 * # -> Path
 * 
-*  [[2,  0,  0,  0,  0,  0],
-*	[#,  0,  1,  1,  0,  0],
-*	[#,  #,  #,  1,  0,  0],
-*	[0,  0,  #,  #,  0,  0],
-*	[0,  0,  1,  #,  #,  0],
-*	[0,  0,  0,  0,  #,  #],
-*	[0,  0,  0,  0,  0,  3]];
+*  [[S,  0,  1,  1,  0,  0],
+*   [#,  0,  1,  1,  0,  0],
+*   [#,  0,  1,  1,  0,  0],
+*   [#,  0,  1,  1,  0,  0],
+*   [#,  0,  1,  1,  0,  0],
+*   [#,  0,  0,  0,  0,  0],
+*   [#,  #,  #,  #,  #,  E]];
 * 
 * */
 ```
@@ -314,7 +345,7 @@ let bestPath = pfManager.find(map);
 
 | *Name*        | *Type*        | *Description*                                                                                             |
 | ------------- |:-------------:| ----------------------------------------------------------------------------------------------------------|
-| arg           | Array         | An array of numbers and/or WalkableTile type. WalkableTile:{type:number, weight:number}, weight is the percentage that a tile is "heaviest" than the default weight.|          
+| arg           | ...args       | A list of numbers and/or WalkableTile type. WalkableTile:{type:number, weight:number}, weight is the percentage that a tile is "heaviest" than the default weight.|          
 
 
 ### setStart(start:number|{row:number, col:number})
