@@ -20,8 +20,8 @@ export enum Heuristic {
 }
 
 export class PathFinding {
-	private DEFAULT_DISTANCE: number = 10;
-	private DIAGONAL_DISTANCE: number = 14;
+	private DEFAULT_DISTANCE: number = 1;
+	private DIAGONAL_DISTANCE: number = Math.sqrt(2);
 
 	private heuristic: Heuristic = Heuristic.MANHATTAN;
 	private allowDiagonal: boolean = false;
@@ -39,11 +39,11 @@ export class PathFinding {
 	public setWalkable(...args: (number | WalkableTile)[]) {
 		this.walkableTypes = this.walkableTypes.concat(...args).map((tileType: number | WalkableTile) => {
 			if (this.isNumber(tileType as number)) {
-				return { type: tileType as number, weight: 1 };
+				return { type: tileType as number, weight: 0 };
 			} else {
 				const walkableData: WalkableTile = {
 					type: (tileType as WalkableTile).type,
-					weight: (tileType as WalkableTile).weight ? (tileType as WalkableTile).weight : 1,
+					weight: (tileType as WalkableTile).weight ? (tileType as WalkableTile).weight : 0,
 				};
 				return walkableData;
 			}
